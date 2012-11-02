@@ -373,7 +373,7 @@ function getUserTransmissionTransfers($uid = 0) {
 	"name", "id", "hashString", "eta", "totalSize", "percentDone", "metadataPercentComplete",
 	"peersConnected", 'peersGettingFromUs', 'peersSendingToUs', "rateDownload", "rateUpload", "status", 
 	"uploadLimit", "uploadRatio", "seedRatioLimit", "seedRatioMode", 
-	"downloadedEver", "uploadedEver",
+	"downloadedEver", "uploadedEver", "error", "errorString",
 //	"trackerStats", "files", "fileStats" slow down
 	);
 

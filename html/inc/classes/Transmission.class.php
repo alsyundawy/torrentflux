@@ -497,7 +497,7 @@ class Transmission
             6: seeding
             */
             //fixme: stupid check, don't know whether tfstatus can be > 3
-            var_dump($status);
+            //var_dump($status);
             if ((int) $status > 0) return 1;
             return 0;
         }
@@ -512,7 +512,7 @@ class Transmission
 		if ($stat['uploadRatio'] == -1)
 			$stat['uploadRatio'] = 0;
 
-                if ($stat['eta'] < 0) $stat["eta"] = 0;
+                //if ($stat['eta'] < 0) $stat["eta"] = 0;
 
 		$tfStat = array(
 			'rpcid' => $stat['id'],

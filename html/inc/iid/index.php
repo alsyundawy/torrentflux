@@ -134,7 +134,7 @@ if ($cfg["transmission_rpc_enable"]) {
 
 		$status = $aTorrent['status'];
 		switch ($aTorrent['status']) {
-		case 16:
+		case 0:
 			$transferRunning = false;
 			if ( $aTorrent['percentDone'] >= 1 ) {
 				$status = "Done";
@@ -148,11 +148,11 @@ if ($cfg["transmission_rpc_enable"]) {
 				}
 			}
 			break;
-		case 9:
-			$status = "Seeding";
+		case 5:
+			$status = "QSeeding";
 			$transferRunning = true;
 			break;
-		case 8:
+		case 6:
 			$status = "Seeding";
 			$transferRunning = true;
 			break;
@@ -213,7 +213,9 @@ if ($cfg["transmission_rpc_enable"]) {
 			'uptotal'   => $aTorrent['uploadedEver'],
 			'downtotal' => $aTorrent['downloadedEver'],
 			'down_speed' => ($aTorrent['rateDownload'] != 0 ? formatBytesTokBMBGBTB( $aTorrent['rateDownload'] ) . '/s' : '&nbsp;'),
-			'up_speed' =>   ($aTorrent['rateUpload']   != 0 ? formatBytesTokBMBGBTB( $aTorrent['rateUpload'] ) . '/s' : '&nbsp;')
+			'up_speed' =>   ($aTorrent['rateUpload']   != 0 ? formatBytesTokBMBGBTB( $aTorrent['rateUpload'] ) . '/s' : '&nbsp;'),
+                        'error' => (int) $aTorrent['error'],
+                        'errorString' => $aTorrent['errorString']
 		);
 
 		if ($cfg["transmission_rpc_enable"] == 1) {
@@ -382,7 +384,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 						if (!$sf->seedlimit)
 							$sf->seedlimit=$settingsAry["sharekill"];
 							
-						if ($rpcStat['status'] == 8 || $rpcStat['status'] == 9)
+						if ($rpcStat['status'] == 5 || $rpcStat['status'] == 6)
 							$sf->running = 1;
 
 						$sf->percent_done= floatval($rpcStat['percentDone']);
@@ -406,7 +408,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 						} else
 							$sf->time_left="";
 
-						if ($rpcStat['status'] == 16) {
+						if ($rpcStat['status'] == 0) {
 							if (abs($sf->percent_done) >= 100) {
 								//$sf->percent_done = 100;
 								//$sf->running = 0;
@@ -435,7 +437,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 					$trStat = $arTrUserTorrent[$settingsAry['hash']];
 					if (is_array($trStat)) {
 						$sf->running      = $trStat['transferRunning'];
-						if ($trStat['status'] == 8 || $trStat['status'] == 9)
+						if ($trStat['status'] == 5 || $trStat['status'] == 6)
 							$sf->running = 2;
 						
 						$sf->rpc_status   = $trStat['rpc_status'];
@@ -457,6 +459,8 @@ foreach ($arList as $mtimecrc => $transfer) {
 						$sf->downtotal    = (float) $trStat['downtotal'];
 						
 						$sf->size         = (float) $trStat['size'];
+                                                $sf->error        = $trStat['error'];
+                                                $sf->errorString  = $trStat['errorString'];
 						
 						//sf->write();
 						//var_dump($sf);
@@ -466,14 +470,14 @@ foreach ($arList as $mtimecrc => $transfer) {
 							if (strpos($error,'Scrape') !== false) {
 								//ignore scrape error
 							} else {
-								$sf->status .= 'Error';
+								$sf->status = 'Error';
 							}
 						}
 						
 						if ($sf->down_speed == '0 B/s')
 							$sf->down_speed = '';
 						
-						if ($sf->rpc_status == 16) {
+						if ($sf->rpc_status == 0) {
 							//stopped
 							$sf->up_speed = '';
 							if (abs($sf->percent_done) >= 100) {// && (int) $sf->sharing > (int) $sf->seedlimit - 5) {
@@ -568,10 +572,21 @@ foreach ($arList as $mtimecrc => $transfer) {
 				$statusStr = "Stopped";
 				$show_run = true;
 			} else {
-				$statusStr = "Leeching";
+				//fixme: wont necessarily work; old:  $statusStr = "Leeching";
+                                if (!empty($sf->status)) {
+                                    $statusStr = $sf->status;
+                                    
+                                    if ($transferRunning !== 0 && $sf->error !== 0) {
+                                        $statusStr = "Error";
+                                        $show_run = true;
+                                    }
+                                }
+                                else $statusStr = "Leeching";
 			}
 			// pid-file
-			$is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
+			//fixme: error handling for transmissionrpc
+                        $is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
+                        if ($sf->error !== 0) $is_no_file = 1;
 			break;
 	}
 

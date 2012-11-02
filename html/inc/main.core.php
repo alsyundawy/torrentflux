@@ -74,6 +74,8 @@ $cfg["upload_limit"] = 8000000;
 // username
 $cfg["user"] = "";
 
+//var_dump($_SERVER);
+
 // ip + hostname
 if (isset($_SERVER['REMOTE_ADDR'])) {
 	$cfg['ip'] = htmlentities($_SERVER['REMOTE_ADDR'], ENT_QUOTES);
