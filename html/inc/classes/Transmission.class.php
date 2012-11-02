@@ -456,7 +456,7 @@ class Transmission
 	/*
 	 * Convert RPC Status to TorrentFlux running
 	 */
-	public function status_to_tf($status) {
+	/*public function status_to_tf($status) {
 		// 1 - waiting to verify
 		// 2 - verifying
 		// 4 - downloading
@@ -485,7 +485,22 @@ class Transmission
 		//2: New
 		//3: Queued (Qmgr)
 		return $tfstatus;
-	}
+	}*/
+        public function status_to_tf($status) {
+            /*
+            0: stopped
+            1: queued to check
+            2: checking files
+            3: queued to download
+            4: downloading
+            5: queued to seeding
+            6: seeding
+            */
+            //fixme: stupid check, don't know whether tfstatus can be > 3
+            var_dump($status);
+            if ((int) $status > 0) return 1;
+            return 0;
+        }
 
 	/*
 	 * RPC Struct to TorrentFlux Names
@@ -496,6 +511,8 @@ class Transmission
 		
 		if ($stat['uploadRatio'] == -1)
 			$stat['uploadRatio'] = 0;
+
+                if ($stat['eta'] < 0) $stat["eta"] = 0;
 
 		$tfStat = array(
 			'rpcid' => $stat['id'],
