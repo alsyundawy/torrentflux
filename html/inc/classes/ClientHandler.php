@@ -191,6 +191,10 @@ class ClientHandler
 	 */
 	function start($transfer, $interactive = false, $enqueue = false) { return; }
 
+        function getNetstatName() {
+            return $this->binSocket;
+        }
+
 	/**
 	 * deletes cache of a transfer
 	 *
