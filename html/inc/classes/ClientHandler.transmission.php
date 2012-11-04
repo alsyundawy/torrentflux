@@ -41,10 +41,6 @@ class ClientHandlerTransmission extends ClientHandler
 		$this->binClient = "transmission-cli";
 	}
 
-        function getNetstatName() {
-            return "transmission-";
-        }
-
 	// =========================================================================
 	// public methods
 	// =========================================================================
