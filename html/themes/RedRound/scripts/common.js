@@ -21,7 +21,7 @@ jQuery(document).ready(function(){
 			jQuery('#credits').dialog({
 				resizable: false,
 				width: 500,
-				height: 300
+				height: "auto"
 			});
 		});
 	});
