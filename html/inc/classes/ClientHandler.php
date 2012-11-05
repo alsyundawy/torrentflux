@@ -191,6 +191,10 @@ class ClientHandler
 	 */
 	function start($transfer, $interactive = false, $enqueue = false) { return; }
 
+        function getNetstatName() {
+            return substr($this->binSocket, 0, 13); // 13 chars seems to be a limitation of netstat process names in output
+        }
+
 	/**
 	 * deletes cache of a transfer
 	 *
