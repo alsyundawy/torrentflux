@@ -1,23 +1,22 @@
 <?php
 /*******************************************************************************
- Set tabs to 4.
+Set tabs to 4.
 
- $Id: main.internal.php $
+$Id: main.internal.php $
 
- @package torrentflux
- @license LICENSE http://www.gnu.org/copyleft/gpl.html
+@package torrentflux
+@license LICENSE http://www.gnu.org/copyleft/gpl.html
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-
-*******************************************************************************/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+ *******************************************************************************/
 
 // start session
 @session_start();
@@ -50,11 +49,11 @@ if (isset($_SESSION['user'])) {
 		// main.core
 		require_once('inc/main.core.php');
 	}
-    $cfg["user"] = $currentUser;
+	$cfg["user"] = $currentUser;
 } else {
 	// reset user
-    $cfg["user"] = "";
-    $currentUser = "";
+	$cfg["user"] = "";
+	$currentUser = "";
 	// main.core
 	require_once('inc/main.core.php');
 }
@@ -64,7 +63,7 @@ if (isAuthenticated() == 1) {
 	// check if we are locked
 	if ($cfg["webapp_locked"] == 1) {
 		// only superadmin can login when we are locked
-		if (! IsSuperAdmin()) {
+		if (!IsSuperAdmin()) {
 			@header('location: locked.php');
 			exit();
 		}
@@ -82,7 +81,7 @@ if (isAuthenticated() == 1) {
 			// check if we are locked
 			if ($cfg["webapp_locked"] == 1) {
 				// only superadmin can login when we are locked
-				if (! IsSuperAdmin()) {
+				if (!IsSuperAdmin()) {
 					@header('location: locked.php');
 					exit();
 				}
@@ -101,12 +100,11 @@ if (isAuthenticated() == 1) {
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
 // if at this moment no user is set there is something wrong
-if(!isset($currentUser) || empty($currentUser))
-{
+if (!isset($currentUser) || empty($currentUser)) {
 	@header('location: login.php');
 	exit();
 }
-	
+
 
 // cache is not set
 if (!cacheIsSet($currentUser)) {
@@ -150,7 +148,7 @@ if (!cacheIsSet($currentUser)) {
 	$cfg['isAdmin'] = IsAdmin();
 
 	// load some settings from users-table
-	$sql = "SELECT hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+	$sql       = "SELECT hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	list ($cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
@@ -199,7 +197,7 @@ if (!cacheIsSet($currentUser)) {
 
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;
-	$_SESSION['settings']['index_ajax_update'] = ($cfg["enable_index_ajax_update"] != 0) ? 1 : 0;
+	$_SESSION['settings']['index_ajax_update']  = ($cfg["enable_index_ajax_update"] != 0) ? 1 : 0;
 	$_SESSION['settings']['index_show_seeding'] = ($cfg["index_show_seeding"] != 0) ? 1 : 0;
 
 	// xfer
@@ -207,11 +205,9 @@ if (!cacheIsSet($currentUser)) {
 		// xfer-init
 		Xfer::init();
 	}
-}
-else
-{
+} else {
 	// Check for valid theme
-	if(isset($cfg["theme"]))
+	if (isset($cfg["theme"]))
 		$cfg["theme"] = CheckandSetUserTheme();
 
 	// Run internal maintenance regularly
@@ -224,7 +220,7 @@ else
 
 // schedule next internal maintenance if needed
 if (empty($_SESSION['next_int_maintenance']))
-	$_SESSION['next_int_maintenance'] = time() + 2 * 3600 + mt_rand(-1200, 1200);	// 2h (+/- 20m)
+	$_SESSION['next_int_maintenance'] = time() + 2 * 3600 + mt_rand(-1200, 1200); // 2h (+/- 20m)
 
 // free space in MB var
 $cfg["free_space"] = @disk_free_space($cfg["path"]) / 1048576;

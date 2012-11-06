@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // main.internal
 require_once("inc/main.internal.php");
@@ -33,15 +32,15 @@ require_once('inc/functions/functions.all.php');
 $action = (isset($_REQUEST['action'])) ? tfb_getRequestVar('action') : "---";
 switch ($action) {
 
-/*******************************************************************************
- * dummy
- ******************************************************************************/
+	/*******************************************************************************
+	 * dummy
+	 ******************************************************************************/
 	case "---":
 		break;
 
-/*******************************************************************************
- * single transfer ops
- ******************************************************************************/
+	/*******************************************************************************
+	 * single transfer ops
+	 ******************************************************************************/
 	case "start":
 		dispatcher_startTransfer(urldecode(tfb_getRequestVar('transfer')));
 		break;
@@ -70,9 +69,9 @@ switch ($action) {
 		dispatcher_setFilePriority(urldecode(tfb_getRequestVar('transfer')));
 		break;
 
-/*******************************************************************************
- * injects
- ******************************************************************************/
+	/*******************************************************************************
+	 * injects
+	 ******************************************************************************/
 	case "fileUpload":
 		dispatcher_processUpload();
 		break;
@@ -83,35 +82,35 @@ switch ($action) {
 		dispatcher_injectWget(tfb_getRequestVarRaw('url'));
 		break;
 
-/*******************************************************************************
- * metafile-download
- ******************************************************************************/
+	/*******************************************************************************
+	 * metafile-download
+	 ******************************************************************************/
 	case "metafileDownload":
 		dispatcher_sendMetafile(tfb_getRequestVar('transfer'));
 		break;
 
-/*******************************************************************************
- * set
- ******************************************************************************/
+	/*******************************************************************************
+	 * set
+	 ******************************************************************************/
 	case "set":
 		dispatcher_set(tfb_getRequestVar('key'), tfb_getRequestVar('val'));
 		break;
 
-/*******************************************************************************
- * Maintenance
- ******************************************************************************/
+	/*******************************************************************************
+	 * Maintenance
+	 ******************************************************************************/
 	case "maintenance":
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		$type = tfb_getRequestVar('type',(tfb_getRequestVar('trestart') == "true") ?
+		$type = tfb_getRequestVar('type', (tfb_getRequestVar('trestart') == "true") ?
 			MAINTENANCEANDREPAIR_TYPE_EXT : MAINTENANCEANDREPAIR_TYPE_STD);
 		MaintenanceAndRepair::maintenance($type);
 		// set transfers-cache
 		cacheTransfersSet();
 		break;
 
-/*******************************************************************************
- * Cache-Flush
- ******************************************************************************/
+	/*******************************************************************************
+	 * Cache-Flush
+	 ******************************************************************************/
 	case "cacheFlush":
 		// flush session-cache
 		cacheFlush();
@@ -119,16 +118,16 @@ switch ($action) {
 		cacheTransfersFlush();
 		break;
 
-/*******************************************************************************
- * Cookie-Flush
- ******************************************************************************/
+	/*******************************************************************************
+	 * Cookie-Flush
+	 ******************************************************************************/
 	case "cookieFlush":
 		@setcookie("autologin", "", time() - 3600);
 		break;
 
-/*******************************************************************************
- * bulk operations
- ******************************************************************************/
+	/*******************************************************************************
+	 * bulk operations
+	 ******************************************************************************/
 	case "bulkStop":
 		dispatcher_bulk("stop");
 		break;
@@ -139,9 +138,9 @@ switch ($action) {
 		dispatcher_bulk("start");
 		break;
 
-/*******************************************************************************
- * multi operations
- ******************************************************************************/
+	/*******************************************************************************
+	 * multi operations
+	 ******************************************************************************/
 	default:
 		dispatcher_multi($action);
 		break;

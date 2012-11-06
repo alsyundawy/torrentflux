@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // main.internal
 require_once("inc/main.internal.php");
@@ -30,23 +29,23 @@ require_once('inc/functions/functions.all.php');
 require_once('inc/functions/functions.superadmin.php');
 
 // defines
-define('_DIR_BACKUP','.backup');
-define('_URL_HOME','http://tf-b4rt.berlios.de/');
-define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
-define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
-define('_SUPERADMIN_PROXY','tf-b4rt.php');
-define('_FILE_CHECKSUMS_PRE','checksums-');
-define('_FILE_CHECKSUMS_SUF','.txt');
+define('_DIR_BACKUP', '.backup');
+define('_URL_HOME', 'http://tf-b4rt.berlios.de/');
+define('_URL_RELEASE', 'http://tf-b4rt.berlios.de/current');
+define('_SUPERADMIN_URLBASE', 'http://tf-b4rt.berlios.de/');
+define('_SUPERADMIN_PROXY', 'tf-b4rt.php');
+define('_FILE_CHECKSUMS_PRE', 'checksums-');
+define('_FILE_CHECKSUMS_SUF', '.txt');
 define('_FILE_THIS', 'superadmin.php');
-define('_UPDATE_ARCHIVE','update.tar.bz2');
+define('_UPDATE_ARCHIVE', 'update.tar.bz2');
 
 // global fields
-$error = "";
-$statusImage = "black.gif";
+$error         = "";
+$statusImage   = "black.gif";
 $statusMessage = "";
-$htmlTitle = "";
-$htmlTop = "";
-$htmlMain = "";
+$htmlTitle     = "";
+$htmlTop       = "";
+$htmlMain      = "";
 
 // authenticate first
 superadminAuthentication();

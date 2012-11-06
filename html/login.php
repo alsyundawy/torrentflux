@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // main.external
 require_once('inc/main.external.php');
@@ -45,20 +44,20 @@ if (isset($_SESSION['user'])) {
 @ob_start();
 
 // authentication
-$isLoginRequest = false;
-$bSetReCaptcha = false;
+$isLoginRequest  = false;
+$bSetReCaptcha   = false;
 $nAuthTypeCookie = 0; // Is this a cookie-supporting auth type?
 switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
-			$user = strtolower($_SERVER['PHP_AUTH_USER']);
-			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
+			$user        = strtolower($_SERVER['PHP_AUTH_USER']);
+			$iamhim      = addslashes($_SERVER['PHP_AUTH_PW']);
 			$md5password = "";
 			if ((!empty($user)) && (isset($iamhim)))
 				$isLoginRequest = true;
 		} else {
-			@header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
+			@header('WWW-Authenticate: Basic realm="'.$cfg["auth_basic_realm"].'"');
 			@header('HTTP/1.0 401 Unauthorized');
 			@ob_end_clean();
 			exit();
@@ -68,17 +67,17 @@ switch ($cfg['auth_type']) {
 		// bring in the recaptcha library
 		require_once('inc/lib/recaptcha/recaptchalib.php');
 	case 1: /* Form-Auth + Cookie */
-		$cookieDelim = '|';
+		$cookieDelim     = '|';
 		$nAuthTypeCookie = 1;
 		// check if login-request
 		$isCookieLoginRequest = tfb_getRequestVar('docookielogin');
 		if ($isCookieLoginRequest == "true") {
 			// state: A cookie exists, user is logged out, and user pushes "Login as X" button to use the cookie and come in.
 			$isLoginRequest = true;
-			$user = strtolower(tfb_getRequestVar('username'));
-			$iamhim = "";
-			$md5password = tfb_getRequestVar('md5pass');
-			
+			$user           = strtolower(tfb_getRequestVar('username'));
+			$iamhim         = "";
+			$md5password    = tfb_getRequestVar('md5pass');
+
 			// set new cookie
 			setcookie("autologin", $user.$cookieDelim.$md5password, time() + 60 * 60 * 24 * 30);
 		} else {
@@ -87,18 +86,18 @@ switch ($cfg['auth_type']) {
 			if ($docookieloginnew == "true") {
 				// state: User is logging in with form, may or may not have checked the setcookie option.
 				$isLoginRequest = true;
-				$user = strtolower(tfb_getRequestVar('username'));
-				$requestPW = tfb_getRequestVar('iamhim');
-				$iamhim = addslashes($requestPW);
-				$md5password = "";
-				$setcookie = tfb_getRequestVar('setcookie');
-				
+				$user           = strtolower(tfb_getRequestVar('username'));
+				$requestPW      = tfb_getRequestVar('iamhim');
+				$iamhim         = addslashes($requestPW);
+				$md5password    = "";
+				$setcookie      = tfb_getRequestVar('setcookie');
+
 				// test the captcha if this is login type 6.  If it fails then don't set the cookie.
-				if($cfg["auth_type"] == 6)
-					if(!auth_validateRecaptcha($user, $iamhim, $bSetRecaptcha))
-						if($setcookie == "true")
+				if ($cfg["auth_type"] == 6)
+					if (!auth_validateRecaptcha($user, $iamhim, $bSetRecaptcha))
+						if ($setcookie == "true")
 							$setcookie = "false";
-				
+
 				// set cookie if wanted
 				if ($setcookie == "true")
 					setcookie("autologin", $user.$cookieDelim.md5($requestPW), time() + 60 * 60 * 24 * 30);
@@ -106,7 +105,7 @@ switch ($cfg['auth_type']) {
 				// check if cookie-set
 				if (isset($_COOKIE["autologin"])) {
 					// state: user is logged out, but login page senses cookie credentials.  We need a new recaptcha for user change.
-					
+
 					// cookie is set
 					$tmpl->setvar('cookie_set', 1);
 					$creds = explode($cookieDelim, $_COOKIE["autologin"]);
@@ -115,7 +114,7 @@ switch ($cfg['auth_type']) {
 				}
 				// Either user is logged out and form is sensing login credentials, so a user change form needs the recaptcha -OR-
 				// cookie is not set for this login.  The auth form with cookie checkbox is shown
-				if($cfg["auth_type"] == 6)
+				if ($cfg["auth_type"] == 6)
 					$bSetReCaptcha = true;
 			}
 		}
@@ -123,21 +122,21 @@ switch ($cfg['auth_type']) {
 	case 4: /* Form-Auth + Image-Validation */
 		// Image class
 		require_once('inc/classes/Image.php');
-		$user = strtolower(tfb_getRequestVar('username'));
-		$iamhim = addslashes(tfb_getRequestVar('iamhim'));
-		$md5password = "";
+		$user             = strtolower(tfb_getRequestVar('username'));
+		$iamhim           = addslashes(tfb_getRequestVar('iamhim'));
+		$md5password      = "";
 		$isImageSupported = Image::isSupported();
 		if (!empty($user)) {
 			$isLoginRequest = true;
 			// image-validation
 			if ($isImageSupported) {
 				$secCode = tfb_getRequestVar('security');
-				$rndChk = tfb_getRequestVar('rnd_chk');
+				$rndChk  = tfb_getRequestVar('rnd_chk');
 				if ($secCode !== loginImageCode($cfg["db_user"], $rndChk)) {
 					// log this
 					AuditAction($cfg["constants"]["access_denied"], "FAILED IMAGE-VALIDATION: ".$user);
 					// flush credentials if sec-code-validation fails (-> login-failure)
-					$user = "";
+					$user   = "";
 					$iamhim = "";
 				}
 			}
@@ -155,8 +154,8 @@ switch ($cfg['auth_type']) {
 	case 5: /* Form-Based + ReCaptcha */
 		// 2009-04-19 pmunn@munn.com
 		require_once('inc/lib/recaptcha/recaptchalib.php');
-		$user = strtolower(tfb_getRequestVar('username'));
-		$iamhim = addslashes(tfb_getRequestVar('iamhim'));
+		$user        = strtolower(tfb_getRequestVar('username'));
+		$iamhim      = addslashes(tfb_getRequestVar('iamhim'));
 		$md5password = "";
 		if (!empty($user)) {
 			$isLoginRequest = true;
@@ -170,8 +169,8 @@ switch ($cfg['auth_type']) {
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
-		$user = strtolower(tfb_getRequestVar('username'));
-		$iamhim = addslashes(tfb_getRequestVar('iamhim'));
+		$user        = strtolower(tfb_getRequestVar('username'));
+		$iamhim      = addslashes(tfb_getRequestVar('iamhim'));
 		$md5password = "";
 		if (!empty($user))
 			$isLoginRequest = true;
@@ -181,8 +180,8 @@ switch ($cfg['auth_type']) {
 // process login if this is a login-request
 if ($isLoginRequest) {
 	// First User check
-	$next_loc = "index.php?iid=index";
-	$sql = "SELECT count(*) FROM tf_users";
+	$next_loc   = "index.php?iid=index";
+	$sql        = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
 	if ($user_count == 0) {
 		firstLogin($user, $iamhim);
@@ -194,14 +193,14 @@ if ($isLoginRequest) {
 		exit();
 	} else {
 		$tmpl->setvar('login_failed', 1);
-		
+
 		// reset the captcha if this was an auth types of 5 or 6.
 		$bSetReCaptcha = ($cfg["auth_type"] == 5 || $cfg["auth_type"] == 6);
 	}
 }
 
 // Do we need to reset the captcha for this page?
-if($bSetReCaptcha) {
+if ($bSetReCaptcha) {
 	// write recaptcha code
 	$tmpl->setvar('recaptcha_html', recaptcha_get_html($cfg["recaptcha_public_key"], $error));
 }
