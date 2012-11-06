@@ -96,12 +96,15 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			mkdir($cfg["path"].'.config/transmissionrpc/torrents',0775);
 		}
 		*/
-		if (!is_dir($cfg['path'].$cfg['user'])) {
-			mkdir($cfg['path'].$cfg['user'],0777);
+
+                $owner = getOwner($transfer);
+		if (!is_dir($cfg['path'].$owner)) {
+			mkdir($cfg['path'].$owner,0777);
 		}
 		
 		$this->command = "";
-		if (getOwner($transfer) != $cfg['user']) {
+                // we don't want to change the transfer owner just because someone else started it
+		/*if (getOwner($transfer) != $cfg['user']) {
 			//directory must be changed for different users ?
 			changeOwner($transfer,$cfg['user']);
 			$this->owner = $cfg['user'];
@@ -115,7 +118,8 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			
 		} else {
 			$this->command = "downloading to ".$this->savepath;
-		}
+		}*/
+                $this->command = "downloading to ".$this->savepath;
 
 		// no client needed
 		$this->state = CLIENTHANDLER_STATE_READY;
@@ -126,6 +130,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		$hash = getTransferHash($transfer);
 		
 		if (empty($hash) || !isTransmissionTransfer($hash)) {
+                        //fixme: will this still work without the above part?
 			$hash = addTransmissionTransfer( $cfg['uid'], $cfg['transfer_file_path'].$transfer, $cfg['path'].$cfg['user'] );
 			if (is_array($hash) && $hash["result"] == "duplicate torrent") {
 				$this->command = 'torrent-add skipped, already exists '.$transfer; //log purpose
