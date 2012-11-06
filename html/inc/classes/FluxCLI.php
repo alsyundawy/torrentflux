@@ -1341,7 +1341,8 @@ class FluxCLI
 	 * @param $message
 	 */
 	function _outputMessage($message) {
-		printMessage($this->name, $message);
+                global $cfg;
+		if (!isset($cfg['fluxd_loglevel']) || $cfg['fluxd_loglevel'] > 0) printMessage($this->name, $message);
 	}
 
 	/**

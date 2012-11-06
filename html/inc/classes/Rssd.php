@@ -449,8 +449,9 @@ class Rssd
 	 * @param $message
 	 */
 	function _outputMessage($message) {
+                global $cfg;
 		// only in cli-mode
-		if ($this->_mode == RSSD_MODE_CLI)
+		if ($this->_mode == RSSD_MODE_CLI && (!isset($cfg['fluxd_loglevel']) || $cfg['fluxd_loglevel'] > 0))
 			printMessage($this->name, $message);
 	}
 
