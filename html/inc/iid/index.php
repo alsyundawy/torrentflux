@@ -306,10 +306,14 @@ foreach ($arList as $mtimecrc => $transfer) {
 	// stat
 	$sf = new StatFile($transfer, $transferowner);
 	// settings
+        //var_dump($transfers['settings'][$transfer], $transfer, $sf);
 	if (isset($transfers['settings'][$transfer])) {
 		$settingsAry = $transfers['settings'][$transfer];
-	} else {
-		$settingsAry = array();
+        //} else {
+        // auto-added torrent, info missing?
+        }
+        if (empty($transfers['settings'][$transfer]['type']) || empty($transfers['settings'][$transfer]['client'])) {
+		if (!isset($transfers['settings'][$transfer])) $settingsAry = array();
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a t-client
 			$settingsAry['type'] = "torrent";
@@ -432,14 +436,16 @@ foreach ($arList as $mtimecrc => $transfer) {
 				break;
 
 			case "transmissionrpc":
-			
 				if (!empty($arTrUserTorrent)) {
 					$trStat = $arTrUserTorrent[$settingsAry['hash']];
 					if (is_array($trStat)) {
 						$sf->running      = $trStat['transferRunning'];
-						if ($trStat['status'] == 5 || $trStat['status'] == 6)
-							$sf->running = 2;
+
+                                                // this may have never worked, because 'status' isnt in the array
+						//if ($trStat['status'] == 5 || $trStat['status'] == 6)
+						//	$sf->running = 2;
 						
+                                                if ($trStat["statusStr"] == "New") $sf->running = 2;
 						$sf->rpc_status   = $trStat['rpc_status'];
 						$sf->status       = $trStat['statusStr'];
 						$sf->seeds        = $trStat['seeds'];
@@ -498,6 +504,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 	$transferRunning = (int) $sf->running;
 	// percent-done in local var. ...
 	$percentDone = $sf->percent_done;
+
 
 	// hide seeding - we do it asap to keep things as fast as possible
 	if (($_SESSION['settings']['index_show_seeding'] == 0) && ($percentDone >= 100) && ($transferRunning == 1)) {
