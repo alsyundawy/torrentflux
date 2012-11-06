@@ -1127,8 +1127,6 @@ class ClientHandler
 	 */
 	function _setClientPort() {
 		global $cfg;
-		$portString = netstatPortList();
-		$portAry = explode("\n", $portString);
 
 		if ($this->minport == 0)
 			$this->minport = (int) $cfg['minport'];
@@ -1139,6 +1137,9 @@ class ClientHandler
 			$this->minport = 50000;
 		if ($this->maxport == 0)
 			$this->maxport = 60000;
+
+                $portString = netstatPortListBetween($this->minport, $this->maxport);
+		$portAry = explode("\n", $portString);
 		
 		$this->port = intval($this->minport);
 

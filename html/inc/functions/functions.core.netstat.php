@@ -105,6 +105,21 @@ function netstatPortList() {
 }
 
 /**
+ * netstatPortListBetween
+ *
+ * @return string
+ */
+function netstatPortListBetween($min, $max) {
+    global $cfg;
+    $retStr = "";
+
+    $cmd = $cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}' | ".$cfg['bin_awk']."  '\$1<=".$max." && \$1>=".$min."'";
+    $retStr = shell_exec($cmd);
+    
+    return $retStr;
+}
+
+/**
  * netstatPort
  *
  * @param $transfer
