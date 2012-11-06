@@ -167,7 +167,7 @@ sub main {
 
 	if ((time() - $time_last_run) >= $interval) {
 
-		Fluxd::printMessage("Trigger", "main\n"); # DEBUG
+		#Fluxd::printMessage("Trigger", "main\n"); # DEBUG
 
 		# set last run time
 		$time_last_run = time();
