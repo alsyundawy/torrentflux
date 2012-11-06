@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * create torrent with BitTornado
@@ -33,7 +32,7 @@ function createTorrentTornado() {
 	$onLoad = "";
 	// Clean up old files
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
-		@unlink($cfg["transfer_file_path"].$tfile );
+		@unlink($cfg["transfer_file_path"].$tfile);
 	// This is the command to execute
 	$command = "nohup ".$cfg["pythonCmd"]." -OO";
 	$command .= " ".tfb_shellencode($cfg["docroot"]."bin/clients/tornado/btmakemetafile.py");
@@ -46,9 +45,9 @@ function createTorrentTornado() {
 	if (!empty($piece))
 		$command .= " --piece_size_pow2 ".tfb_shellencode($piece);
 	if (!empty($ancelist)) {
-		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
+		$check = "/".str_replace("/", "\/", quotemeta($announce))."/i";
 		// if they didn't add the primary tracker in, we will add it for them
-		if (preg_match( $check, $ancelist, $result))
+		if (preg_match($check, $ancelist, $result))
 			$command .= " --announce_list ".tfb_shellencode($ancelist);
 		else
 			$command .= " --announce_list ".tfb_shellencode($announce.",".$ancelist);
@@ -63,8 +62,8 @@ function createTorrentTornado() {
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
-	$raw = @file_get_contents($cfg["transfer_file_path"].$tfile );
-	if (preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
+	$raw     = @file_get_contents($cfg["transfer_file_path"].$tfile);
+	if (preg_match("/6:pieces([^:]+):/i", $raw, $results)) {
 		// This means it is a valid torrent
 		$success = true;
 		// Make an entry for the owner
@@ -75,15 +74,15 @@ function createTorrentTornado() {
 			// e7:privatei1e
 			// e17:dht_backup_enablei1e
 			// e20:dht_backup_requestedi1e
-			if(preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
-				$pos = strpos( $raw, "6:pieces" ) + 9 + strlen( $results[1] ) + $results[1];
-				$fp = @fopen( $cfg["transfer_file_path"] . $tfile, "r+" );
-				@fseek( $fp, $pos, SEEK_SET );
+			if (preg_match("/6:pieces([^:]+):/i", $raw, $results)) {
+				$pos = strpos($raw, "6:pieces") + 9 + strlen($results[1]) + $results[1];
+				$fp  = @fopen($cfg["transfer_file_path"].$tfile, "r+");
+				@fseek($fp, $pos, SEEK_SET);
 				if ($private)
-					@fwrite($fp,"7:privatei1eee");
+					@fwrite($fp, "7:privatei1eee");
 				else
-					@fwrite($fp,"e7:privatei0e17:dht_backup_enablei1e20:dht_backup_requestedi1eee");
-				@fclose( $fp );
+					@fwrite($fp, "e7:privatei0e17:dht_backup_enablei1e20:dht_backup_requestedi1eee");
+				@fclose($fp);
 			}
 		}
 	} else {
@@ -93,7 +92,7 @@ function createTorrentTornado() {
 	}
 	// We are done! how long did we take?
 	$time_end = microtime(true);
-	$diff = duration($time_end - $time_start);
+	$diff     = duration($time_end - $time_start);
 	// make path URL friendly to support non-standard characters
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
@@ -113,7 +112,7 @@ function createTorrentMainline() {
 	$onLoad = "";
 	// Clean up old files
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
-		@unlink($cfg["transfer_file_path"].$tfile );
+		@unlink($cfg["transfer_file_path"].$tfile);
 	// build command-string
 	$command = "cd ".tfb_shellencode($cfg["transfer_file_path"]).";";
 	$command .= " HOME=".tfb_shellencode($cfg["path"]);
@@ -154,8 +153,8 @@ function createTorrentMainline() {
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
-	$raw = @file_get_contents($cfg["transfer_file_path"].$tfile );
-	if (preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
+	$raw     = @file_get_contents($cfg["transfer_file_path"].$tfile);
+	if (preg_match("/6:pieces([^:]+):/i", $raw, $results)) {
 		// This means it is a valid torrent
 		$success = true;
 		// Make an entry for the owner
@@ -167,7 +166,7 @@ function createTorrentMainline() {
 	}
 	// We are done! how long did we take?
 	$time_end = microtime(true);
-	$diff = duration($time_end - $time_start);
+	$diff     = duration($time_end - $time_start);
 	// make path URL friendly to support non-standard characters
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
@@ -184,8 +183,8 @@ function createTorrentMainline() {
  * @return string
  */
 function StripFolders($path) {
-	$pos = strrpos($path, "/");
-	$pos = ($pos === false) ? 0 : $pos + 1;
+	$pos  = strrpos($path, "/");
+	$pos  = ($pos === false) ? 0 : $pos + 1;
 	$path = substr($path, $pos);
 	return $path;
 }
@@ -207,7 +206,7 @@ function duration($timestamp) {
 	$timestamp %= 60 * 60;
 	$mins = floor($timestamp / 60);
 	$secs = $timestamp % 60;
-	$str = "";
+	$str  = "";
 	if ($years >= 1)
 		$str .= "{$years} years ";
 	if ($weeks >= 1)
@@ -219,7 +218,7 @@ function duration($timestamp) {
 	if ($mins >= 1)
 		$str .= "{$mins} minutes ";
 	if ($secs >= 1)
-		$str.="{$secs} seconds ";
+		$str .= "{$secs} seconds ";
 	return $str;
 }
 

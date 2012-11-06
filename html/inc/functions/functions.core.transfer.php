@@ -4,27 +4,26 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * isHash return true if its a valid transfer hash
  */
 function isHash($transfer) {
-        return (strlen($transfer) == 40 && preg_match('#^[a-f0-9]{40}#i',$transfer));
+	return (strlen($transfer) == 40 && preg_match('#^[a-f0-9]{40}#i', $transfer));
 }
 
 /**
@@ -102,7 +101,7 @@ function getTransferClient($transfer) {
  */
 function getRunningTransferCount() {
 	global $cfg;
-	
+
 	$count = 0;
 	// use pid-files-direct-access for now because all clients of currently
 	// available handlers write one. then its faster and correct meanwhile.
@@ -115,13 +114,13 @@ function getRunningTransferCount() {
 		@closedir($dirHandle);
 		$count = $tCount;
 	}
-	
+
 	//bad, because there is also pid files for new rpc transfers, but
 	if ($cfg["transmission_rpc_enable"] == 2) {
 		require_once('inc/functions/functions.rpc.transmission.php');
 		$count += getRunningTransmissionTransferCount();
 	}
-	
+
 	return $count;
 }
 
@@ -141,7 +140,7 @@ function getTransferSize($transfer) {
 		if ($fd = @fopen($file, "rd")) {
 			require_once("inc/classes/BDecode.php");
 			$alltorrent = @fread($fd, @filesize($file));
-			$array = BDecode($alltorrent);
+			$array      = BDecode($alltorrent);
 			@fclose($fd);
 		}
 		return ((isset($array["info"]["piece length"])) && (isset($array["info"]["pieces"])))
@@ -182,7 +181,7 @@ function getTransferHash($transfer) {
 					$hash = "";
 				} else {
 					$resultAry = explode("\n", $metainfo);
-					$hashAry = array();
+					$hashAry   = array();
 					switch ($cfg["metainfoclient"]) {
 						case "transmissioncli":
 						case "ttools.pl":
@@ -192,7 +191,7 @@ function getTransferHash($transfer) {
 						case "torrentinfo-console.py":
 						default:
 							if (!isset($resultAry[3]))
-								AuditAction($cfg["constants"]["debug"],"getTransferHash($transfer) : no metainfo");
+								AuditAction($cfg["constants"]["debug"], "getTransferHash($transfer) : no metainfo");
 							else
 								$hashAry = explode(":", trim($resultAry[3]));
 							break;
@@ -202,13 +201,13 @@ function getTransferHash($transfer) {
 			} else if (substr($transfer, -5) == ".wget") {
 				// this is wget.
 				$metacontent = @file_get_contents($cfg["transfer_file_path"].$transfer);
-				$hash = (empty($metacontent))
+				$hash        = (empty($metacontent))
 					? ""
 					: sha1($metacontent);
 			} else if (substr($transfer, -4) == ".nzb") {
 				// This is nzbperl.
 				$metacontent = @file_get_contents($cfg["transfer_file_path"].$transfer);
-				$hash = (empty($metacontent))
+				$hash        = (empty($metacontent))
 					? ""
 					: sha1($metacontent);
 			} else {
@@ -242,33 +241,33 @@ function getTransferFromHash($hash) {
  * @param $transfer name of the torrent
  * @return int
  */
-function getTransferOwnerID($transfer, $default=0) {
+function getTransferOwnerID($transfer, $default = 0) {
 	global $transfers, $db, $cfg;
 	if (isset($transfers['owner'][$transfer])) {
 		$owner = $transfers['owner'][$transfer];
-		$uid = (int) GetUID($owner);
+		$uid   = (int)GetUID($owner);
 	} else {
 		$hash = $transfer;
 		if (!isHash($hash))
 			$hash = getTransferHash($transfer);
 		$hash = strtolower($hash);
 
-		$uid = (int) $db->GetOne("SELECT uid FROM tf_transfer_totals WHERE tid = ".$db->qstr($hash)." AND uid > 0");
+		$uid = (int)$db->GetOne("SELECT uid FROM tf_transfer_totals WHERE tid = ".$db->qstr($hash)." AND uid > 0");
 		if ($uid == 0) {
 			$savepath = $db->GetOne("SELECT savepath FROM tf_transfers WHERE hash = ".$db->qstr($hash));
-			$savepath = str_replace($cfg["path"],'',$savepath);
-			$username = explode('/',$savepath);
-			$uid = GetUID($username[0]);
+			$savepath = str_replace($cfg["path"], '', $savepath);
+			$username = explode('/', $savepath);
+			$uid      = GetUID($username[0]);
 			if ($uid != 0) {
 				$sql = "DELETE FROM tf_transfer_totals WHERE tid=".$db->qstr($hash);
 				$db->Execute($sql);
 
-				$sql = "INSERT INTO tf_transfer_totals (tid, uid, uptotal, downtotal)"
-				." VALUES ("
-				. $db->qstr($hash).","
-				. $uid.","
-				. "0,0"
-				.")";
+				$sql    = "INSERT INTO tf_transfer_totals (tid, uid, uptotal, downtotal)"
+					." VALUES ("
+					.$db->qstr($hash).","
+					.$uid.","
+					."0,0"
+					.")";
 				$result = $db->Execute($sql);
 				if ($db->ErrorNo() != 0) dbError($sql);
 			}
@@ -344,71 +343,71 @@ function getTransferDetails($transfer, $full) {
 		$settingsAry = $transfers['settings'][$transfer];
 	} else {
 		$settingsAry = array();
-		$ftransfer = str_replace('.imported','',$transfer);
+		$ftransfer   = str_replace('.imported', '', $transfer);
 		if (substr($ftransfer, -8) == ".torrent") {
 			// this is a t-client
-			$settingsAry['type'] = "torrent";
+			$settingsAry['type']   = "torrent";
 			$settingsAry['client'] = getTransferClient($transfer);
 			if (empty($settingsAry['client'])) $settingsAry['client'] = $cfg["btclient"];
 		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
-			$settingsAry['type'] = "wget";
+			$settingsAry['type']   = "wget";
 			$settingsAry['client'] = "wget";
 		} else if (substr($transfer, -4) == ".nzb") {
 			// this is nzbperl.
-			$settingsAry['type'] = "nzb";
+			$settingsAry['type']   = "nzb";
 			$settingsAry['client'] = "nzbperl";
 		} else {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$ftransfer);
 			@error("Invalid Transfer", "", "", array($transfer));
 		}
-		$settingsAry['hash'] = "";
+		$settingsAry['hash']     = "";
 		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 	}
-	
+
 	$totalsCurrent = array("downtotal" => 0, "uptotal" => 0);
-	$totals = array("downtotal" => 0, "uptotal" => 0);
-	
+	$totals        = array("downtotal" => 0, "uptotal" => 0);
+
 	// stat
 	$sf = new StatFile($transfer, $transferowner);
 	// totals
 	$afu = $sf->uptotal;
 	$afd = $sf->downtotal;
-	
-	if (isset($settingsAry['client']) ){
-		$ch = ClientHandler::getInstance($settingsAry['client']);
+
+	if (isset($settingsAry['client'])) {
+		$ch            = ClientHandler::getInstance($settingsAry['client']);
 		$totalsCurrent = $ch->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
-		$totals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
+		$totals        = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 		$ch->updateStatFiles($transfer);
-		$sf = new StatFile($transfer, $transferowner);
-		$bIsRPC = (int) $ch->useRPC;
+		$sf     = new StatFile($transfer, $transferowner);
+		$bIsRPC = (int)$ch->useRPC;
 	}
 	// size
 	$size = floatval($sf->size);
-	
+
 	// running
-	$running = $sf->running;
+	$running            = $sf->running;
 	$details['running'] = $running;
-	
+
 	$details['cons'] = "";
 	$details['port'] = "";
-	
+
 	// speed_down + speed_up + seeds + peers + cons
 	if ($bIsRPC) {
-		
-		$stat = $ch->monitorTransfer($transfer,$format="tf");
-		
+
+		$stat = $ch->monitorTransfer($transfer, $format = "tf");
+
 		$totals["downtotal"] = $stat['downTotal'];
 		$totals["uptotal"]   = $stat['upTotal'];
-	
+
 		$details['running'] = $stat['running'];
 		// speed_down
 		$details['speedDown'] = @ ($stat['speedDown'] != "") ? $stat['speedDown'] : '';
 		// speed_up
-		$details['speedUp']   = ($stat['speedUp'] != "") ? $stat['speedUp'] : '';
+		$details['speedUp'] = ($stat['speedUp'] != "") ? $stat['speedUp'] : '';
 		// down_current
 		$details['downCurrent'] = formatFreeSpace($totals["downtotal"] / 1048576);
 		// up_current
@@ -418,7 +417,7 @@ function getTransferDetails($transfer, $full) {
 		// peers
 		$details['peers'] = $stat['peers'];
 		// connections
-		$details['cons']  = $stat['cons'];
+		$details['cons'] = $stat['cons'];
 		// percentage
 		$percentage = $stat['percentDone'];
 		// sharing
@@ -427,10 +426,10 @@ function getTransferDetails($transfer, $full) {
 		$size = $stat['size'];
 		// eta
 		$details['eta'] = $stat['eta'];
-		
+
 	} elseif ($running == 1) {
 		// pid
-		$pid = (int) getTransferPid($transfer);
+		$pid = (int)getTransferPid($transfer);
 		// speed_down
 		$details['speedDown'] = (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s';
 		// speed_up
@@ -474,7 +473,7 @@ function getTransferDetails($transfer, $full) {
 	// up_total
 	$details['upTotal'] = formatFreeSpace($totals["uptotal"] / 1048576);
 	if ($percentage < 0) {
-		$percentage = round(($percentage * -1) - 100, 1);
+		$percentage    = round(($percentage * -1) - 100, 1);
 		$sf->time_left = $cfg['_INCOMPLETE'];
 	} elseif ($percentage > 100) {
 		$percentage = 100;
@@ -525,11 +524,11 @@ function getTransferDetails($transfer, $full) {
  */
 function getTransferArrayFromDB() {
 	global $db;
-	$retVal = array();
-	$sql = "SELECT transfer FROM tf_transfers ORDER BY transfer ASC";
+	$retVal    = array();
+	$sql       = "SELECT transfer FROM tf_transfers ORDER BY transfer ASC";
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	while(list($transfer) = $recordset->FetchRow())
+	while (list($transfer) = $recordset->FetchRow())
 		array_push($retVal, $transfer);
 	return $retVal;
 }
@@ -558,12 +557,11 @@ function getTransferArray($sortOrder = '') {
 				case 'prio':
 					break;
 				default:
-					$transferName=str_replace('.imported','',$transfer);
+					$transferName = str_replace('.imported', '', $transfer);
 					if (tfb_isValidTransfer($transferName)) {
-						$datecrc = date('YmdHi', filemtime($cfg['transfer_file_path'].$transfer) ).'_'.sprintf('%x', crc32($transfer) );
+						$datecrc          = date('YmdHi', filemtime($cfg['transfer_file_path'].$transfer)).'_'.sprintf('%x', crc32($transfer));
 						$retVal[$datecrc] = $transfer;
-					}
-					else
+					} else
 						AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transferName);
 					break;
 			}
@@ -651,8 +649,8 @@ function getTransferListHeadArray($settings = null) {
 function getTransferListArray() {
 	global $cfg, $db, $transfers;
 
-	$kill_id = "";
-	$lastUser = "";
+	$kill_id         = "";
+	$lastUser        = "";
 	$arUserTransfers = array();
 	$arListTransfers = array();
 	// settings
@@ -662,19 +660,19 @@ function getTransferListArray() {
 	if ($sortOrder == "")
 		$sortOrder = $cfg["index_page_sortorder"];
 
-	if ($cfg["transmission_rpc_enable"]==2) {
+	if ($cfg["transmission_rpc_enable"] == 2) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		
+
 		// New method for transmission-daemon transfers
 		$result = getUserTransmissionTransfers($cfg['uid']);
 		foreach ($result as $aTorrent) {
-			if ( $aTorrent['status']==4 || $aTorrent['status'] == 8 ) {
+			if ($aTorrent['status'] == 4 || $aTorrent['status'] == 8) {
 				if (!isset($cfg["total_upload"]))
 					$cfg["total_upload"] = 0;
 				if (!isset($cfg["total_download"]))
 					$cfg["total_download"] = 0;
-				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($aTorrent['rateUpload']/1000);
-				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($aTorrent['rateDownload']/1000);
+				$cfg["total_upload"]   = $cfg["total_upload"] + GetSpeedValue($aTorrent['rateUpload'] / 1000);
+				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($aTorrent['rateDownload'] / 1000);
 			}
 			array_push($arUserTransfers, $aTorrent);
 		}
@@ -683,10 +681,10 @@ function getTransferListArray() {
 	$arList = getTransferArray($sortOrder);
 	foreach ($arList as $transfer) {
 		// init some vars
-		$displayname = $transfer;
-		$show_run = true;
+		$displayname   = $transfer;
+		$show_run      = true;
 		$transferowner = getOwner($transfer);
-		$owner = IsOwner($cfg["user"], $transferowner);
+		$owner         = IsOwner($cfg["user"], $transferowner);
 		// stat
 		$sf = new StatFile($transfer, $transferowner);
 		// settings
@@ -694,23 +692,23 @@ function getTransferListArray() {
 			$settingsAry = $transfers['settings'][$transfer];
 		} else {
 			$settingsAry = array();
-			if (substr(str_replace('.imported','',$transfer), -8) == ".torrent") {
+			if (substr(str_replace('.imported', '', $transfer), -8) == ".torrent") {
 				// this is a t-client
-				$settingsAry['type'] = "torrent";
+				$settingsAry['type']   = "torrent";
 				$settingsAry['client'] = $cfg["btclient"];
 			} else if (substr($transfer, -5) == ".wget") {
 				// this is wget.
-				$settingsAry['type'] = "wget";
+				$settingsAry['type']   = "wget";
 				$settingsAry['client'] = "wget";
 			} else if (substr($transfer, -4) == ".nzb") {
 				// this is nzbperl.
-				$settingsAry['type'] = "nzb";
+				$settingsAry['type']   = "nzb";
 				$settingsAry['client'] = "nzbperl";
 			} else {
 				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 				@error("Invalid Transfer", "", "", array($transfer));
 			}
-			$settingsAry['hash'] = "";
+			$settingsAry['hash']     = "";
 			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
 				? $cfg["path"].$transferowner.'/'
 				: $cfg["path"].$cfg["path_incoming"].'/';
@@ -730,8 +728,8 @@ function getTransferListArray() {
 		// injects
 		if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 			$transferRunning = 2;
-			$sf->running = "2";
-			$sf->size = getTransferSize($transfer);
+			$sf->running     = "2";
+			$sf->size        = getTransferSize($transfer);
 			injectTransfer($transfer);
 		}
 
@@ -742,13 +740,13 @@ function getTransferListArray() {
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			$ch = ClientHandler::getInstance($settingsAry['client']);
+			$ch             = ClientHandler::getInstance($settingsAry['client']);
 			$transferTotals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 		}
 
 		// ---------------------------------------------------------------------
 		// preprocess stat-file and get some vars
-		$estTime = "";
+		$estTime   = "";
 		$statusStr = "";
 		switch ($transferRunning) {
 			case 2: // new
@@ -756,7 +754,7 @@ function getTransferListArray() {
 				break;
 			case 3: // queued
 				$statusStr = 'Queued';
-				$estTime = 'Waiting';
+				$estTime   = 'Waiting';
 				break;
 			default: // running + stopped
 				// increment the totals
@@ -769,10 +767,10 @@ function getTransferListArray() {
 					$estTime = $sf->time_left;
 				} else {
 					if ($sf->time_left != "" && $sf->time_left != "0") {
-						if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
+						if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100)) {
 							$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && (intval(($sf->up_speed{0})) > 0))
-									? convertTimeText(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
-									: '-';
+								? convertTimeText(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
+								: '-';
 						} else {
 							$estTime = $sf->time_left;
 						}
@@ -781,12 +779,12 @@ function getTransferListArray() {
 				// $lastUser
 				$lastUser = $transferowner;
 				// $show_run + $statusStr
-				if($percentDone >= 100) {
+				if ($percentDone >= 100) {
 					$statusStr = (($transferRunning == 1) && (trim($sf->up_speed) != "")) ? 'Seeding' : 'Done';
-					$show_run = false;
+					$show_run  = false;
 				} else if ($percentDone < 0) {
 					$statusStr = 'Stopped';
-					$show_run = true;
+					$show_run  = true;
 				} else {
 					$statusStr = 'Leeching';
 				}
@@ -824,12 +822,12 @@ function getTransferListArray() {
 		if ($settings[5] != 0) {
 			$percentage = "";
 			if (($percentDone >= 100) && (trim($sf->up_speed) != "")) {
-				$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
+				$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2).'%';
 			} else {
 				if ($percentDone >= 1)
-					$percentage = $percentDone . '%';
+					$percentage = $percentDone.'%';
 				else if ($percentDone < 0)
-					$percentage = round(($percentDone*-1)-100,1) . '%';
+					$percentage = round(($percentDone * -1) - 100, 1).'%';
 				else
 					$percentage = '0%';
 			}
@@ -855,16 +853,16 @@ function getTransferListArray() {
 		// =============================================================== seeds
 		if ($settings[8] != 0) {
 			$seeds = ($transferRunning == 1)
-			? $sf->seeds
-			:  "";
+				? $sf->seeds
+				: "";
 			array_push($transferAry, $seeds);
 		}
 
 		// =============================================================== peers
 		if ($settings[9] != 0) {
 			$peers = ($transferRunning == 1)
-			? $sf->peers
-			:  "";
+				? $sf->peers
+				: "";
 			array_push($transferAry, $peers);
 		}
 
@@ -920,14 +918,14 @@ function getTransferListArray() {
 	// build output-array
 	$retVal = array();
 	if (sizeof($arUserTransfers) > 0) {
-		foreach($arUserTransfers as $torrentrow)
+		foreach ($arUserTransfers as $torrentrow)
 			array_push($retVal, $torrentrow);
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
 		$boolCond = $cfg['isAdmin'];
 	if (($boolCond) && (sizeof($arListTransfers) > 0)) {
-		foreach($arListTransfers as $torrentrow)
+		foreach ($arListTransfers as $torrentrow)
 			array_push($retVal, $torrentrow);
 	}
 	return $retVal;
@@ -939,7 +937,7 @@ function getTransferListArray() {
  * @return array-ref
  */
 function &loadAllTransferOwner() {
-	$ary = array();
+	$ary  = array();
 	$tary = getTransferArray();
 	foreach ($tary as $transfer)
 		$ary[$transfer] = getOwner($transfer);
@@ -954,11 +952,11 @@ function &loadAllTransferOwner() {
 function &loadAllTransferTotals() {
 	global $db;
 	$recordset = $db->Execute("SELECT * FROM tf_transfer_totals");
-	$ary = array();
+	$ary       = array();
 	while ($row = $recordset->FetchRow()) {
 		if (strlen($row["tid"]) == 40) {
 			$ary[$row["tid"]] = array(
-				"uptotal" => $row["uptotal"],
+				"uptotal"   => $row["uptotal"],
 				"downtotal" => $row["downtotal"]
 			);
 		}
@@ -974,25 +972,25 @@ function &loadAllTransferTotals() {
 function &loadAllTransferSettings() {
 	global $db;
 	$recordset = $db->Execute("SELECT * FROM tf_transfers");
-	$ary = array();
+	$ary       = array();
 	while ($row = $recordset->FetchRow()) {
 		$ary[$row["transfer"]] = array(
-			"type"                   => $row["type"],
-			"client"                 => $row["client"],
-			"hash"                   => $row["hash"],
-			"datapath"               => $row["datapath"],
-			"savepath"               => $row["savepath"],
-			"running"                => $row["running"],
-			"max_upload_rate"        => $row["rate"],
-			"max_download_rate"      => $row["drate"],
-			"die_when_done"          => $row["runtime"],
-			"max_uploads"            => $row["maxuploads"],
-			"superseeder"            => $row["superseeder"],
-			"minport"                => $row["minport"],
-			"maxport"                => $row["maxport"],
-			"sharekill"              => $row["sharekill"],
-			"maxcons"                => $row["maxcons"],
-			"rerequest"              => $row["rerequest"]
+			"type"              => $row["type"],
+			"client"            => $row["client"],
+			"hash"              => $row["hash"],
+			"datapath"          => $row["datapath"],
+			"savepath"          => $row["savepath"],
+			"running"           => $row["running"],
+			"max_upload_rate"   => $row["rate"],
+			"max_download_rate" => $row["drate"],
+			"die_when_done"     => $row["runtime"],
+			"max_uploads"       => $row["maxuploads"],
+			"superseeder"       => $row["superseeder"],
+			"minport"           => $row["minport"],
+			"maxport"           => $row["maxport"],
+			"sharekill"         => $row["sharekill"],
+			"maxcons"           => $row["maxcons"],
+			"rerequest"         => $row["rerequest"]
 		);
 	}
 	return $ary;
@@ -1006,19 +1004,19 @@ function initGlobalTransfersArray() {
 	// transfers
 	$transfers = array();
 	// settings
-	$transferSettings =& loadAllTransferSettings();
+	$transferSettings      =& loadAllTransferSettings();
 	$transfers['settings'] = $transferSettings;
 	// totals
-	$transferTotals =& loadAllTransferTotals();
+	$transferTotals      =& loadAllTransferTotals();
 	$transfers['totals'] = $transferTotals;
 	// sum
 	$transfers['sum'] = array(
 		'maxcons' => getSumMaxCons(),
-		'rate' => getSumMaxUpRate(),
-		'drate' => getSumMaxDownRate()
+		'rate'    => getSumMaxUpRate(),
+		'drate'   => getSumMaxDownRate()
 	);
-    // owner
-	$transferOwner =& loadAllTransferOwner();
+	// owner
+	$transferOwner      =& loadAllTransferOwner();
 	$transfers['owner'] = $transferOwner;
 }
 
@@ -1030,9 +1028,9 @@ function initGlobalTransfersArray() {
  */
 function injectTransfer($transfer) {
 	global $cfg;
-	$sf = new StatFile($transfer);
+	$sf          = new StatFile($transfer);
 	$sf->running = "2"; // file is new
-	$sf->size = getTransferSize($transfer);
+	$sf->size    = getTransferSize($transfer);
 	if ($sf->write()) {
 		// set transfers-cache
 		cacheTransfersSet();
@@ -1051,11 +1049,11 @@ function injectTransfer($transfer) {
  */
 function getOwner($transfer) {
 	global $cfg, $db, $transfers;
-	
+
 	if (isset($transfers['owner'][$transfer])) {
 		return $transfers['owner'][$transfer];
 	} else {
-		$uid = (int) getTransferOwnerID($transfer);
+		$uid = (int)getTransferOwnerID($transfer);
 		if ($uid > 0) {
 			//fast method
 			return GetUsername($uid);
@@ -1086,17 +1084,17 @@ function changeOwner($transfer, $user) {
 	$oldowner = getOwner($transfer);
 	if ($oldowner != $user) {
 		if (file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
-			$sf = new StatFile($transfer, $user);
+			$sf                = new StatFile($transfer, $user);
 			$sf->transferowner = $user;
 			$sf->write();
 		}
-		$hash = getTransferHash($transfer);
-		$uid = (int) GetUID($user);
-		$sql = "INSERT INTO tf_transfer_totals(tid, uid, uptotal,downtotal) values ("
-		. $db->qstr($hash).","
-		. $uid.","
-		. "0,0"
-		.")";
+		$hash   = getTransferHash($transfer);
+		$uid    = (int)GetUID($user);
+		$sql    = "INSERT INTO tf_transfer_totals(tid, uid, uptotal,downtotal) values ("
+			.$db->qstr($hash).","
+			.$uid.","
+			."0,0"
+			.")";
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 
@@ -1122,17 +1120,17 @@ function resetOwner($transfer) {
 		else
 			$rtnValue = GetSuperAdmin(); /* no owner found, so the super admin will now own it */
 
-	    // add entry to the log
-	    $sql = "INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
-	    	." VALUES ("
-	    	. $db->qstr($rtnValue).","
-	    	. $db->qstr($transfer).","
-	    	. $db->qstr($cfg["constants"]["reset_owner"]).","
-    		. $db->qstr($cfg['ip']).","
-    		. $db->qstr($cfg['ip_resolved']).","
-	    	. $db->qstr($cfg['user_agent']).","
-	    	. $db->qstr(time())
-	    	.")";
+		// add entry to the log
+		$sql    = "INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
+			." VALUES ("
+			.$db->qstr($rtnValue).","
+			.$db->qstr($transfer).","
+			.$db->qstr($cfg["constants"]["reset_owner"]).","
+			.$db->qstr($cfg['ip']).","
+			.$db->qstr($cfg['ip_resolved']).","
+			.$db->qstr($cfg['user_agent']).","
+			.$db->qstr(time())
+			.")";
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
@@ -1150,7 +1148,7 @@ function resetOwner($transfer) {
 function IsOwner($user, $owner) {
 	return (($user) == ($owner));
 }
-	
+
 /**
  * gets datapath of a transfer.
  *
@@ -1167,11 +1165,11 @@ function getTransferDatapath($transfer) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client
 				require_once('inc/classes/BDecode.php');
-				$ftorrent = $cfg["transfer_file_path"].$transfer;
+				$ftorrent   = $cfg["transfer_file_path"].$transfer;
 				$alltorrent = @file_get_contents($ftorrent);
 				if ($alltorrent == "") return "";
-				
-				$btmeta = @BDecode($alltorrent);
+
+				$btmeta   = @BDecode($alltorrent);
 				$datapath = (empty($btmeta['info']['name']))
 					? ""
 					: trim($btmeta['info']['name']);
@@ -1189,13 +1187,13 @@ function getTransferDatapath($transfer) {
 		return $datapath;
 	}
 }
-	
+
 /**
  * gets savepath of a transfer for a given profile.
  *
  * @param $transfer name of the torrent
  * @param $profile name of profile to be used. if not given, attempt
- *	to grab it from request vars is made.
+ *    to grab it from request vars is made.
  * @return var with transfer-savepath or empty string
  */
 function getTransferSavepath($transfer, $profile = NULL) {

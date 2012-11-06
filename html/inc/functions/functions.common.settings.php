@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * load Settings
@@ -26,21 +25,21 @@
  * @param $dbTable
  */
 function loadSettings($dbTable) {
-    global $cfg, $db;
-    // pull the config params out of the db
-    $sql = "SELECT tf_key, tf_value FROM ".$dbTable;
-    $recordset = $db->Execute($sql);
-    if ($db->ErrorNo() != 0) dbError($sql);
-    while(list($key, $value) = $recordset->FetchRow()) {
+	global $cfg, $db;
+	// pull the config params out of the db
+	$sql       = "SELECT tf_key, tf_value FROM ".$dbTable;
+	$recordset = $db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	while (list($key, $value) = $recordset->FetchRow()) {
 		$tmpValue = '';
-		if (strpos($key,"Filter") > 0)
+		if (strpos($key, "Filter") > 0)
 			$tmpValue = unserialize($value);
 		elseif ($key == 'searchEngineLinks')
 			$tmpValue = unserialize($value);
 		if (is_array($tmpValue))
 			$value = $tmpValue;
 		$cfg[$key] = $value;
-    }
+	}
 }
 
 /**
@@ -51,11 +50,11 @@ function loadSettings($dbTable) {
  * @param $value
  */
 function insertSetting($dbTable, $key, $value) {
-    global $cfg, $db;
+	global $cfg, $db;
 	// flush session-cache
 	cacheFlush();
-    $insert_value = (is_array($value)) ? serialize($value) : $value;
-    $sql = "INSERT INTO ".$dbTable." VALUES (".$db->qstr($key).", ".$db->qstr($insert_value).")";
+	$insert_value = (is_array($value)) ? serialize($value) : $value;
+	$sql          = "INSERT INTO ".$dbTable." VALUES (".$db->qstr($key).", ".$db->qstr($insert_value).")";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
@@ -70,15 +69,15 @@ function insertSetting($dbTable, $key, $value) {
  * @param $value
  */
 function updateSetting($dbTable, $key, $value) {
-    global $cfg, $db;
+	global $cfg, $db;
 	// flush session-cache
 	cacheFlush();
-    $update_value = (is_array($value)) ? serialize($value) : $value;
-    $sql = "UPDATE ".$dbTable." SET tf_value = ".$db->qstr($update_value)." WHERE tf_key = ".$db->qstr($key);
-    $db->Execute($sql);
-    if ($db->ErrorNo() != 0) dbError($sql);
-    // update the Config.
-    $cfg[$key] = $value;
+	$update_value = (is_array($value)) ? serialize($value) : $value;
+	$sql          = "UPDATE ".$dbTable." SET tf_value = ".$db->qstr($update_value)." WHERE tf_key = ".$db->qstr($key);
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	// update the Config.
+	$cfg[$key] = $value;
 }
 
 /**
@@ -88,19 +87,19 @@ function updateSetting($dbTable, $key, $value) {
  * @param $settings
  */
 function saveSettings($dbTable, $settings) {
-    global $cfg, $db;
-    foreach ($settings as $key => $value) {
-        if (array_key_exists($key, $cfg)) {
-            if (is_array($cfg[$key]) || is_array($value)) {
-                if (serialize($cfg[$key]) != serialize($value))
-                    updateSetting($dbTable, $key, $value);
-            } elseif ($cfg[$key] != $value) {
-                updateSetting($dbTable, $key, $value);
-            }
-        } else {
-            insertSetting($dbTable, $key, $value);
-        }
-    }
+	global $cfg, $db;
+	foreach ($settings as $key => $value) {
+		if (array_key_exists($key, $cfg)) {
+			if (is_array($cfg[$key]) || is_array($value)) {
+				if (serialize($cfg[$key]) != serialize($value))
+					updateSetting($dbTable, $key, $value);
+			} elseif ($cfg[$key] != $value) {
+				updateSetting($dbTable, $key, $value);
+			}
+		} else {
+			insertSetting($dbTable, $key, $value);
+		}
+	}
 }
 
 /*
@@ -147,7 +146,7 @@ function insertUserSettingPair($uid, $key, $value) {
 		if ($cfg[$key] == $value)
 			return true;
 	}
-	$sql = "INSERT INTO tf_settings_user VALUES (".$db->qstr($uid).", ".$db->qstr($key).", ".$db->qstr($insert_value).")";
+	$sql    = "INSERT INTO tf_settings_user VALUES (".$db->qstr($uid).", ".$db->qstr($key).", ".$db->qstr($insert_value).")";
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
@@ -197,11 +196,11 @@ function deleteAllUserSettings() {
 function loadUserSettingsToConfig($uid) {
 	global $cfg, $db;
 	// get user-settings from db and set in global cfg-array
-	$sql = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = ".$db->qstr($uid);
+	$sql       = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = ".$db->qstr($uid);
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	if ((isset($recordset)) && ($recordset->NumRows() > 0)) {
-		while(list($key, $value) = $recordset->FetchRow())
+		while (list($key, $value) = $recordset->FetchRow())
 			$cfg[$key] = $value;
 	}
 	// return
@@ -231,17 +230,17 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 	$settings = array();
 	// index-page
 	if ($updateIndexSettings) {
-		$indexPageSettingsPrefix = "index_page_settings_";
+		$indexPageSettingsPrefix    = "index_page_settings_";
 		$indexPageSettingsPrefixLen = strlen($indexPageSettingsPrefix);
-		$settingsIndexPageAry = array();
+		$settingsIndexPageAry       = array();
 		for ($j = 0; $j <= 11; $j++)
 			$settingsIndexPageAry[$j] = 0;
 	}
 	// good-look-stats
 	if ($updateGoodlookinSettings) {
-		$hackStatsPrefix = "hack_goodlookstats_settings_";
+		$hackStatsPrefix    = "hack_goodlookstats_settings_";
 		$hackStatsStringLen = strlen($hackStatsPrefix);
-		$settingsHackAry = array();
+		$settingsHackAry    = array();
 		for ($i = 0; $i <= 5; $i++)
 			$settingsHackAry[$i] = 0;
 	}
@@ -249,11 +248,11 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 	foreach ($_POST as $key => $value) {
 		if (($updateIndexSettings) && ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix)) {
 			// good-look-stats
-			$idx = intval(substr($key, -1, 1));
+			$idx                   = intval(substr($key, -1, 1));
 			$settingsHackAry[$idx] = ($value != "0") ? 1 : 0;
 		} else if (($updateGoodlookinSettings) && ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix)) {
 			// index-page
-			$idx = intval(substr($key, ($indexPageSettingsPrefixLen - (strlen($key)))));
+			$idx                        = intval(substr($key, ($indexPageSettingsPrefixLen - (strlen($key)))));
 			$settingsIndexPageAry[$idx] = ($value != "0") ? 1 : 0;
 		} else {
 			switch ($key) {
@@ -265,8 +264,8 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 					break;
 				case "move_paths": // move-hack-paths
 					if (strlen($value) > 0) {
-						$val = "";
-						$dirAry = explode(":",$value);
+						$val    = "";
+						$dirAry = explode(":", $value);
 						for ($idx = 0; $idx < count($dirAry); $idx++) {
 							if ($idx > 0)
 								$val .= ':';

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * init
@@ -33,20 +32,20 @@ function transfer_init() {
 	if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 		require_once('inc/functions/functions.rpc.transmission.php');
 		$theTorrent = getTransmissionTransfer($transfer, array('hashString', 'id', 'name'));
-		if ( is_array($theTorrent) ) {
+		if (is_array($theTorrent)) {
 			$transferLabel = (strlen($theTorrent[name]) >= 39) ? substr($theTorrent[name], 0, 35)."..." : $theTorrent[name];
 			$tmpl->setvar('transfer', $theTorrent[hashString]);
 			$tmpl->setvar('transferLabel', $transferLabel);
 			$tmpl->setvar('transfer_exists', 0);
 			return;
-			
+
 			// We really don't need this. Only the hash is a unique way of finding transfers. So all transfer operations should use the hash.
-/*
-			//tf compatible... erk
-			$transfer = getTransferFromHash($transfer);
-			if (empty($transfer))
-				$transfer = $theTorrent[name];
-*/
+			/*
+						//tf compatible... erk
+						$transfer = getTransferFromHash($transfer);
+						if (empty($transfer))
+							$transfer = $theTorrent[name];
+			*/
 		}
 	}
 
@@ -61,7 +60,7 @@ function transfer_init() {
 		@error("Access Denied", "", "", array($transfer));
 	}
 	// get label
-	$transferLabel = preg_replace("#\.torrent$#","",$transfer);
+	$transferLabel = preg_replace("#\.torrent$#", "", $transfer);
 	$transferLabel = (strlen($transferLabel) >= 39) ? substr($transferLabel, 0, 35)."..." : $transferLabel;
 	// set transfer vars
 	$tmpl->setvar('transfer', $transfer);
@@ -79,8 +78,7 @@ function transfer_setCustomizeVars() {
 	if ($cfg['transfer_customize_settings'] == 2)
 		$customize_settings = 1;
 	elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
-		$customize_settings = 1;
-	else
+		$customize_settings = 1; else
 		$customize_settings = 0;
 	$tmpl->setvar('customize_settings', $customize_settings);
 	// set supported-vars for transfer
@@ -193,26 +191,26 @@ function transfer_setFileVars() {
 			$tFile = $cfg["transfer_file_path"].$transfer;
 			if ($fd = @fopen($tFile, "rd")) {
 				$alltorrent = @fread($fd, @filesize($tFile));
-				$btmeta = @BDecode($alltorrent);
+				$btmeta     = @BDecode($alltorrent);
 				@fclose($fd);
 			}
 			$transferSizeSum = 0;
-			
+
 			$isTransmissionTorrent = false;
 			if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 				require_once('inc/functions/functions.rpc.transmission.php');
-				$theTorrent = getTransmissionTransfer($transfer, array('hashString', 'id', 'name', 'files'));
+				$theTorrent            = getTransmissionTransfer($transfer, array('hashString', 'id', 'name', 'files'));
 				$isTransmissionTorrent = is_array($theTorrent);
 			}
-			if ( $isTransmissionTorrent ) {
-				foreach ( $theTorrent['files'] as $aFile ) {
+			if ($isTransmissionTorrent) {
+				foreach ($theTorrent['files'] as $aFile) {
 					$transferSizeSum += $aFile['length'];
-					$fileNameParts = explode ( "/", $aFile['name'] );
-					$name = $fileNameParts[ count($fileNameParts) - 1 ];
-					$size = $aFile['length'];
+					$fileNameParts = explode("/", $aFile['name']);
+					$name          = $fileNameParts[count($fileNameParts) - 1];
+					$size          = $aFile['length'];
 					array_push($transferFilesList, array(
-						'name' => $name,
-						'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
+							'name' => $name,
+							'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
 						)
 					);
 				}
@@ -224,8 +222,8 @@ function transfer_setFileVars() {
 							$size = ((isset($file['length'])) && (is_numeric($file['length']))) ? $file['length'] : 0;
 							$transferSizeSum += $size;
 							array_push($transferFilesList, array(
-								'name' => $name,
-								'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
+									'name' => $name,
+									'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
 								)
 							);
 						}
@@ -233,8 +231,8 @@ function transfer_setFileVars() {
 						$size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
 						$transferSizeSum += $size;
 						array_push($transferFilesList, array(
-							'name' => $btmeta["info"]["name"],
-							'size' => formatBytesTokBMBGBTB($size)
+								'name' => $btmeta["info"]["name"],
+								'size' => formatBytesTokBMBGBTB($size)
 							)
 						);
 					}
@@ -258,8 +256,8 @@ function transfer_setFileVars() {
 				$size = SimpleHTTP::getRemoteSize($ch->url);
 				$transferSizeSum += $size;
 				array_push($transferFilesList, array(
-					'name' => $ch->url,
-					'size' => formatBytesTokBMBGBTB($size)
+						'name' => $ch->url,
+						'size' => formatBytesTokBMBGBTB($size)
 					)
 				);
 			}
@@ -274,7 +272,7 @@ function transfer_setFileVars() {
 			return;
 		case "nzb":
 			require_once("inc/classes/NZBFile.php");
-			$nzb = new NZBFile($transfer);
+			$nzb             = new NZBFile($transfer);
 			$transferSizeSum = 0;
 			if (empty($nzb->files)) {
 				$tmpl->setvar('transferFilesString', "Empty");
@@ -283,8 +281,8 @@ function transfer_setFileVars() {
 				foreach ($nzb->files as $file) {
 					$transferSizeSum += $file['size'];
 					array_push($transferFilesList, array(
-						'name' => $file['name'],
-						'size' => formatBytesTokBMBGBTB($file['size'])
+							'name' => $file['name'],
+							'size' => formatBytesTokBMBGBTB($file['size'])
 						)
 					);
 				}
@@ -350,7 +348,7 @@ function transfer_setProfiledVars() {
 			$tmpl->setvar('useLastSettings', 1);
 		}
 		// load profile lists
-		$profiles = ($cfg['transfer_profiles'] >= 3 || $cfg['isAdmin'])
+		$profiles        = ($cfg['transfer_profiles'] >= 3 || $cfg['isAdmin'])
 			? GetProfiles($cfg["uid"], $profile)
 			: array();
 		$public_profiles = ($cfg['transfer_profiles'] >= 2 || $cfg['isAdmin'])

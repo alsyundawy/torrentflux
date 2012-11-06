@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * get Request Var
@@ -28,18 +27,18 @@
  * @return string
  */
 function tfb_getRequestVar($varName, $return = '') {
-	if(array_key_exists($varName, $_REQUEST)){
+	if (array_key_exists($varName, $_REQUEST)) {
 		// If magic quoting on, strip magic quotes:
 		/**
-		* TODO:
-		* Codebase needs auditing to remove any unneeded stripslashes
-		* calls before uncommenting this.  Also using this really means
-		* checking any addslashes() calls to see if they're really needed
-		* when magic quotes is on.
+		 * TODO:
+		 * Codebase needs auditing to remove any unneeded stripslashes
+		 * calls before uncommenting this.  Also using this really means
+		 * checking any addslashes() calls to see if they're really needed
+		 * when magic quotes is on.
 		if(ini_get('magic_quotes_gpc')){
-			tfb_strip_quotes($_REQUEST[$varName]);
+		tfb_strip_quotes($_REQUEST[$varName]);
 		}
-		*/
+		 */
 		$return = htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES);
 		/*
 		disabled, need to fix deadeye's implementation
@@ -67,11 +66,11 @@ function tfb_getRequestVar($varName, $return = '') {
  * @param $return
  * @return string
  */
-function tfb_getRequestVarRaw($varName,$return = '') {
+function tfb_getRequestVarRaw($varName, $return = '') {
 	// Note: CANNOT use tfb_strip_quotes directly on $_REQUEST
 	// here, because it works in-place, i.e. would break other
 	// future uses of tfb_getRequestVarRaw on the same variables.
-	if (array_key_exists($varName, $_REQUEST)){
+	if (array_key_exists($varName, $_REQUEST)) {
 		$return = $_REQUEST[$varName];
 		// Seems get_magic_quotes_gpc is deprecated
 		// in PHP 6, use ini_get instead.
@@ -118,10 +117,10 @@ function tfb_isValidTransfer($transfer) {
  * @return string
  */
 function tfb_clean_accents($inName) {
-	$outName = strtr($inName, 'àáâãäåòóôõöøèéêëçìíîïùúûüÿñ', 'aaaaaaooooooeeeeciiiiuuuuyn');
-	$outName = strtr($outName,'ÀÁÂÃÄÅÒÓÔÕÖØÈÉÊËÇÌÍÎÏÙÚÛÜŸÑ', 'AAAAAAOOOOOOEEEECIIIIUUUUYN');
-	$outName = str_replace("æ","ae",$outName);
-	$outName = str_replace("œ","oe",$outName);	
+	$outName = strtr($inName, 'Ã Ã¡Ã¢Ã£Ã¤Ã¥Ã²Ã³Ã´ÃµÃ¶Ã¸Ã¨Ã©ÃªÃ«Ã§Ã¬Ã­Ã®Ã¯Ã¹ÃºÃ»Ã¼Ã¿Ã±', 'aaaaaaooooooeeeeciiiiuuuuyn');
+	$outName = strtr($outName, 'Ã€ÃÃ‚ÃƒÃ„Ã…Ã’Ã“Ã”Ã•Ã–Ã˜ÃˆÃ‰ÃŠÃ‹Ã‡ÃŒÃÃŽÃÃ™ÃšÃ›ÃœÅ¸Ã‘', 'AAAAAAOOOOOOEEEECIIIIUUUUYN');
+	$outName = str_replace("Ã¦", "ae", $outName);
+	$outName = str_replace("Å“", "oe", $outName);
 	return $outName;
 }
 
@@ -133,13 +132,13 @@ function tfb_clean_accents($inName) {
  */
 function tfb_cleanFileName($inName) {
 	global $cfg;
-	$outName = tfb_clean_accents($inName);
-	$outName = preg_replace("/[^0-9a-zA-Z\.\-]+/",'_', $outName);
-	$outName = str_replace("_-_", "-", $outName);
+	$outName      = tfb_clean_accents($inName);
+	$outName      = preg_replace("/[^0-9a-zA-Z\.\-]+/", '_', $outName);
+	$outName      = str_replace("_-_", "-", $outName);
 	$stringLength = strlen($outName);
 	foreach ($cfg['file_types_array'] as $ftype) {
 		$extLength = strlen($ftype);
-		$extIndex = 0 - $extLength;
+		$extIndex  = 0 - $extLength;
 		if (($stringLength > $extLength) && (strtolower(substr($outName, $extIndex)) === ($ftype)))
 			return substr($outName, 0, $extIndex).$ftype;
 	}
@@ -154,8 +153,8 @@ function tfb_cleanFileName($inName) {
  */
 function tfb_cleanTransferName($transfer) {
 	global $cfg;
-	$outName = trim(preg_replace("/\[www\.[^\]]+\]/i",'', $transfer));
-	$outName = preg_replace("/[^0-9a-zA-Z\.\-]+/",'_', $outName);
+	$outName = trim(preg_replace("/\[www\.[^\]]+\]/i", '', $transfer));
+	$outName = preg_replace("/[^0-9a-zA-Z\.\-]+/", '_', $outName);
 	return str_replace($cfg["file_types_array"], "", $outName);
 }
 
@@ -173,10 +172,10 @@ function tfb_cleanURL($url) {
 /**
  *  Avoid magic_quotes_gpc issues
  *  courtesy of iliaa@php.net
- * @param	ref		&$var reference to a $_REQUEST variable
- * @return	null
+ * @param    ref        &$var reference to a $_REQUEST variable
+ * @return    null
  */
-function tfb_strip_quotes(&$var){
+function tfb_strip_quotes(&$var) {
 	if (is_array($var)) {
 		foreach ($var as $k => $v) {
 			if (is_array($v))
@@ -223,8 +222,8 @@ function tfb_htmlencodekeepspaces($str) {
  * @return string
  */
 function tfb_shellencode($str) {
-  $str = (string)$str;
-  return isset($str) && strlen($str) > 0 ? escapeshellarg($str) : "''";
+	$str = (string)$str;
+	return isset($str) && strlen($str) > 0 ? escapeshellarg($str) : "''";
 }
 
 ?>

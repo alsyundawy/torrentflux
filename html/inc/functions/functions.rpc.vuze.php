@@ -8,14 +8,14 @@
  */
 function getVuzeTransferRpcId($transfer) {
 	global $cfg;
-	
+
 	require_once('inc/classes/VuzeRPC.php');
 	$rpc = VuzeRPC::getInstance();
-	
-	$hash = getTransferHash($transfer);
+
+	$hash     = getTransferHash($transfer);
 	$torrents = $rpc->torrent_get_hashids();
-	$tid = false;
-	if ( array_key_exists(strtoupper($hash),$torrents) ) {
+	$tid      = false;
+	if (array_key_exists(strtoupper($hash), $torrents)) {
 		$tid = $torrents[strtoupper($hash)];
 	}
 	return $tid;
@@ -39,10 +39,10 @@ function initVuzeSessionCache() {
  *
  * @return int
  */
-function getVuzeShareKill($usecache=false) {
+function getVuzeShareKill($usecache = false) {
 	require_once('inc/classes/VuzeRPC.php');
 	$rpc = VuzeRPC::getInstance();
-	
+
 	if ($usecache) {
 		if (!isset($rpc->session)) initVuzeSessionCache();
 		return round($rpc->session->seedRatioLimit * 100.0);
@@ -52,7 +52,7 @@ function getVuzeShareKill($usecache=false) {
 	if (is_object($req) && isset($req->arguments->seedRatioLimit)) {
 		return round($req->arguments->seedRatioLimit * 100.0);
 	}
-	
+
 	return 0;
 }
 
@@ -61,7 +61,7 @@ function getVuzeShareKill($usecache=false) {
  *
  * @return int
  */
-function getVuzeSpeedLimitUpload($usecache=false) {
+function getVuzeSpeedLimitUpload($usecache = false) {
 	require_once('inc/classes/VuzeRPC.php');
 	$rpc = VuzeRPC::getInstance();
 
@@ -69,14 +69,14 @@ function getVuzeSpeedLimitUpload($usecache=false) {
 
 	if ($usecache) {
 		if (!isset($rpc->session)) initVuzeSessionCache();
-		return (int) $rpc->session->$key;
+		return (int)$rpc->session->$key;
 	}
 
 	$req = $rpc->session_get($key);
 	if (is_object($req) && isset($req->arguments->$key)) {
-		return (int) $req->arguments->$key;
+		return (int)$req->arguments->$key;
 	}
-	
+
 	return 0;
 }
 
@@ -85,7 +85,7 @@ function getVuzeSpeedLimitUpload($usecache=false) {
  *
  * @return int
  */
-function getVuzeSpeedLimitDownload($usecache=false) {
+function getVuzeSpeedLimitDownload($usecache = false) {
 	require_once('inc/classes/VuzeRPC.php');
 	$rpc = VuzeRPC::getInstance();
 
@@ -93,14 +93,14 @@ function getVuzeSpeedLimitDownload($usecache=false) {
 
 	if ($usecache) {
 		if (!isset($rpc->session)) initVuzeSessionCache();
-		return (int) $rpc->session->$key;
+		return (int)$rpc->session->$key;
 	}
 
 	$req = $rpc->session_get($key);
 	if (is_object($req) && isset($req->arguments->$key)) {
-		return (int) $req->arguments->$key;
+		return (int)$req->arguments->$key;
 	}
-	
+
 	return 0;
 }
 
@@ -112,20 +112,20 @@ function vuzeResetUpload($hash) {
 
 	require_once('inc/classes/VuzeRPC.php');
 	$rpc = VuzeRPC::getInstance();
-	
+
 	$torrents = $rpc->torrent_get_hashids();
-	$tid = "";
-	if ( array_key_exists(strtoupper($hash),$torrents) ) {
+	$tid      = "";
+	if (array_key_exists(strtoupper($hash), $torrents)) {
 		$tid = $torrents[strtoupper($hash)];
 	}
 	if (!empty($tid)) {
 		$key = 'uploadedEver';
-		$rpc->torrent_set(array($tid),'uploadedEver',0);
+		$rpc->torrent_set(array($tid), 'uploadedEver', 0);
 	}
 }
 
 //to check...
-function addVuzeMagnetTransfer($userid = 0, $url, $path, $paused=true) {
+function addVuzeMagnetTransfer($userid = 0, $url, $path, $paused = true) {
 	global $cfg;
 
 	require_once('inc/classes/VuzeRPC.php');
@@ -134,7 +134,7 @@ function addVuzeMagnetTransfer($userid = 0, $url, $path, $paused=true) {
 	$content = $path."\n";
 	//... max_ul
 	//... todo
-	$id = $rpc->torrent_add_url( $url, $content);
+	$id = $rpc->torrent_add_url($url, $content);
 
 	$hash = false;
 	if ($id !== false) {

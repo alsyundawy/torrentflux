@@ -4,28 +4,27 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // TODO: Rename function name
-function transmissionSetVars ($transfer, $tmpl) {
+function transmissionSetVars($transfer, $tmpl) {
 
 	//require_once('inc/functions/functions.rpc.transmission.php');
 	require_once('functions.rpc.transmission.php');
-	$options = array("eta","percentDone", "rateDownload", "rateUpload", "downloadedEver", "uploadedEver", "percentDone", "sizeWhenDone","peers","trackerStats");
+	$options   = array("eta", "percentDone", "rateDownload", "rateUpload", "downloadedEver", "uploadedEver", "percentDone", "sizeWhenDone", "peers", "trackerStats");
 	$returnArr = getTransmissionTransfer($transfer, $options);
 
 	$tmpl->setvar('transferowner', getTransmissionTransferOwner($transfer));
@@ -52,8 +51,8 @@ function transmissionSetVars ($transfer, $tmpl) {
 
 		// seeds + peers
 		$seeds = getTransmissionSeederCount($transfer);
-		$tmpl->setvar('seeds', ($seeds == "" ? "Could not be retrieved" : $seeds." (might be incorrect)" ));
-		$tmpl->setvar('peers', sizeof($returnArr['peers']) );
+		$tmpl->setvar('seeds', ($seeds == "" ? "Could not be retrieved" : $seeds." (might be incorrect)"));
+		$tmpl->setvar('peers', sizeof($returnArr['peers']));
 
 		// port + cons
 		$transfer_pid = getTransferPid($transfer);
@@ -61,10 +60,10 @@ function transmissionSetVars ($transfer, $tmpl) {
 		$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid)); // TODO: this is probably incorrect
 
 		// up speed
-		$tmpl->setvar('up_speed', (trim($returnArr['rateUpload']) != "") ? formatBytesTokBMBGBTB( $returnArr['rateUpload'] ) . '/s' : '0.0 kB/s');
+		$tmpl->setvar('up_speed', (trim($returnArr['rateUpload']) != "") ? formatBytesTokBMBGBTB($returnArr['rateUpload']).'/s' : '0.0 kB/s');
 
 		// down speed
-		$tmpl->setvar('down_speed', (trim($returnArr['rateDownload']) != "") ? formatBytesTokBMBGBTB( $returnArr['rateDownload'] ) . '/s' : '0.0 kB/s');
+		$tmpl->setvar('down_speed', (trim($returnArr['rateDownload']) != "") ? formatBytesTokBMBGBTB($returnArr['rateDownload']).'/s' : '0.0 kB/s');
 
 		// sharekill
 		$tmpl->setvar('sharekill', ($ch->sharekill != 0) ? $ch->sharekill.'%' : '&#8734');
@@ -99,13 +98,13 @@ function transmissionSetVars ($transfer, $tmpl) {
 	if ($returnArr['eta'] < 0)
 		$tmpl->setvar('time_left', 'n/a');
 	else
-		$tmpl->setvar('time_left', convertTime( $returnArr['eta'] ));
+		$tmpl->setvar('time_left', convertTime($returnArr['eta']));
 
 	// graph width
-	$tmpl->setvar('graph_width1', $returnArr['percentDone']*100);
-	$tmpl->setvar('graph_width2', (100 - $returnArr['percentDone']*100));
-		
-	$tmpl->setvar('percent_done', $returnArr['percentDone']*100);
+	$tmpl->setvar('graph_width1', $returnArr['percentDone'] * 100);
+	$tmpl->setvar('graph_width2', (100 - $returnArr['percentDone'] * 100));
+
+	$tmpl->setvar('percent_done', $returnArr['percentDone'] * 100);
 
 	// language vars
 	global $cfg;

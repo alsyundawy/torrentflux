@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * login
@@ -29,10 +28,10 @@ function image_login() {
 		? 'themes/'.$cfg["default_theme"].'/images/code_bg'
 		: 'themes/tf_standard_themes/images/code_bg';
 	$rndCode = loginImageCode($cfg["db_user"], tfb_getRequestVar('rnd'));
-	$tc = image_getTextcolor(80, 80, 80);
-	Image::paintLabelFromImage($bgImage, $rndCode, 
-							   5, 12, 2, 
-							   $tc['r'], $tc['g'], $tc['b']);
+	$tc      = image_getTextcolor(80, 80, 80);
+	Image::paintLabelFromImage($bgImage, $rndCode,
+		5, 12, 2,
+		$tc['r'], $tc['g'], $tc['b']);
 }
 
 /**
@@ -43,10 +42,10 @@ function image_test() {
 	$bgImage = ((strpos($cfg["theme"], '/')) === false)
 		? 'themes/'.$cfg["theme"].'/images/code_bg'
 		: 'themes/tf_standard_themes/images/code_bg';
-	$tc = image_getTextcolor(0, 0, 0);
-	Image::paintLabelFromImage($bgImage, 'tf-b4rt', 
-							   5, 8, 2, 
-							   $tc['r'], $tc['g'], $tc['b']);
+	$tc      = image_getTextcolor(0, 0, 0);
+	Image::paintLabelFromImage($bgImage, 'tf-b4rt',
+		5, 8, 2,
+		$tc['r'], $tc['g'], $tc['b']);
 }
 
 /**
@@ -61,28 +60,28 @@ function image_pieTransferTotals() {
 	// validate transfer
 	$validTransfer = false;
 
-	if (isHash($transfer)) 
+	if (isHash($transfer))
 		$hash = $transfer;
 	else
 		$hash = getTransferHash($transfer);
 
 	if ($cfg["transmission_rpc_enable"]) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		$options = array('uploadedEver','downloadedEver');
+		$options       = array('uploadedEver', 'downloadedEver');
 		$transTransfer = getTransmissionTransfer($hash, $options); // false if not found; TODO check if transmission enabled
-		if ( is_array($transTransfer) ) {
-			$uptotal = $transTransfer['uploadedEver'];
-			$downtotal = $transTransfer['downloadedEver'];
+		if (is_array($transTransfer)) {
+			$uptotal       = $transTransfer['uploadedEver'];
+			$downtotal     = $transTransfer['downloadedEver'];
 			$validTransfer = true;
 		}
 	}
 	if (!$validTransfer) { // If not found in transmission transfer
-		if ( tfb_isValidTransfer($transfer) ) {
+		if (tfb_isValidTransfer($transfer)) {
 			// client-handler + totals
-			$ch = ClientHandler::getInstance(getTransferClient($transfer));
-			$totals = $ch->getTransferTotal($transfer);
-			$uptotal = $totals["uptotal"];
-			$downtotal = $totals["downtotal"];
+			$ch            = ClientHandler::getInstance(getTransferClient($transfer));
+			$totals        = $ch->getTransferTotal($transfer);
+			$uptotal       = $totals["uptotal"];
+			$downtotal     = $totals["downtotal"];
 			$validTransfer = true;
 		}
 	}
@@ -125,36 +124,36 @@ function image_pieTransferPeers() {
 	$validTransfer = false;
 
 	if (isHash($transfer))
-                $hash = $transfer;
+		$hash = $transfer;
 	else
 		$hash = getTransferHash($transfer);
 
 	if ($cfg["transmission_rpc_enable"]) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		$options = array('trackerStats','peers');
+		$options       = array('trackerStats', 'peers');
 		$transTransfer = getTransmissionTransfer($hash, $options); // false if not found; TODO check if transmission enabled
-		if ( is_array($transTransfer) ) {
+		if (is_array($transTransfer)) {
 			$validTransfer = true;
-			$client = "transmissionrpc";
+			$client        = "transmissionrpc";
 		}
 	}
 	if (!$validTransfer) { // If not found in transmission transfer
-		if ( tfb_isValidTransfer($transfer) ) {
+		if (tfb_isValidTransfer($transfer)) {
 			// stat
-			$sf = new StatFile($transfer);
+			$sf    = new StatFile($transfer);
 			$seeds = trim($sf->seeds);
 			$peers = trim($sf->peers);
 			// client-switch + get peer-data
-			$peerData = array();
-			$peerData['seeds'] = 0;
-			$peerData['peers'] = 0;
+			$peerData               = array();
+			$peerData['seeds']      = 0;
+			$peerData['peers']      = 0;
 			$peerData['seedsLabel'] = ($seeds != "") ? $seeds : 0;
 			$peerData['peersLabel'] = ($peers != "") ? $peers : 0;
-			$client = getTransferClient($transfer);
-			$validTransfer = true;
+			$client                 = getTransferClient($transfer);
+			$validTransfer          = true;
 		}
 	}
-	if ( !$validTransfer ) {
+	if (!$validTransfer) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		Image::paintNoOp();
 	}
@@ -180,24 +179,24 @@ function image_pieTransferPeers() {
 		case "transmissionrpc":
 			$peers = sizeof($transTransfer['peers']);
 			$seeds = 0;
-			foreach ( $transTransfer['trackerStats'] as $tracker ) {
-				$seeds += ($tracker['seederCount'] == -1 ? 0:$tracker['seederCount']);
+			foreach ($transTransfer['trackerStats'] as $tracker) {
+				$seeds += ($tracker['seederCount'] == -1 ? 0 : $tracker['seederCount']);
 			}
 			$peerData['seedsLabel'] = $seeds;
-			$peerData['seeds'] = $seeds;
+			$peerData['seeds']      = $seeds;
 			$peerData['peersLabel'] = $peers;
-			$peerData['peers'] = $peers;
+			$peerData['peers']      = $peers;
 			break;
 		case "vuzerpc":
 			if (empty($seeds) || empty($peers)) {
-				$ch = ClientHandler::getInstance($client);
+				$ch      = ClientHandler::getInstance($client);
 				$running = $ch->monitorRunningTransfers();
-				$hash = strtoupper(getTransferHash($transfer));
-				if (!empty($running[$hash]) ) {
-					$t = $running[$hash];
-					$peerData['seeds'] = $t['seeds'];
+				$hash    = strtoupper(getTransferHash($transfer));
+				if (!empty($running[$hash])) {
+					$t                      = $running[$hash];
+					$peerData['seeds']      = $t['seeds'];
 					$peerData['seedsLabel'] = $t['seeds'];
-					$peerData['peers'] = $t['peers'];
+					$peerData['peers']      = $t['peers'];
 					$peerData['peersLabel'] = $t['peers'];
 				}
 			}
@@ -220,11 +219,11 @@ function image_pieTransferPeers() {
 			break;
 		case "mainline":
 			if (($seeds != "") && (is_numeric($seeds))) {
-				$peerData['seeds'] = $seeds;
+				$peerData['seeds']      = $seeds;
 				$peerData['seedsLabel'] = $seeds;
 			}
 			if (($peers != "") && (is_numeric($peers))) {
-				$peerData['peers'] = $peers;
+				$peerData['peers']      = $peers;
 				$peerData['peersLabel'] = $peers;
 			}
 			break;
@@ -275,7 +274,7 @@ function image_pieTransferScrape() {
 	require_once('inc/functions/functions.common.php');
 	$scrape = @trim(getTorrentScrapeInfo($transfer));
 	if ((!empty($scrape)) && (preg_match("/(\d+) seeder\(s\), (\d+) leecher\(s\).*/i", $scrape, $reg))) {
-		$seeder = $reg[1];
+		$seeder  = $reg[1];
 		$leecher = $reg[2];
 		// draw image
 		Image::paintPie3D(
@@ -387,7 +386,8 @@ function image_mrtg() {
 	if (!((tfb_isValidPath($targetFile) === true)
 		&& (preg_match('/^[0-9a-zA-Z_]+(-day|-week|-month|-year)(.png)$/D', $fileName))
 		&& (@is_file($targetFile))
-		)) {
+	)
+	) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-IMAGE: ".$cfg["user"]." tried to access ".$fileName);
 		Image::paintNoOp();
 	}
@@ -424,8 +424,8 @@ function image_noop() {
 }
 
 /**
- * get array with text-color. try to read values from the request-vars. 
- * use default-color created from function-args if no colors provided in 
+ * get array with text-color. try to read values from the request-vars.
+ * use default-color created from function-args if no colors provided in
  * request-vars.
  *
  * @param $r
@@ -436,25 +436,25 @@ function image_noop() {
  */
 function image_getTextcolor($r = 0, $g = 0, $b = 0) {
 	$rtc = tfb_getRequestVar('tc');
-	return (empty($rtc)) 
-		? array('r' => $r, 'g' => $g, 'b' => $b) 
+	return (empty($rtc))
+		? array('r' => $r, 'g' => $g, 'b' => $b)
 		: Image::stringToRGBColor($rtc);
 }
-	
+
 /**
- * get array with colors. try to read values from the request-vars. 
+ * get array with colors. try to read values from the request-vars.
  * use default-colors if no colors provided in request-vars.
  *
  * @return colors[][]
  */
 function image_getColors() {
-	$rc1 = tfb_getRequestVar('c1');
-	$rc2 = tfb_getRequestVar('c2');
-	$color1 = (empty($rc1)) 
-		? array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C) 
+	$rc1    = tfb_getRequestVar('c1');
+	$rc2    = tfb_getRequestVar('c2');
+	$color1 = (empty($rc1))
+		? array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C)
 		: Image::stringToRGBColor($rc1);
-	$color2 = (empty($rc2)) 
-		? array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF) 
+	$color2 = (empty($rc2))
+		? array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)
 		: Image::stringToRGBColor($rc2);
 	return (array($color1, $color2));
 }
