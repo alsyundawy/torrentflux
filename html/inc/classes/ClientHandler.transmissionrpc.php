@@ -97,9 +97,9 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		}
 		*/
 
-                $owner = getOwner($transfer);
-		if (!is_dir($cfg['path'].$owner)) {
-			mkdir($cfg['path'].$owner,0777);
+                //$owner = getOwner($transfer);
+		if (!is_dir($cfg['path'].$this->owner)) {
+			mkdir($cfg['path'].$this->owner,0777);
 		}
 		
 		$this->command = "";
@@ -128,6 +128,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		$this->_start();
 
 		$hash = getTransferHash($transfer);
+                $uid = (int) GetUID($this->owner);
 		
 		if (empty($hash) || !isTransmissionTransfer($hash)) {
                         //fixme: will this still work without the above part?
@@ -162,7 +163,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			'seedRatioLimit' => (float) $this->sharekill,
 			'seedRatioMode' => intval($this->sharekill > 0.1)
 			);
-			$res = (int) startTransmissionTransfer($hash, $enqueue, $params);
+			$res = (int) startTransmissionTransfer($hash, $enqueue, $params, $uid);
 		}
 		if (!$res) {
 			$this->command .= "\n".$rpc->LastError;

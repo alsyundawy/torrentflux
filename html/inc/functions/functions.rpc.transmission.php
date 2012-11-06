@@ -185,12 +185,13 @@ function getTransmissionTransferOwner($transfer) {
  *
  * @return void
  */
-function startTransmissionTransfer($hash,$startPaused=false,$params=array()) {
+function startTransmissionTransfer($hash,$startPaused=false,$params=array(),$uid=NULL) {
 	global $cfg;
+        if ($uid === NULL) $uid = $cfg["uid"];
 	require_once('inc/classes/Transmission.class.php');
 	$rpc = Transmission::getInstance();
 
-	if ( isValidTransmissionTransfer($cfg['uid'],$hash) ) {
+	if ( isValidTransmissionTransfer($uid,$hash) ) {
 		$transmissionId = getTransmissionTransferIdByHash($hash);
 		$response = $rpc->set($transmissionId, array_merge(array("seedRatioMode" => 1), $params) );
 		$response = $rpc->start($transmissionId);
