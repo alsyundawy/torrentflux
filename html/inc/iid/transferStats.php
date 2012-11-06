@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -43,7 +42,7 @@ transfer_init();
 
 // stat
 $transferowner = getOwner($transfer);
-$sf = new StatFile($transfer, $transferowner);
+$sf            = new StatFile($transfer, $transferowner);
 
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
@@ -53,10 +52,10 @@ if ($ch->settingsLoad($transfer) !== true)
 	$ch->settingsDefault();
 
 // totals
-$afu = $sf->uptotal;
-$afd = $sf->downtotal;
+$afu           = $sf->uptotal;
+$afd           = $sf->downtotal;
 $totalsCurrent = $ch->getTransferCurrentOP($transfer, $ch->hash, $afu, $afd);
-$totals = $ch->getTransferTotalOP($transfer, $ch->hash, $afu, $afd);
+$totals        = $ch->getTransferTotalOP($transfer, $ch->hash, $afu, $afd);
 // owner
 $tmpl->setvar('transferowner', $transferowner);
 
@@ -91,7 +90,7 @@ if ($sf->running == 1) {
 	$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid));
 
 	// up speed
-	$tmpl->setvar('up_speed', (trim($sf->up_speed) != "") ?  $sf->up_speed : '0.0 kB/s');
+	$tmpl->setvar('up_speed', (trim($sf->up_speed) != "") ? $sf->up_speed : '0.0 kB/s');
 
 	// down speed
 	$tmpl->setvar('down_speed', (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s');
@@ -132,23 +131,23 @@ if ($ch->useRPC) {
 		$monitoring = $stat;
 	} else {
 		global $transfers;
-		$settings = $transfers['settings'][$transfer];
-		$monitoring = "<pre>".print_r($stat,true)."</pre>"."<pre>".print_r($settings,true)."</pre>";
+		$settings   = $transfers['settings'][$transfer];
+		$monitoring = "<pre>".print_r($stat, true)."</pre>"."<pre>".print_r($settings, true)."</pre>";
 	}
 	$tmpl->setvar('realtime_monitor', $monitoring);
 }
 
 // percent and eta
 if ($sf->percent_done < 0) {
-	$sf->percent_done = round(($sf->percent_done*-1)-100,1);
-	$sf->time_left = $cfg['_INCOMPLETE'];
+	$sf->percent_done = round(($sf->percent_done * -1) - 100, 1);
+	$sf->time_left    = $cfg['_INCOMPLETE'];
 }
 $tmpl->setvar('time_left', $sf->time_left);
 
 // graph width
 $tmpl->setvar('graph_width1', $sf->percent_done);
 $tmpl->setvar('graph_width2', (100 - $sf->percent_done));
-	
+
 if ($sf->percent_done >= 100) {
 	$sf->percent_done = 100;
 	$tmpl->setvar('background', "#0000ff"); //deprecated

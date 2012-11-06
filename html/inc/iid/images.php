@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -47,19 +46,19 @@ define('_IMAGE_PREFIX_MRTG', "?i=mrtg&f=");
 tmplInitializeInstance($cfg["theme"], "page.images.tmpl");
 
 // request-vars
-$type = (isset($_REQUEST['type'])) ? tfb_getRequestVar('type') : _DEFAULT_TYPE;
+$type   = (isset($_REQUEST['type'])) ? tfb_getRequestVar('type') : _DEFAULT_TYPE;
 $target = tfb_getRequestVar('target');
 
 // types
 $type_list = array();
 array_push($type_list, array(
-	'name' => "server",
-	'selected' => ($type == "server") ? 1 : 0
+		'name'     => "server",
+		'selected' => ($type == "server") ? 1 : 0
 	)
 );
 array_push($type_list, array(
-	'name' => "mrtg",
-	'selected' => ($type == "mrtg") ? 1 : 0
+		'name'     => "mrtg",
+		'selected' => ($type == "mrtg") ? 1 : 0
 	)
 );
 $tmpl->setloop('type_list', $type_list);
@@ -77,18 +76,18 @@ switch ($type) {
 		// targets
 		$target_list = array();
 		array_push($target_list, array(
-			'name' => "all",
-			'selected' => ($target == "all") ? 1 : 0
+				'name'     => "all",
+				'selected' => ($target == "all") ? 1 : 0
 			)
 		);
 		array_push($target_list, array(
-			'name' => "bandwidth",
-			'selected' => ($target == "bandwidth") ? 1 : 0
+				'name'     => "bandwidth",
+				'selected' => ($target == "bandwidth") ? 1 : 0
 			)
 		);
 		array_push($target_list, array(
-			'name' => "drivespace",
-			'selected' => ($target == "drivespace") ? 1 : 0
+				'name'     => "drivespace",
+				'selected' => ($target == "drivespace") ? 1 : 0
 			)
 		);
 		$tmpl->setloop('target_list', $target_list);
@@ -102,14 +101,14 @@ switch ($type) {
 		$image_list = array();
 		if (($target == "bandwidth") || ($target == "all"))
 			array_push($image_list, array(
-				'title' => "Bandwidth",
-				'src' => "image.php?i=pieServerBandwidth"
+					'title' => "Bandwidth",
+					'src'   => "image.php?i=pieServerBandwidth"
 				)
 			);
 		if (($target == "drivespace") || ($target == "all"))
 			array_push($image_list, array(
-				'title' => "Drivespace",
-				'src' => "image.php?i=pieServerDrivespace"
+					'title' => "Drivespace",
+					'src'   => "image.php?i=pieServerDrivespace"
 				)
 			);
 		if (!empty($image_list))
@@ -134,10 +133,10 @@ switch ($type) {
 		if ((@is_dir(_MRTG_DIR_INPUT)) && ($dirHandle = @opendir(_MRTG_DIR_INPUT))) {
 			while (false !== ($file = @readdir($dirHandle))) {
 				if ((strlen($file) > 4) && (substr($file, -4) == ".inc")) {
-		      		$targetName = (substr($file, 0, -4));
+					$targetName = (substr($file, 0, -4));
 					array_push($target_list, array(
-						'name' => $targetName,
-						'selected' => ($target == $targetName) ? 1 : 0
+							'name'     => $targetName,
+							'selected' => ($target == $targetName) ? 1 : 0
 						)
 					);
 				}
@@ -160,7 +159,8 @@ switch ($type) {
 		if (!((tfb_isValidPath($targetFile) === true)
 			&& (preg_match('/^[0-9a-zA-Z_]+$/D', $target))
 			&& (@is_file($targetFile))
-			)) {
+		)
+		) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$target);
 			@error("Invalid Target", "", "", array($target));
 		}

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -67,7 +66,7 @@ function setWatchError($msg) {
 }
 
 
-$pageop = tfb_getRequestVar('pageop');
+$pageop  = tfb_getRequestVar('pageop');
 $pageop2 = $pageop = (empty($pageop)) ? "default" : $pageop;
 $tmpl->setvar('pageop', $pageop);
 
@@ -90,21 +89,21 @@ switch ($pageop) {
 	case "editJob":
 	case "saveJob":
 		$jobNumber = trim(tfb_getRequestVarRaw('job'));
-		$isNew = empty($jobNumber);
+		$isNew     = empty($jobNumber);
 
 		$watchdir = trim(tfb_getRequestVarRaw('watchdir'));
-		$user = trim(tfb_getRequestVarRaw('user'));
-		$profile = trim(tfb_getRequestVarRaw('profile'));
+		$user     = trim(tfb_getRequestVarRaw('user'));
+		$profile  = trim(tfb_getRequestVarRaw('profile'));
 		$checkdir = trim(tfb_getRequestVarRaw('checkdir'));
 
-		$postback = tfb_getRequestVarRaw('postback');
+		$postback   = tfb_getRequestVarRaw('postback');
 		$isPostback = $postback == '1';
-		$refresh = tfb_getRequestVarRaw('refresh');
-		$isRefresh = $refresh == '1';
-		$isSave = $isPostback && !$isRefresh;
-		$checkdir = ($checkdir == '1' || $checkdir == 'on' || $checkdir == 'true');
+		$refresh    = tfb_getRequestVarRaw('refresh');
+		$isRefresh  = $refresh == '1';
+		$isSave     = $isPostback && !$isRefresh;
+		$checkdir   = ($checkdir == '1' || $checkdir == 'on' || $checkdir == 'true');
 
-		if ($isSave) {	// saving (a new one or an existing one)
+		if ($isSave) { // saving (a new one or an existing one)
 			$pageop2 = "saveJob";
 
 			$paramErrors = 0;
@@ -126,8 +125,8 @@ switch ($pageop) {
 				}
 				if ($result === false) {
 					$wasWatchError = true;
-					$messages = array();
-					$msgs = FluxdWatch::getMessages();
+					$messages      = array();
+					$msgs          = FluxdWatch::getMessages();
 					foreach ($msgs as $msg)
 						array_push($messages, array('msg' => $msg));
 					$tmpl->setloop('messages', $messages);
@@ -138,7 +137,7 @@ switch ($pageop) {
 
 			// title-bar
 			tmplSetTitleBar("Administration - Fluxd Watch - Save Job");
-		} else {	// initial display, or refresh (of a new one or of an existing one)
+		} else { // initial display, or refresh (of a new one or of an existing one)
 			$pageop2 = "addJobOReditJob";
 
 			// job number
@@ -151,8 +150,8 @@ switch ($pageop) {
 					$wasWatchError = true;
 				else {
 					$watchdir = $job['D'];
-					$user = $job['U'];
-					$profile = isset($job['P']) ? $job['P'] : '';
+					$user     = $job['U'];
+					$profile  = isset($job['P']) ? $job['P'] : '';
 				}
 			}
 
@@ -163,8 +162,8 @@ switch ($pageop) {
 				$tmpl->setvar('watchdir', $watchdir);
 				// users
 				$watchusers = array();
-				$userCount = count($cfg['users']);
-				$foundSel = false;
+				$userCount  = count($cfg['users']);
+				$foundSel   = false;
 				for ($i = 0; $i < $userCount; $i++) {
 					$tmp = $cfg['users'][$i];
 					$sel = ((!$isNew || $isRefresh) && $user == $tmp) ? 1 : 0;
@@ -185,7 +184,7 @@ switch ($pageop) {
 				$tmpl->setloop('watch_users', $watchusers);
 				// profiles
 				if ($with_profiles) {
-					$profiles = GetProfilesByUserName($user, $profile);
+					$profiles        = GetProfilesByUserName($user, $profile);
 					$public_profiles = GetPublicProfiles($profile);
 					$tmpl->setloop('profiles', $profiles);
 					$tmpl->setloop('public_profiles', $public_profiles);

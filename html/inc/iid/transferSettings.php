@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -65,7 +64,7 @@ if ($ch->settingsLoad($transfer) !== true)
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
 
 // save/display
-if ($isSave) {                                                        /* save */
+if ($isSave) { /* save */
 
 	// set save-var
 	$tmpl->setvar('isSave', 1);
@@ -95,38 +94,38 @@ if ($isSave) {                                                        /* save */
 
 	// settings-labels
 	$settingsLabels = array(
-		'savepath' => 'Savepath',
-		'max_upload_rate' => 'Max Upload Rate',
+		'savepath'          => 'Savepath',
+		'max_upload_rate'   => 'Max Upload Rate',
 		'max_download_rate' => 'Max Download Rate',
-		'max_uploads' => 'Max Upload Connections',
-		'superseeder' => 'Superseeder',
-		'die_when_done' => 'Torrent Completion Activity',
-		'sharekill' => 'Percentage When Seeding should Stop',
-		'minport' => 'Min-Port',
-		'maxport' => 'Max-Port',
-		'maxcons' => 'Max Cons',
-		'rerequest' => 'Rerequest Interval',
-		'file_priority' => 'File priority support',
-		'skip_hash_check'=> 'Skip hash check',
-		'encryption'=> 'Encryption required'
+		'max_uploads'       => 'Max Upload Connections',
+		'superseeder'       => 'Superseeder',
+		'die_when_done'     => 'Torrent Completion Activity',
+		'sharekill'         => 'Percentage When Seeding should Stop',
+		'minport'           => 'Min-Port',
+		'maxport'           => 'Max-Port',
+		'maxcons'           => 'Max Cons',
+		'rerequest'         => 'Rerequest Interval',
+		'file_priority'     => 'File priority support',
+		'skip_hash_check'   => 'Skip hash check',
+		'encryption'        => 'Encryption required'
 	);
 
 	// current settings
-	$settingsCurrent = array();
-	$settingsCurrent['savepath'] = $ch->savepath;
-	$settingsCurrent['max_upload_rate'] = $ch->rate;
+	$settingsCurrent                      = array();
+	$settingsCurrent['savepath']          = $ch->savepath;
+	$settingsCurrent['max_upload_rate']   = $ch->rate;
 	$settingsCurrent['max_download_rate'] = $ch->drate;
-	$settingsCurrent['max_uploads'] = $ch->maxuploads;
-	$settingsCurrent['superseeder'] = $ch->superseeder;
-	$settingsCurrent['die_when_done'] = $ch->runtime;
-	$settingsCurrent['sharekill'] = $ch->sharekill;
-	$settingsCurrent['minport'] = $ch->minport;
-	$settingsCurrent['maxport'] = $ch->maxport;
-	$settingsCurrent['maxcons'] = $ch->maxcons;
-	$settingsCurrent['rerequest'] = $ch->rerequest;
-	$settingsCurrent['file_priority'] = $ch->file_priority;
-	$settingsCurrent['skip_hash_check'] = $ch->skip_hash_check;
-	$settingsCurrent['encryption'] = $ch->encryption;
+	$settingsCurrent['max_uploads']       = $ch->maxuploads;
+	$settingsCurrent['superseeder']       = $ch->superseeder;
+	$settingsCurrent['die_when_done']     = $ch->runtime;
+	$settingsCurrent['sharekill']         = $ch->sharekill;
+	$settingsCurrent['minport']           = $ch->minport;
+	$settingsCurrent['maxport']           = $ch->maxport;
+	$settingsCurrent['maxcons']           = $ch->maxcons;
+	$settingsCurrent['rerequest']         = $ch->rerequest;
+	$settingsCurrent['file_priority']     = $ch->file_priority;
+	$settingsCurrent['skip_hash_check']   = $ch->skip_hash_check;
+	$settingsCurrent['encryption']        = $ch->encryption;
 
 	// new settings
 	$settingsNew = array();
@@ -140,8 +139,7 @@ if ($isSave) {                                                        /* save */
 	if ($cfg['transfer_customize_settings'] == 2)
 		$customize_settings = 1;
 	elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
-		$customize_settings = 1;
-	else
+		$customize_settings = 1; else
 		$customize_settings = 0;
 
 	// process changes
@@ -162,7 +160,7 @@ if ($isSave) {                                                        /* save */
 		// fill lists
 		$list_changes = array();
 		$list_restart = array();
-		$list_send = array();
+		$list_send    = array();
 		foreach ($settingsChanged as $settingsKey) {
 			// value
 			$valid = true;
@@ -175,7 +173,7 @@ if ($isSave) {                                                        /* save */
 					break;
 				case 'savepath':
 					if ($cfg["showdirtree"] == 1) {
-						$value =  checkDirPathString($settingsNew[$settingsKey]);
+						$value = checkDirPathString($settingsNew[$settingsKey]);
 						// skip if invalid
 						if ((@checkDirectory($value, 0777)) !== true)
 							$valid = false;
@@ -192,8 +190,8 @@ if ($isSave) {                                                        /* save */
 			if ($valid) {
 				// list
 				array_push($list_changes, array(
-					'lbl' => $settingsLabels[$settingsKey],
-					'val' => $value
+						'lbl' => $settingsLabels[$settingsKey],
+						'val' => $value
 					)
 				);
 				// send
@@ -201,15 +199,15 @@ if ($isSave) {                                                        /* save */
 					// runtime
 					if ($cfg["runtimeMap"][$ch->client][$settingsKey] == 1)
 						array_push($list_send, array(
-							'lbl' => $settingsLabels[$settingsKey],
-							'val' => $value
+								'lbl' => $settingsLabels[$settingsKey],
+								'val' => $value
 							)
 						);
 					// restart
 					else
 						array_push($list_restart, array(
-							'lbl' => $settingsLabels[$settingsKey],
-							'val' => $value
+								'lbl' => $settingsLabels[$settingsKey],
+								'val' => $value
 							)
 						);
 				}
@@ -226,7 +224,7 @@ if ($isSave) {                                                        /* save */
 
 		// save settings
 		if ($cfg["showdirtree"] == 1) {
-			$newSavepath =  checkDirPathString($settingsNew['savepath']);
+			$newSavepath = checkDirPathString($settingsNew['savepath']);
 			if ($newSavepath != $settingsCurrent['savepath']) {
 				if ((@checkDirectory($newSavepath, 0777)) !== true)
 					$tmpl->setvar('error', "savepath ".$newSavepath." not valid and change not saved.");
@@ -234,19 +232,19 @@ if ($isSave) {                                                        /* save */
 					$ch->savepath = $newSavepath;
 			}
 		}
-		$ch->rate = $settingsNew['max_upload_rate'];
-		$ch->drate = $settingsNew['max_download_rate'];
-		$ch->maxuploads = $settingsNew['max_uploads'];
-		$ch->superseeder = $settingsNew['superseeder'];
-		$ch->runtime = $settingsNew['die_when_done'];
-		$ch->sharekill = $settingsNew['sharekill'];
-		$ch->minport = $settingsNew['minport'];
-		$ch->maxport = $settingsNew['maxport'];
-		$ch->maxcons = $settingsNew['maxcons'];
-		$ch->rerequest = $settingsNew['rerequest'];
-		$ch->file_priority = $settingsNew['file_priority'];
+		$ch->rate            = $settingsNew['max_upload_rate'];
+		$ch->drate           = $settingsNew['max_download_rate'];
+		$ch->maxuploads      = $settingsNew['max_uploads'];
+		$ch->superseeder     = $settingsNew['superseeder'];
+		$ch->runtime         = $settingsNew['die_when_done'];
+		$ch->sharekill       = $settingsNew['sharekill'];
+		$ch->minport         = $settingsNew['minport'];
+		$ch->maxport         = $settingsNew['maxport'];
+		$ch->maxcons         = $settingsNew['maxcons'];
+		$ch->rerequest       = $settingsNew['rerequest'];
+		$ch->file_priority   = $settingsNew['file_priority'];
 		$ch->skip_hash_check = $settingsNew['skip_hash_check'];
-		$ch->encryption = $settingsNew['encryption'];
+		$ch->encryption      = $settingsNew['encryption'];
 
 		$ch->settingsSave();
 
@@ -283,7 +281,7 @@ if ($isSave) {                                                        /* save */
 
 	}
 
-} else {                                                           /* display */
+} else { /* display */
 
 	// set save-var
 	$tmpl->setvar('isSave', 0);

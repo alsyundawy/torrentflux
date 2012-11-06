@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -59,9 +58,9 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			$cats = array();
 			foreach ($sEngine->getMainCategories(false) as $mainId => $mainName) {
 				array_push($cats, array(
-					'mainId' => $mainId,
-					'in_array' => (@in_array($mainId, $sEngine->catFilter)) ? 1 : 0,
-					'mainName' => $mainName
+						'mainId'   => $mainId,
+						'in_array' => (@in_array($mainId, $sEngine->catFilter)) ? 1 : 0,
+						'mainName' => $mainName
 					)
 				);
 			}
@@ -71,7 +70,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('is_file', 0);
 	}
 }
-$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine,true));
+$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine, true));
 //
 tmplSetTitleBar("Administration - Search Settings");
 tmplSetAdminMenu();

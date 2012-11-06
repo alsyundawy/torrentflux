@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -33,13 +32,13 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 tmplInitializeInstance($cfg["theme"], "page.admin.fluxdSettings.tmpl");
 
 // superadmin-links
-$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','<font class="adminlink">log</font></a>'));
-$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2','<font class="adminlink">error-log</font></a>'));
-$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','<font class="adminlink">ps</font></a>'));
-$tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','<font class="adminlink">status</font></a>'));
-$tmpl->setvar('SuperAdminLink5', getSuperAdminLink('?f=5','<font class="adminlink">check</font></a>'));
-$tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlink">db-debug</font></a>'));
-$tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?f=9','<font class="adminlink">version</font></a>'));
+$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1', '<font class="adminlink">log</font></a>'));
+$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2', '<font class="adminlink">error-log</font></a>'));
+$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3', '<font class="adminlink">ps</font></a>'));
+$tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4', '<font class="adminlink">status</font></a>'));
+$tmpl->setvar('SuperAdminLink5', getSuperAdminLink('?f=5', '<font class="adminlink">check</font></a>'));
+$tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6', '<font class="adminlink">db-debug</font></a>'));
+$tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?f=9', '<font class="adminlink">version</font></a>'));
 
 // message section
 $message = tfb_getRequestVar('m');
@@ -124,7 +123,7 @@ $tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_FILE', $cfg['_FILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
-$tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
+$tmpl->setvar('_FORCESTOP', str_replace(" ", "<br>", $cfg['_FORCESTOP']));
 // templ-calls
 tmplSetTitleBar("Administration - Fluxd Settings");
 tmplSetAdminMenu();

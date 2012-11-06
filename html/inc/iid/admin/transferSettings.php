@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -88,17 +87,17 @@ $tmpl->setvar('nzbperl_port', $cfg['nzbperl_port']);
 $tmpl->setvar('nzbperl_threads', $cfg['nzbperl_threads']);
 $nzbThreadList = array();
 array_push($nzbThreadList, array(
-	'name' => 'No Threads',
-	'value' => 0,
-	'is_selected' => ($cfg["nzbperl_threads"] == 0) ? 1 : 0
+		'name'        => 'No Threads',
+		'value'       => 0,
+		'is_selected' => ($cfg["nzbperl_threads"] == 0) ? 1 : 0
 	)
 );
-for ($i = 1; $i <= 5 ; $i++) {
+for ($i = 1; $i <= 5; $i++) {
 	if ($i == 3) continue;
 	array_push($nzbThreadList, array(
-		'name' => $i,
-		'value' => $i,
-		'is_selected' => ($cfg["nzbperl_threads"] == $i) ? 1 : 0
+			'name'        => $i,
+			'value'       => $i,
+			'is_selected' => ($cfg["nzbperl_threads"] == $i) ? 1 : 0
 		)
 	);
 }
@@ -111,10 +110,10 @@ $tmpl->setvar('nzbperl_options', $cfg['nzbperl_options']);
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $nice_list = array();
-for ($i = 0; $i < 20 ; $i++) {
+for ($i = 0; $i < 20; $i++) {
 	array_push($nice_list, array(
-		'i' => $i,
-		'nice_adjust_true' => ($cfg["nice_adjust"] == $i) ? 1 : 0
+			'i'                => $i,
+			'nice_adjust_true' => ($cfg["nice_adjust"] == $i) ? 1 : 0
 		)
 	);
 }

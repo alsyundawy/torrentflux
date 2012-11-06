@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -49,11 +48,11 @@ if ($cfg["enable_vlc"] != 1) {
 if (@file_exists($cfg['bin_vlc']) !== true) {
 	@error("Required binary could not be found", "", "",
 		(
-			($cfg['isAdmin'])
+		($cfg['isAdmin'])
 			? array(
-				'vlc is required for vlc-streaming',
-				'Specified vlc-binary does not exist: '.$cfg['bin_vlc'],
-				'Check Settings on Admin-Server-Settings Page')
+			'vlc is required for vlc-streaming',
+			'Specified vlc-binary does not exist: '.$cfg['bin_vlc'],
+			'Check Settings on Admin-Server-Settings Page')
 			: array('Please contact an Admin')
 		)
 	);
@@ -76,37 +75,38 @@ switch ($pageop) {
 	case "default":
 		// fill lists
 		// vidc
-		$vidcList = Vlc::getList('vidc');
+		$vidcList  = Vlc::getList('vidc');
 		$list_vidc = array();
 		foreach ($vidcList as $vidcT)
 			array_push($list_vidc, array('name' => $vidcT));
 		$tmpl->setloop('list_vidc', $list_vidc);
 		// vbit
-		$vbitList = Vlc::getList('vbit');
+		$vbitList  = Vlc::getList('vbit');
 		$list_vbit = array();
 		foreach ($vbitList as $vbitT)
 			array_push($list_vbit, array('name' => $vbitT));
 		$tmpl->setloop('list_vbit', $list_vbit);
 		// audc
-		$audcList = Vlc::getList('audc');
+		$audcList  = Vlc::getList('audc');
 		$list_audc = array();
 		foreach ($audcList as $audcT)
 			array_push($list_audc, array('name' => $audcT));
 		$tmpl->setloop('list_audc', $list_audc);
 		// abit
-		$abitList = Vlc::getList('abit');
+		$abitList  = Vlc::getList('abit');
 		$list_abit = array();
 		foreach ($abitList as $abitT)
 			array_push($list_abit, array('name' => $abitT));
 		$tmpl->setloop('list_abit', $list_abit);
 		// requested file
-		$dirName = urldecode($_REQUEST['dir']);
-		$fileName = urldecode(stripslashes($_REQUEST['file']));
+		$dirName    = urldecode($_REQUEST['dir']);
+		$fileName   = urldecode(stripslashes($_REQUEST['file']));
 		$targetFile = $dirName.$fileName;
 		// only valid dirs + entries with permission
 		if (!((tfb_isValidPath($targetFile)) &&
 			(isValidEntry(basename($targetFile))) &&
-			(hasPermission($targetFile, $cfg["user"], 'r')))) {
+			(hasPermission($targetFile, $cfg["user"], 'r')))
+		) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);
 			@error("Illegal access. Action has been logged.", "", "");
 		}
@@ -119,7 +119,7 @@ switch ($pageop) {
 		// already streaming
 		if (Vlc::isStreamRunning(Vlc::getPort()) === true) {
 			$tmpl->setvar('is_streaming', 1);
-			$streams = Vlc::getRunning(Vlc::getPort());
+			$streams       = Vlc::getRunning(Vlc::getPort());
 			$currentStream = (empty($streams))
 				? ""
 				: array_pop($streams);
@@ -130,8 +130,8 @@ switch ($pageop) {
 		break;
 	case "start":
 		// get vars
-		$fileName = urldecode(stripslashes($_REQUEST['file']));
-		$targetFile = urldecode(stripslashes($_POST['target']));
+		$fileName    = urldecode(stripslashes($_REQUEST['file']));
+		$targetFile  = urldecode(stripslashes($_POST['target']));
 		$target_vidc = $_POST['vidc'];
 		$target_vbit = $_POST['vbit'];
 		$target_audc = $_POST['audc'];
@@ -139,7 +139,8 @@ switch ($pageop) {
 		// only valid dirs + entries with permission
 		if (!((tfb_isValidPath($targetFile)) &&
 			(isValidEntry(basename($targetFile))) &&
-			(hasPermission($targetFile, $cfg["user"], 'r')))) {
+			(hasPermission($targetFile, $cfg["user"], 'r')))
+		) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);
 			@error("Illegal access. Action has been logged.", "", "");
 		}

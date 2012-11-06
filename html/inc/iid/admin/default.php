@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -45,7 +44,7 @@ tmplSetAdminMenu();
 
 // L: tfb-stats
 // transfers
-$arTransfers = getTransferArray();
+$arTransfers    = getTransferArray();
 $countTransfers = count($arTransfers);
 $tmpl->setvar('server_transfers_total', $countTransfers);
 // users
@@ -66,7 +65,7 @@ $countLinks = (isset($cfg['linklist']))
 	: 0;
 $tmpl->setvar('server_links_total', $countLinks);
 // rss
-$arRss = GetRSSLinks();
+$arRss    = GetRSSLinks();
 $countRss = count($arRss);
 $tmpl->setvar('server_rss_total', $countRss);
 // cookies
@@ -76,19 +75,19 @@ $tmpl->setvar('server_cookies_total', $cookies);
 $profiles = $db->GetOne("SELECT COUNT(id) AS id FROM tf_trprofiles");
 $tmpl->setvar('server_profiles_total', $profiles);
 // search-engines
-$arSearchEngines = tmplSetSearchEngineDDL($cfg["searchEngine"]);
+$arSearchEngines    = tmplSetSearchEngineDDL($cfg["searchEngine"]);
 $countSearchEngines = count($arSearchEngines);
 $tmpl->setvar('server_searchengines_total', $countSearchEngines);
 // themes
-$arThemes = GetThemes();
+$arThemes    = GetThemes();
 $countThemes = count($arThemes);
 $tmpl->setvar('server_themes_total', $countThemes);
 // themes standard
-$arThemesStandard = GetThemesStandard();
+$arThemesStandard    = GetThemesStandard();
 $countThemesStandard = count($arThemesStandard);
 $tmpl->setvar('server_themes_standard_total', $countThemesStandard);
 // languages
-$arLang = GetLanguages();
+$arLang    = GetLanguages();
 $countLang = count($arLang);
 $tmpl->setvar('server_lang_total', $countLang);
 // du
@@ -163,7 +162,7 @@ if ($register_globals) {
 	$tmpl->setvar('server_ini_register_globals_state', 1);
 }
 $imageSupported = Image::isSupported();
-$imageTypes = array();
+$imageTypes     = array();
 if (Image::isTypeSupported(IMG_GIF))
 	array_push($imageTypes, "gif");
 if (Image::isTypeSupported(IMG_PNG))

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -36,9 +35,9 @@ require_once("inc/classes/FluAzu.php");
 tmplInitializeInstance($cfg["theme"], "page.admin.fluazuSettings.tmpl");
 
 // superadmin-links
-$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?a=1','<font class="adminlink">log</font></a>'));
-$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?a=3','<font class="adminlink">ps</font></a>'));
-$tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?a=9','<font class="adminlink">version</font></a>'));
+$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?a=1', '<font class="adminlink">log</font></a>'));
+$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?a=3', '<font class="adminlink">ps</font></a>'));
+$tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?a=9', '<font class="adminlink">version</font></a>'));
 
 // message section
 $message = tfb_getRequestVar('m');
@@ -54,7 +53,7 @@ if (@file_exists($cfg['pythonCmd']) !== true)
 if (FluAzu::isRunning()) {
 	$tmpl->setvar('fluazuRunning', 1);
 	$tmpl->setvar('fluazuPid', FluAzu::getPid());
-	$status = FluAzu::getStatus();
+	$status     = FluAzu::getStatus();
 	$statusKeys = FluAzu::getStatusKeys();
 	foreach ($statusKeys as $statusKey)
 		$tmpl->setvar($statusKey, $status[$statusKey]);

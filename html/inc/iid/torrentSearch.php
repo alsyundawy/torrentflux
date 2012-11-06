@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -51,7 +50,7 @@ if (!empty($hideSeedless))
 if (!isset($_SESSION['hideSeedless']))
 	$_SESSION['hideSeedless'] = 'no';
 $hideSeedless = $_SESSION['hideSeedless'];
-$pg = tfb_getRequestVar('pg');
+$pg           = tfb_getRequestVar('pg');
 $searchEngine = tfb_getRequestVar('searchEngine');
 if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
@@ -60,12 +59,12 @@ if (!preg_match('/^[a-zA-Z0-9]+$/D', $searchEngine))
 $searchterm = tfb_getRequestVar('searchterm');
 if (empty($searchterm))
 	$searchterm = tfb_getRequestVar('query');
-$searchterm = str_replace(" ", "+",$searchterm);
+$searchterm = str_replace(" ", "+", $searchterm);
 if (empty($searchterm)) {
 	// no searchterm set the get latest flag.
 	$_REQUEST["LATEST"] = "1";
 }
-$tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
+$tmpl->setvar('searchterm', str_replace("+", " ", $searchterm));
 $tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
 // Check if Search Engine works properly
@@ -80,27 +79,27 @@ if (!is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('sEngine_msg', $sEngine->msg);
 	} else {
 		// Search Engine ready to go
-		$mainStart = true;
-		$catLinks = '';
+		$mainStart   = true;
+		$catLinks    = '';
 		$tmpCatLinks = '';
-		$tmpLen = 0;
-		$link_list = array();
+		$tmpLen      = 0;
+		$link_list   = array();
 		foreach ($sEngine->getMainCategories() as $mainId => $mainName) {
 			array_push($link_list, array(
-				'searchEngine' => $searchEngine,
-				'mainId' => $mainId,
-				'mainName' => $mainName
+					'searchEngine' => $searchEngine,
+					'mainId'       => $mainId,
+					'mainName'     => $mainName
 				)
 			);
 		}
 		$tmpl->setloop('link_list', $link_list);
 		$mainGenre = tfb_getRequestVar('mainGenre');
-		$subCats = $sEngine->getSubCategories($mainGenre);
+		$subCats   = $sEngine->getSubCategories($mainGenre);
 		if ((empty($mainGenre) && array_key_exists("subGenre", $_REQUEST)) || (count($subCats) <= 0)) {
 			$tmpl->setvar('no_genre', 1);
 			$tmpl->setvar('performSearch', (array_key_exists("LATEST", $_REQUEST) && $_REQUEST["LATEST"] == "1")
-				? $sEngine->getLatest()
-				: $sEngine->performSearch($searchterm)
+					? $sEngine->getLatest()
+					: $sEngine->performSearch($searchterm)
 			);
 		} else {
 			$mainGenreName = $sEngine->GetMainCatName($mainGenre);
@@ -108,8 +107,8 @@ if (!is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			$list_cats = array();
 			foreach ($subCats as $subId => $subName) {
 				array_push($list_cats, array(
-					'subId' => $subId,
-					'subName' => $subName
+						'subId'   => $subId,
+						'subName' => $subName
 					)
 				);
 			}
