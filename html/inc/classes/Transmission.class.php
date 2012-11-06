@@ -34,10 +34,9 @@
  * https://trac.transmissionbt.com/browser/trunk/extras/rpc-spec.txt
  */
 
-$Transmission_inst=NULL;
- 
-class Transmission
-{
+$Transmission_inst = NULL;
+
+class Transmission {
 	/**
 	 * The URL to the bittorent client you want to communicate with
 	 * the port (default: 9091) can be set in you Tranmission preferences
@@ -62,25 +61,25 @@ class Transmission
 	 * @var string
 	 */
 	protected $session_id = '';
-	
+
 	/**
 	 * Transmission last error
 	 * @var string
 	 */
 	public $lastError = '';
-	
+
 	/**
 	 * Torrents cache
 	 * @var array
 	 */
 	public $torrents = array();
-	
-	
+
+
 	/**
 	 * Tranmission version (from session vars)
 	 */
 	public $version;
-	
+
 	/*
 	 * Constructor
 	*/
@@ -88,23 +87,23 @@ class Transmission
 
 		global $cfg;
 		if (!empty($_cfg)) {
-		 	if (!empty($cfg))
+			if (!empty($cfg))
 				$cfg = array_merge($cfg, $_cfg);
 			else
 				$cfg = $_cfg;
 		}
 
 		if (isset($cfg['transmission_rpc_host']))
-			$this->url = str_replace('127.0.0.1',$cfg['transmission_rpc_host'],$this->url);
+			$this->url = str_replace('127.0.0.1', $cfg['transmission_rpc_host'], $this->url);
 		if (isset($cfg['transmission_rpc_port']))
-			$this->url = str_replace('9091',$cfg['transmission_rpc_port'],$this->url);
+			$this->url = str_replace('9091', $cfg['transmission_rpc_port'], $this->url);
 		if (isset($cfg['transmission_rpc_user']))
 			$this->username = $cfg['transmission_rpc_user'];
 		if (isset($cfg['transmission_rpc_password']))
 			$this->password = $cfg['transmission_rpc_password'];
 
 		if (!isset($cfg['transmissionrpc_version'])) {
-			$req = $this->session_get(array("version","rpc-version"));
+			$req                            = $this->session_get(array("version", "rpc-version"));
 			$cfg['transmissionrpc_version'] = $req['arguments']['version'];
 		}
 		$this->version = $cfg['transmissionrpc_version'];
@@ -118,11 +117,10 @@ class Transmission
 	 *
 	 * @param int|array ids A list of transmission torrent ids
 	 */
-	public function start( $ids )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		$request = array( "ids" => $ids );
-		return $this->request( "torrent-start", $request );
+	public function start($ids) {
+		if (!is_array($ids)) $ids = array($ids);
+		$request = array("ids" => $ids);
+		return $this->request("torrent-start", $request);
 	}
 
 	/**
@@ -130,11 +128,10 @@ class Transmission
 	 *
 	 * @param int|array ids A list of transmission torrent ids
 	 */
-	public function stop( $ids )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		$request = array( "ids" => $ids );
-		return $this->request( "torrent-stop", $request );
+	public function stop($ids) {
+		if (!is_array($ids)) $ids = array($ids);
+		$request = array("ids" => $ids);
+		return $this->request("torrent-stop", $request);
 	}
 
 	/**
@@ -142,11 +139,10 @@ class Transmission
 	 *
 	 * @param int|array ids A list of transmission torrent ids
 	 */
-	public function reannounce( $ids )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		$request = array( "ids" => $ids );
-		return $this->request( "torrent-reannounce", $request );
+	public function reannounce($ids) {
+		if (!is_array($ids)) $ids = array($ids);
+		$request = array("ids" => $ids);
+		return $this->request("torrent-reannounce", $request);
 	}
 
 	/**
@@ -154,11 +150,10 @@ class Transmission
 	 *
 	 * @param int|array ids A list of transmission torrent ids
 	 */
-	public function verify( $ids )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		$request = array( "ids" => $ids );
-		return $this->request( "torrent-verify", $request );
+	public function verify($ids) {
+		if (!is_array($ids)) $ids = array($ids);
+		$request = array("ids" => $ids);
+		return $this->request("torrent-verify", $request);
 	}
 
 	/**
@@ -171,17 +166,16 @@ class Transmission
 	 * @param int|array ids A list of transmission torrent ids
 	 * @return object
 	 */
-	public function get( $ids = array(), $fields = array() )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		if( count( $fields ) == 0 ) $fields = array( "id", "name", "status", "doneDate", "haveValid", "totalSize" );
+	public function get($ids = array(), $fields = array()) {
+		if (!is_array($ids)) $ids = array($ids);
+		if (count($fields) == 0) $fields = array("id", "name", "status", "doneDate", "haveValid", "totalSize");
 
 		$request = array(
 			"fields" => $fields,
-			"ids" => $ids
+			"ids"    => $ids
 		);
 
-		return $this->request( "torrent-get", $request );
+		return $this->request("torrent-get", $request);
 	}
 
 	/**
@@ -207,13 +201,12 @@ class Transmission
 	 * @param ids int|array ids A list of transmission torrent ids
 	 * @param arguments array arguments An associative array of arguments to set
 	 */
-	public function set( $ids = array(), $arguments = array() )
-	{
+	public function set($ids = array(), $arguments = array()) {
 		// See https://trac.transmissionbt.com/browser/trunk/doc/rpc-spec.txt for available fields
-		if( !is_array( $ids ) ) $ids = array( $ids );
-		if( !isset( $arguments['ids'] ) ) $arguments['ids'] = $ids;
+		if (!is_array($ids)) $ids = array($ids);
+		if (!isset($arguments['ids'])) $arguments['ids'] = $ids;
 
-		return $this->request( "torrent-set", $arguments );
+		return $this->request("torrent-set", $arguments);
 	}
 
 	/**
@@ -241,12 +234,11 @@ class Transmission
 	 * @param save_path Folder to save torrent in
 	 * @param extra options Optional extra torrent options
 	 */
-	public function add( $torrent_location, $save_path = '', $extra_options = array() )
-	{
+	public function add($torrent_location, $save_path = '', $extra_options = array()) {
 		$extra_options['download-dir'] = $save_path;
-		$extra_options['filename'] = $torrent_location;
+		$extra_options['filename']     = $torrent_location;
 
-		return $this->request( "torrent-add", $extra_options );
+		return $this->request("torrent-add", $extra_options);
 	}
 
 	/**
@@ -255,14 +247,13 @@ class Transmission
 	 * @param bool delete_local_data Also remove local data?
 	 * @param int|array ids A list of transmission torrent ids
 	 */
-	public function remove( $ids, $delete_local_data = false )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
+	public function remove($ids, $delete_local_data = false) {
+		if (!is_array($ids)) $ids = array($ids);
 		$request = array(
-			"ids" => $ids,
+			"ids"               => $ids,
 			"delete-local-data" => $delete_local_data
 		);
-		return $this->request( "torrent-remove", $request );
+		return $this->request("torrent-remove", $request);
 	}
 
 	/**
@@ -272,15 +263,14 @@ class Transmission
 	 * @param string target_location The new storage location
 	 * @param string move_existing_data Move existing data or scan new location for available data
 	 */
-	public function move( $ids, $target_location, $move_existing_data = true )
-	{
-		if( !is_array( $ids ) ) $ids = array( $ids );
+	public function move($ids, $target_location, $move_existing_data = true) {
+		if (!is_array($ids)) $ids = array($ids);
 		$request = array(
-			"ids" => $ids,
+			"ids"      => $ids,
 			"location" => $target_location,
-			"move" => $move_existing_data
+			"move"     => $move_existing_data
 		);
-		return $this->request( "torrent-set-location", $request );
+		return $this->request("torrent-set-location", $request);
 	}
 
 	/**
@@ -289,12 +279,11 @@ class Transmission
 	 * @param array array The request associative array to clean
 	 * @returns array The cleaned array
 	 */
-	protected function cleanRequestData( $array )
-	{
-		if( !is_array( $array ) || count( $array ) == 0 ) return null;
-		foreach( $array as $index => $value ) {
-			if( is_array( $array[$index] ) ) $array[$index] = $this->cleanRequestData( $array[$index] ); // Recursion
-			if( empty( $value ) && $value!=0) unset( $array[$index] );
+	protected function cleanRequestData($array) {
+		if (!is_array($array) || count($array) == 0) return null;
+		foreach ($array as $index => $value) {
+			if (is_array($array[$index])) $array[$index] = $this->cleanRequestData($array[$index]); // Recursion
+			if (empty($value) && $value != 0) unset($array[$index]);
 		}
 		return $array;
 	}
@@ -306,28 +295,29 @@ class Transmission
 	 * @param object The request result to clean
 	 * @returns array The cleaned object
 	 */
-	protected function cleanResultData( $object )
-	{
+	protected function cleanResultData($object) {
 		// Prepare and cast object to array
 		$return_as_array = false;
-		$array = $object;
-		if( !is_array( $array ) ) $array = (array) $array;
-		foreach( $array as $index => $value ) {
-			if( is_array( $array[$index] ) || is_object( $array[$index] ) ) {
-				$array[$index] = $this->cleanResultData( $array[$index] ); // Recursion
+		$array           = $object;
+		if (!is_array($array)) $array = (array)$array;
+		foreach ($array as $index => $value) {
+			if (is_array($array[$index]) || is_object($array[$index])) {
+				$array[$index] = $this->cleanResultData($array[$index]); // Recursion
 			}
-			if( strstr( $index, '-' ) ) {
-				$valid_index = str_replace( '-', '_', $index );
+			if (strstr($index, '-')) {
+				$valid_index         = str_replace('-', '_', $index);
 				$array[$valid_index] = $array[$index];
-				unset( $array[$index] );
+				unset($array[$index]);
 				$index = $valid_index;
 			}
 			// Might be an array, check index for digits, if so, an array should be returned
-			if( ctype_digit( (string) $index ) ) { $return_as_array = true; }
-			if( empty( $value ) ) unset( $array[$index] );
+			if (ctype_digit((string)$index)) {
+				$return_as_array = true;
+			}
+			if (empty($value)) unset($array[$index]);
 		}
 		// Return array cast to object
-		return $return_as_array ? $array : (object) $array;
+		return $return_as_array ? $array : (object)$array;
 	}
 
 	/**
@@ -337,14 +327,13 @@ class Transmission
 	 * @param array arguments The request arguments
 	 * @returns array The request result
 	 */
-	protected function request( $method, $args=array() )
-	{
-		$arguments = $this->cleanRequestData( $args );
+	protected function request($method, $args = array()) {
+		$arguments = $this->cleanRequestData($args);
 		//$arguments = $args;
 
 		// Build request array
 		$data = array(
-			"method" => $method,
+			"method"    => $method,
 			"arguments" => $arguments
 		);
 
@@ -352,70 +341,70 @@ class Transmission
 		$handle = curl_init();
 
 		// Set curl options
-		curl_setopt( $handle, CURLOPT_URL, $this->url );
-		curl_setopt( $handle, CURLOPT_MAXREDIRS, 2);
-		curl_setopt( $handle, CURLOPT_POST, true );
-		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $handle, CURLOPT_HEADER, true );
-		curl_setopt( $handle, CURLOPT_POSTFIELDS, json_encode( $data ) );
+		curl_setopt($handle, CURLOPT_URL, $this->url);
+		curl_setopt($handle, CURLOPT_MAXREDIRS, 2);
+		curl_setopt($handle, CURLOPT_POST, true);
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($handle, CURLOPT_HEADER, true);
+		curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($data));
 
 		// Setup authentication
-		if( $this->username ) {
-			curl_setopt( $handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-			curl_setopt( $handle, CURLOPT_USERPWD, $this->username . ':' . $this->password );
+		if ($this->username) {
+			curl_setopt($handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($handle, CURLOPT_USERPWD, $this->username.':'.$this->password);
 		}
 
 		// Handle session_id
-		if( $this->session_id ) {
-			curl_setopt( $handle, CURLOPT_HTTPHEADER, array( 'X-Transmission-Session-Id: ' . $this->session_id ) );
+		if ($this->session_id) {
+			curl_setopt($handle, CURLOPT_HTTPHEADER, array('X-Transmission-Session-Id: '.$this->session_id));
 		}
 
 		// Execute request
-		$raw_response = curl_exec( $handle );
-		if( $raw_response === false ) {
+		$raw_response = curl_exec($handle);
+		if ($raw_response === false) {
 			throw new Exception("\nThe Transmission server at {$this->url} did not respond. Please make sure Transmission is running and the web client is enabled..\n");
-		} elseif (strpos($raw_response,'Unauthorized') !== false) {
+		} elseif (strpos($raw_response, 'Unauthorized') !== false) {
 			throw new Exception("\nBad Transmission RPC authentification informations (session_id ?) !\n $raw_response");
 		}
 		// Get response headers and body
-		list( $header, $body ) = explode( "\r\n\r\n", $raw_response, 2 );
+		list($header, $body) = explode("\r\n\r\n", $raw_response, 2);
 
 		// Get http code
-		$http_code = curl_getinfo( $handle, CURLINFO_HTTP_CODE );
+		$http_code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
 		// Close connection
-		curl_close( $handle );
+		curl_close($handle);
 
 		// CSRF session fix
-		if( $http_code == 409 && !$this->session_id ) {
-			$matches = array();
-			$session_id = preg_match( "/X-Transmission-Session-Id: ([A-z0-9]*)/", $header, $matches );
-			if( isset( $matches[1] ) ) $this->session_id = $matches[1];
-			if( !$this->session_id ) {
+		if ($http_code == 409 && !$this->session_id) {
+			$matches    = array();
+			$session_id = preg_match("/X-Transmission-Session-Id: ([A-z0-9]*)/", $header, $matches);
+			if (isset($matches[1])) $this->session_id = $matches[1];
+			if (!$this->session_id) {
 				throw new Exception("Needed a session id but could not find one..\n");
 			}
-			return $this->request( $method, $arguments ); // Recursion, loop should be blocked by elseif below this line
-		} elseif( $http_code == 409 && $this->session_id ) {
+			return $this->request($method, $arguments); // Recursion, loop should be blocked by elseif below this line
+		} elseif ($http_code == 409 && $this->session_id) {
 			throw new Exception("Session id '{$this->session_id}' was found and set but not accepted by transmission..\n");
-		} elseif( $http_code == 401 && !$this->username ) {
+		} elseif ($http_code == 401 && !$this->username) {
 			throw new Exception("\nThe Transmission web client at {$this->url} needs authentication..\n");
-		} elseif( $http_code == 401 && $this->username ) {
+		} elseif ($http_code == 401 && $this->username) {
 			throw new Exception("\nThe Transmission web client at {$this->url} needs authentication, the username and password you provided seem to be incorrect.\n");
 		}
 
 		//return $this->cleanResultData( json_decode( $body ) );
-		$response = json_decode( $body, true );
+		$response = json_decode($body, true);
 		if (is_array($response) && $response['result'] != "success") {
 			$this->lastError = serialize($response);
 		}
-		return $response; 
+		return $response;
 	}
 
 	/*
 	 * get session variable
 	 */
 	public function session_get() {
-		$req = $this->request('session-get');
+		$req           = $this->request('session-get');
 		$this->session = $req;
 		return $this->session;
 	}
@@ -425,8 +414,8 @@ class Transmission
 	 * @param arguments array associative
 	 */
 	public function session_set($arguments) {
-		if( !is_array($arguments) ) $arguments = array();
-		$response = $this->request('session-set',$arguments);
+		if (!is_array($arguments)) $arguments = array();
+		$response = $this->request('session-set', $arguments);
 		return $response;
 	}
 
@@ -442,15 +431,15 @@ class Transmission
 		}
 		return $Transmission_inst;
 	}
-	
+
 	/*
 	 * Static Transmission::isRunning()
 	 * @return boolean
 	 */
 	public function isRunning() {
 		$instance = Transmission::getInstance();
-		$session = $instance->session_get();
-		return  (isset($session['result']) && $session['result'] == 'success');
+		$session  = $instance->session_get();
+		return (isset($session['result']) && $session['result'] == 'success');
 	}
 
 	/*
@@ -486,21 +475,21 @@ class Transmission
 		//3: Queued (Qmgr)
 		return $tfstatus;
 	}*/
-        public function status_to_tf($status) {
-            /*
-            0: stopped
-            1: queued to check
-            2: checking files
-            3: queued to download
-            4: downloading
-            5: queued to seeding
-            6: seeding
-            */
-            //fixme: stupid check, don't know whether tfstatus can be > 3
-            //var_dump($status);
-            if ((int) $status > 0) return 1;
-            return 0;
-        }
+	public function status_to_tf($status) {
+		/*
+		0: stopped
+		1: queued to check
+		2: checking files
+		3: queued to download
+		4: downloading
+		5: queued to seeding
+		6: seeding
+		*/
+		//fixme: stupid check, don't know whether tfstatus can be > 3
+		//var_dump($status);
+		if ((int)$status > 0) return 1;
+		return 0;
+	}
 
 	/*
 	 * RPC Struct to TorrentFlux Names
@@ -508,46 +497,46 @@ class Transmission
 	 * @return array
 	*/
 	public function rpc_to_tf($stat) {
-		
+
 		if ($stat['uploadRatio'] == -1)
 			$stat['uploadRatio'] = 0;
 
-                //if ($stat['eta'] < 0) $stat["eta"] = 0;
+		//if ($stat['eta'] < 0) $stat["eta"] = 0;
 
 		$tfStat = array(
-			'rpcid' => $stat['id'],
-			'name' => $stat['name'],
-			
-			'running' => $this->status_to_tf($stat['status']), 
-			'status' => $stat['status'], 
-			
-			'size' => (float) $stat['totalSize'], 
-			
-			'percentDone' => (float) $stat['percentDone']*100.0, 
-			'sharing' => (float) $stat['uploadRatio']*100.0, 
-			
-			'seeds' => $stat['peersSendingToUs'], 
-			'peers' => $stat['peersGettingFromUs'], 
-			'cons' => $stat['peersConnected'], 
-			
-			"error" => $stat['error'],
-			"errorString" => $stat['errorString'],
-			'downloadDir' => $stat['downloadDir'],
-			
-			'downTotal' => (float) $stat['downloadedEver'], 
-			'upTotal' => (float) $stat['uploadedEver'], 
-			
-			'eta' => $stat['eta'], 
-			
-			'speedDown' => (int) $stat['rateDownload'],
-			'speedUp' => (int) $stat['rateUpload'],
-			
-			'drate' => $stat['downloadLimit'],
-			'urate' => $stat['uploadLimit'],
-			
-			'seedlimit' => round($stat['seedRatioLimit']*100),
-			'seedRatioLimit' => round($stat['seedRatioLimit']*100),
-			'seedRatioMode' => $stat['seedRatioMode']
+			'rpcid'          => $stat['id'],
+			'name'           => $stat['name'],
+
+			'running'        => $this->status_to_tf($stat['status']),
+			'status'         => $stat['status'],
+
+			'size'           => (float)$stat['totalSize'],
+
+			'percentDone'    => (float)$stat['percentDone'] * 100.0,
+			'sharing'        => (float)$stat['uploadRatio'] * 100.0,
+
+			'seeds'          => $stat['peersSendingToUs'],
+			'peers'          => $stat['peersGettingFromUs'],
+			'cons'           => $stat['peersConnected'],
+
+			"error"          => $stat['error'],
+			"errorString"    => $stat['errorString'],
+			'downloadDir'    => $stat['downloadDir'],
+
+			'downTotal'      => (float)$stat['downloadedEver'],
+			'upTotal'        => (float)$stat['uploadedEver'],
+
+			'eta'            => $stat['eta'],
+
+			'speedDown'      => (int)$stat['rateDownload'],
+			'speedUp'        => (int)$stat['rateUpload'],
+
+			'drate'          => $stat['downloadLimit'],
+			'urate'          => $stat['uploadLimit'],
+
+			'seedlimit'      => round($stat['seedRatioLimit'] * 100),
+			'seedRatioLimit' => round($stat['seedRatioLimit'] * 100),
+			'seedRatioMode'  => $stat['seedRatioMode']
 		);
 
 		return $tfStat;
@@ -558,10 +547,10 @@ class Transmission
 	 * @param array ids
 	 * @return array
 	*/
-	public function torrent_get_tf_array($ids=array()) {
+	public function torrent_get_tf_array($ids = array()) {
 
 		$this->torrents = array();
-		
+
 		// available fields :
 		// https://trac.transmissionbt.com/browser/trunk/extras/rpc-spec.txt
 		$fields = array(
@@ -570,13 +559,13 @@ class Transmission
 			'status',
 			'hashString',
 			'totalSize',
-			'downloadedEver','uploadedEver',
-			'downloadLimit','uploadLimit',
+			'downloadedEver', 'uploadedEver',
+			'downloadLimit', 'uploadLimit',
 //			'downloadLimited','uploadLimited',
 			"rateDownload", "rateUpload",
 			'peersConnected', 'peersGettingFromUs', 'peersSendingToUs',
-			'percentDone','uploadRatio',
-			'seedRatioLimit','seedRatioMode',
+			'percentDone', 'uploadRatio',
+			'seedRatioLimit', 'seedRatioMode',
 			'downloadDir',
 			'eta',
 			'error', 'errorString'
@@ -584,9 +573,9 @@ class Transmission
 
 		$req = $this->get($ids, $fields);
 		if ($req && $req['result'] == 'success') {
-			$torrents = (array) $req['arguments']['torrents'];
+			$torrents = (array)$req['arguments']['torrents'];
 
-			foreach($torrents as $t) {
+			foreach ($torrents as $t) {
 				$this->torrents[$t['hashString']] = $this->rpc_to_tf($t);
 			}
 		}
@@ -599,7 +588,7 @@ class Transmission
 	 * @param array ids
 	 * @return array
 	*/
-	public function torrent_get_tf($ids=array()) {
+	public function torrent_get_tf($ids = array()) {
 		return $this->torrent_get_tf_array($ids);
 	}
 

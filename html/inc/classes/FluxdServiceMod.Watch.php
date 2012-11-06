@@ -4,25 +4,23 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // class for the Fluxd-Service-module Watch
-class FluxdWatch extends FluxdServiceMod
-{
+class FluxdWatch extends FluxdServiceMod {
 
 	// private fields
 
@@ -36,57 +34,56 @@ class FluxdWatch extends FluxdServiceMod
 	var $_delimComponent = "=";
 
 
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
 
-    /**
-     * accessor for singleton
-     *
-     * @return FluxdWatch
-     */
-    function getInstance() {
+	/**
+	 * accessor for singleton
+	 *
+	 * @return FluxdWatch
+	 */
+	function getInstance() {
 		global $instanceFluxdWatch;
 		// initialize if needed
 		if (!isset($instanceFluxdWatch))
 			FluxdWatch::initialize();
 		return $instanceFluxdWatch;
-    }
+	}
 
-    /**
-     * initialize FluxdWatch.
-     */
-    function initialize() {
-    	global $instanceFluxdWatch;
-    	// create instance
-    	if (!isset($instanceFluxdWatch))
-    		$instanceFluxdWatch = new FluxdWatch();
-    }
+	/**
+	 * initialize FluxdWatch.
+	 */
+	function initialize() {
+		global $instanceFluxdWatch;
+		// create instance
+		if (!isset($instanceFluxdWatch))
+			$instanceFluxdWatch = new FluxdWatch();
+	}
 
 	/**
 	 * getState
 	 *
 	 * @return state
 	 */
-    function getState() {
+	function getState() {
 		global $instanceFluxdWatch;
 		return (isset($instanceFluxdWatch))
 			? $instanceFluxdWatch->state
 			: FLUXDMOD_STATE_NULL;
-    }
+	}
 
-    /**
-     * getMessages
-     *
-     * @return array
-     */
-    function getMessages() {
+	/**
+	 * getMessages
+	 *
+	 * @return array
+	 */
+	function getMessages() {
 		global $instanceFluxdWatch;
 		return (isset($instanceFluxdWatch))
 			? $instanceFluxdWatch->messages
 			: array();
-    }
+	}
 
 	/**
 	 * getModState
@@ -100,17 +97,17 @@ class FluxdWatch extends FluxdServiceMod
 			: FLUXDMOD_STATE_NULL;
 	}
 
-    /**
-     * isRunning
-     *
-     * @return boolean
-     */
-    function isRunning() {
+	/**
+	 * isRunning
+	 *
+	 * @return boolean
+	 */
+	function isRunning() {
 		global $instanceFluxdWatch;
 		return (isset($instanceFluxdWatch))
 			? ($instanceFluxdWatch->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
-    }
+	}
 
 	/**
 	 * get jobs-list
@@ -174,21 +171,19 @@ class FluxdWatch extends FluxdServiceMod
 	}
 
 
-
 	// =========================================================================
 	// ctor
 	// =========================================================================
 
-    /**
-     * ctor
-     */
-    function FluxdWatch() {
-    	// name
-        $this->moduleName = "Watch";
+	/**
+	 * ctor
+	 */
+	function FluxdWatch() {
+		// name
+		$this->moduleName = "Watch";
 		// initialize
-        $this->instance_initialize();
-    }
-
+		$this->instance_initialize();
+	}
 
 
 	// =========================================================================
@@ -206,7 +201,7 @@ class FluxdWatch extends FluxdServiceMod
 		// Job:  U=user:[P=profile:]D=watchdir
 		if (isset($cfg["fluxd_Watch_jobs"])) {
 			$joblist = array();
-			$jobs = explode($this->_delimJobs, trim($cfg["fluxd_Watch_jobs"]));
+			$jobs    = explode($this->_delimJobs, trim($cfg["fluxd_Watch_jobs"]));
 			if (count($jobs) > 0) {
 				$jobCount = 0;
 				foreach ($jobs as $job) {
@@ -231,9 +226,9 @@ class FluxdWatch extends FluxdServiceMod
 								$jobEntry['D'] = '';
 								break;
 							}
-							$rest = trim(array_shift($jobAry));
+							$rest               = trim(array_shift($jobAry));
 							$jobEntry[$rest[0]] = substr($rest, 2);
-							$rest = trim(array_shift($jobAry));
+							$rest               = trim(array_shift($jobAry));
 						}
 					}
 
@@ -377,7 +372,6 @@ class FluxdWatch extends FluxdServiceMod
 	}
 
 
-
 	// =========================================================================
 	// private methods
 	// =========================================================================
@@ -399,16 +393,16 @@ class FluxdWatch extends FluxdServiceMod
 				continue;
 
 			// New format: U= component must be first.
-			$jobstr = 'U' . $this->_delimComponent . $job['U'] . $this->_delimJob;
+			$jobstr = 'U'.$this->_delimComponent.$job['U'].$this->_delimJob;
 
 			foreach ($job as $k => $v)
 				if ($k != 'U' && $k != 'D' && strlen($k) > 0 && strlen($v) > 0)
-					$jobstr .= $k . $this->_delimComponent . $v . $this->_delimJob;
+					$jobstr .= $k.$this->_delimComponent.$v.$this->_delimJob;
 
 			// D= component must be last -- make sure it has a trailing slash.
-			$jobstr .= 'D' . $this->_delimComponent . checkDirPathString($job['D']);
+			$jobstr .= 'D'.$this->_delimComponent.checkDirPathString($job['D']);
 
-			$return .= (strlen($return) == 0 ? '' : $this->_delimJobs) . $jobstr;
+			$return .= (strlen($return) == 0 ? '' : $this->_delimJobs).$jobstr;
 		}
 
 		return $return;

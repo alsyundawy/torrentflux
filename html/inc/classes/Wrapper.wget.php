@@ -4,27 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * class Wrapper for wget-client
  */
-class WrapperWget
-{
+class WrapperWget {
 	// private fields
 
 	// vars from args
@@ -52,8 +50,8 @@ class WrapperWget
 	// buffer
 	var $_buffer = "";
 
-    // done-flag
-    var $_done = false;
+	// done-flag
+	var $_done = false;
 
 	// statfile-object-instance
 	var $_sf = null;
@@ -75,46 +73,46 @@ class WrapperWget
 	 * @param $retries
 	 * @param $pasv
 	 */
-    function start($file, $owner, $path, $drate, $retries, $pasv) {
+	function start($file, $owner, $path, $drate, $retries, $pasv) {
 		global $instanceWrapperWget;
 		$instanceWrapperWget = new WrapperWget($file, $owner, $path, $drate, $retries, $pasv);
 		$instanceWrapperWget->instance_start();
-    }
+	}
 
-    /**
-     * stop
-     */
-    function stop() {
+	/**
+	 * stop
+	 */
+	function stop() {
 		global $instanceWrapperWget;
 		if (isset($instanceWrapperWget))
 			$instanceWrapperWget->instance_stop();
-    }
+	}
 
 	// =========================================================================
 	// ctor
 	// =========================================================================
 
-    /**
-     * ctor
-     *
+	/**
+	 * ctor
+	 *
 	 * @param $file
 	 * @param $owner
 	 * @param $path
 	 * @param $drate
 	 * @param $retries
 	 * @param $pasv
-     * @return WrapperWget
-     */
-    function WrapperWget($file, $owner, $path, $drate, $retries, $pasv) {
-    	global $cfg;
+	 * @return WrapperWget
+	 */
+	function WrapperWget($file, $owner, $path, $drate, $retries, $pasv) {
+		global $cfg;
 
-        // set fields from params
-		$this->_transfer = str_replace($cfg['transfer_file_path'], '', $file);
-		$this->_owner = $owner;
-		$this->_path = $path;
-		$this->_drate = $drate;
-		$this->_retries = $retries;
-		$this->_pasv = $pasv;
+		// set fields from params
+		$this->_transfer    = str_replace($cfg['transfer_file_path'], '', $file);
+		$this->_owner       = $owner;
+		$this->_path        = $path;
+		$this->_drate       = $drate;
+		$this->_retries     = $retries;
+		$this->_pasv        = $pasv;
 		$this->_commandFile = $file.".cmd";
 
 		// set user-var
@@ -125,7 +123,7 @@ class WrapperWget
 
 		// init sf-instance
 		$this->_sf = new StatFile($this->_transfer, $this->_owner);
-    }
+	}
 
 	// =========================================================================
 	// public methods
@@ -244,7 +242,7 @@ class WrapperWget
 		// main loop
 		$this->_outputMessage("downloading...\n");
 		$tick = 1;
-		for (;;) {
+		for (; ;) {
 
 			// read to buffer
 			if (!@feof($this->_wget))
@@ -331,13 +329,13 @@ class WrapperWget
 		$command = "cd ".tfb_shellencode($this->_path).";";
 		$command .= " HOME=".tfb_shellencode($this->_path)."; export HOME;";
 		if ($cfg["enable_umask"] != 0)
-		    $command .= " umask 0000;";
+			$command .= " umask 0000;";
 		if ($cfg["nice_adjust"] != 0)
-		    $command .= " nice -n ".$cfg["nice_adjust"];
+			$command .= " nice -n ".$cfg["nice_adjust"];
 		$command .= " ".$cfg['bin_wget'];
 		$command .= " -c";
 		if (($this->_drate != "") && ($this->_drate != "0"))
-			$command .= " --limit-rate=" . $this->_drate;
+			$command .= " --limit-rate=".$this->_drate;
 		if ($this->_retries != "")
 			$command .= " -t ".$this->_retries;
 		if ($this->_pasv == 1)
@@ -451,7 +449,7 @@ class WrapperWget
 			// check for Length
 			if (preg_match("/.*Length:\s(.+\d)\s(\[|\()/i", $this->_buffer, $matches)) {
 				// set size
-				$this->_size = str_replace(',','', $matches[1]);
+				$this->_size = str_replace(',', '', $matches[1]);
 				// set size in stat-file
 				$this->_sf->size = $this->_size;
 				// return
@@ -499,32 +497,32 @@ class WrapperWget
 
 		// downtotal
 		if (preg_match_all("/\d*(K)/i", $this->_buffer, $matches, PREG_SET_ORDER)) {
-			$matchIdx = count($matches) - 1;
-			$res = preg_replace("/K/i", "",$matches[$matchIdx][0]);
-			$this->_downtotal = (int)$res*1024;
+			$matchIdx         = count($matches) - 1;
+			$res              = preg_replace("/K/i", "", $matches[$matchIdx][0]);
+			$this->_downtotal = (int)$res * 1024;
 		}
 
 		// percent_done
 		if (preg_match_all("/\d*(%)/i", $this->_buffer, $matches, PREG_SET_ORDER)) {
-			$matchIdx = count($matches) - 1;
-			$res = preg_replace("/%/i", "",$matches[$matchIdx][0]);
+			$matchIdx            = count($matches) - 1;
+			$res                 = preg_replace("/%/i", "", $matches[$matchIdx][0]);
 			$this->_percent_done = (int)$res;
 		}
 
 		// down_speed
 		if (preg_match_all("/[0-9]*+[.]+[0-9]+/i", $this->_buffer, $matches, PREG_SET_ORDER)) {
-			$matchIdx = count($matches) - 1;
+			$matchIdx          = count($matches) - 1;
 			$this->_down_speed = $matches[$matchIdx][0]." kB/s";
 			// size as int + convert MB/s
 			$sizeTemp = substr($this->_down_speed, 0, -5);
 			if (is_numeric($sizeTemp)) {
 				$this->_speed = intval($sizeTemp);
 				if (substr($this->_down_speed, -4) == "MB/s") {
-					$this->_speed = $this->_speed * 1024;
+					$this->_speed      = $this->_speed * 1024;
 					$this->_down_speed = $this->_speed." kB/s";
 				}
 			} else {
-				$this->_speed = 0;
+				$this->_speed      = 0;
 				$this->_down_speed = "0.00 kB/s";
 			}
 		}
@@ -561,21 +559,21 @@ class WrapperWget
 			// delete command-file
 			@unlink($this->_commandFile);
 			// process content
-	        $commands = @explode("\n", $data);
-	        if ((is_array($commands)) && (count($commands > 0))) {
-	        	foreach ($commands as $command) {
-	        		// exec, early out when reading a quit-command
-	        		$command = str_replace("\n", "", $command);
-	        		$command = trim($command);
-	        		if ($this->_execCommand($command)) {
-	        			// return
+			$commands = @explode("\n", $data);
+			if ((is_array($commands)) && (count($commands > 0))) {
+				foreach ($commands as $command) {
+					// exec, early out when reading a quit-command
+					$command = str_replace("\n", "", $command);
+					$command = trim($command);
+					if ($this->_execCommand($command)) {
+						// return
 						return true;
-	        		}
-	        	}
-	        } else {
-	        	// no commands found
-	        	$this->_outputMessage("No commands found.\n");
-	        }
+					}
+				}
+			} else {
+				// no commands found
+				$this->_outputMessage("No commands found.\n");
+			}
 		}
 
 		// return
@@ -594,7 +592,7 @@ class WrapperWget
 		$len = strlen($command);
 		if ($len < 1)
 			return false;
-		$opcode = $command{0};
+		$opcode   = $command{0};
 		$workload = ($len > 1)
 			? substr($command, 1)
 			: "";
@@ -619,18 +617,18 @@ class WrapperWget
 	 */
 	function _statStartup() {
 		// set some values
-		$this->_sf->running = 1;
-		$this->_sf->percent_done = 0;
-		$this->_sf->time_left = "Starting...";
-		$this->_sf->down_speed = "0.00 kB/s";
-		$this->_sf->up_speed = "0.00 kB/s";
+		$this->_sf->running       = 1;
+		$this->_sf->percent_done  = 0;
+		$this->_sf->time_left     = "Starting...";
+		$this->_sf->down_speed    = "0.00 kB/s";
+		$this->_sf->up_speed      = "0.00 kB/s";
 		$this->_sf->transferowner = $this->_owner;
-		$this->_sf->seeds = 1;
-		$this->_sf->peers = 1;
-		$this->_sf->sharing = "";
-		$this->_sf->seedlimit = "";
-		$this->_sf->uptotal = 0;
-		$this->_sf->downtotal = 0;
+		$this->_sf->seeds         = 1;
+		$this->_sf->peers         = 1;
+		$this->_sf->sharing       = "";
+		$this->_sf->seedlimit     = "";
+		$this->_sf->uptotal       = 0;
+		$this->_sf->downtotal     = 0;
 		// write
 		return $this->_sf->write();
 	}
@@ -647,9 +645,9 @@ class WrapperWget
 	function _statRunning($percent_done, $time_left, $down_speed, $downtotal) {
 		// set some values
 		$this->_sf->percent_done = $percent_done;
-		$this->_sf->time_left = $time_left;
-		$this->_sf->down_speed = $down_speed;
-		$this->_sf->downtotal = $downtotal;
+		$this->_sf->time_left    = $time_left;
+		$this->_sf->down_speed   = $down_speed;
+		$this->_sf->downtotal    = $downtotal;
 		// write
 		return $this->_sf->write();
 	}
@@ -665,24 +663,24 @@ class WrapperWget
 		$this->_sf->running = 0;
 		if ($this->_done) {
 			$this->_sf->percent_done = 100;
-			$this->_sf->time_left = "Download Succeeded!";
+			$this->_sf->time_left    = "Download Succeeded!";
 		} else {
 			$this->_sf->percent_done = ($this->_size > 0)
 				? (((intval((100.0 * $this->_downtotal / $this->_size))) + 100) * (-1))
 				: "-100";
-			$this->_sf->time_left = "Transfer Stopped";
+			$this->_sf->time_left    = "Transfer Stopped";
 		}
 		if ($error)
 			$this->_sf->time_left = "Error";
-		$this->_sf->down_speed = "";
-		$this->_sf->up_speed = "";
+		$this->_sf->down_speed    = "";
+		$this->_sf->up_speed      = "";
 		$this->_sf->transferowner = $this->_owner;
-		$this->_sf->seeds = "";
-		$this->_sf->peers = "";
-		$this->_sf->sharing = "";
-		$this->_sf->seedlimit = "";
-		$this->_sf->uptotal = 0;
-		$this->_sf->downtotal = $this->_downtotal;
+		$this->_sf->seeds         = "";
+		$this->_sf->peers         = "";
+		$this->_sf->sharing       = "";
+		$this->_sf->seedlimit     = "";
+		$this->_sf->uptotal       = 0;
+		$this->_sf->downtotal     = $this->_downtotal;
 		// write
 		return $this->_sf->write();
 	}
@@ -727,23 +725,23 @@ class WrapperWget
 		}
 	}
 
-    /**
-     * output message
-     *
-     * @param $message
-     */
+	/**
+	 * output message
+	 *
+	 * @param $message
+	 */
 	function _outputMessage($message) {
 		@fwrite(STDOUT, @date("[Y/m/d - H:i:s]")." ".$message);
-    }
+	}
 
-    /**
-     * output error
-     *
-     * @param $message
-     */
+	/**
+	 * output error
+	 *
+	 * @param $message
+	 */
 	function _outputError($message) {
 		@fwrite(STDERR, @date("[Y/m/d - H:i:s]")." ".$message);
-    }
+	}
 
 }
 

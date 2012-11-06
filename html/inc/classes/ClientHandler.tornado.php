@@ -4,27 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * class ClientHandler for tornado-client
  */
-class ClientHandlerTornado extends ClientHandler
-{
+class ClientHandlerTornado extends ClientHandler {
 
 	// public fields
 
@@ -40,11 +38,11 @@ class ClientHandlerTornado extends ClientHandler
 	 */
 	function ClientHandlerTornado() {
 		global $cfg;
-		$this->type = "torrent";
-		$this->client = "tornado";
-		$this->binSystem = "python";
-		$this->binSocket = "python";
-		$this->binClient = "tftornado.py";
+		$this->type       = "torrent";
+		$this->client     = "tornado";
+		$this->binSystem  = "python";
+		$this->binSocket  = "python";
+		$this->binClient  = "tftornado.py";
 		$this->tornadoBin = $cfg["docroot"]."bin/clients/tornado/tftornado.py";
 	}
 
@@ -72,13 +70,13 @@ class ClientHandlerTornado extends ClientHandler
 		// check to see if the path to the python script is valid
 		if (!is_file($this->tornadoBin)) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "path for tftornado.py is not valid";
+			$msg         = "path for tftornado.py is not valid";
 			AuditAction($cfg["constants"]["error"], $msg);
 			$this->logMessage($msg."\n", true);
 			array_push($this->messages, $msg);
 			array_push($this->messages, "tornadoBin : ".$this->tornadoBin);
 			// write error to stat
-			$sf = new StatFile($this->transfer, $this->owner);
+			$sf            = new StatFile($this->transfer, $this->owner);
 			$sf->time_left = 'Error';
 			$sf->write();
 			// return
@@ -92,7 +90,7 @@ class ClientHandlerTornado extends ClientHandler
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
 				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				$this->logMessage($msg."\n", true);
 			}
 			// return
@@ -104,7 +102,7 @@ class ClientHandlerTornado extends ClientHandler
 			setFilePriority($transfer);
 
 		// pythonCmd
-		$pyCmd = $cfg["pythonCmd"] . " -OO";
+		$pyCmd = $cfg["pythonCmd"]." -OO";
 
 		// build the command-string
 		$skipHashCheck = "";
@@ -121,7 +119,7 @@ class ClientHandlerTornado extends ClientHandler
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferTornado
 
-		$this->command  = "";
+		$this->command = "";
 
 //	       Proxy Hack
 //	       $this->command .= 'export http_proxy=127.0.0.1:8118; HTTP_PROXY=$http_proxy;';
@@ -132,7 +130,7 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .tfb_shellencode($this->tornadoBin);
+		$this->command .= $pyCmd." ".tfb_shellencode($this->tornadoBin);
 		$this->command .= " ".tfb_shellencode($this->runtime);
 		$this->command .= " ".tfb_shellencode($this->sharekill_param);
 		$this->command .= " ".tfb_shellencode($this->owner);

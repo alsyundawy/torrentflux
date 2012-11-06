@@ -4,32 +4,30 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // states
-define('FLUAZU_STATE_NULL', 0);                                          // null
-define('FLUAZU_STATE_RUNNING', 1);                                   //  running
-define('FLUAZU_STATE_ERROR', -1);                                       // error
+define('FLUAZU_STATE_NULL', 0); // null
+define('FLUAZU_STATE_RUNNING', 1); //  running
+define('FLUAZU_STATE_ERROR', -1); // error
 
 /**
  * class FluAzu for integration of fluazu
  */
-class FluAzu
-{
+class FluAzu {
 	// public fields
 
 	// state
@@ -40,7 +38,7 @@ class FluAzu
 
 	//Windows OS else Posix
 	var $isWinOS = false;
-	
+
 	// private fields
 
 	// pid
@@ -58,7 +56,7 @@ class FluAzu
 
 	// commands-array
 	var $_commands = array();
-	
+
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -309,19 +307,19 @@ class FluAzu
 	 */
 	function FluAzu() {
 		global $cfg;
-		
-		if (strncmp(PHP_OS,'WIN',3) === 0)
+
+		if (strncmp(PHP_OS, 'WIN', 3) === 0)
 			$this->isWinOS = true;
-		
+
 		// paths
-		$this->_pathDataDir = $cfg["path"] . '.fluazu/';
-		$this->_pathPidFile = $this->_pathDataDir . 'fluazu.pid';
-		$this->_pathCommandFile = $this->_pathDataDir . 'fluazu.cmd';
-		$this->_pathLogFile = $this->_pathDataDir . 'fluazu.log';
-		$this->_pathStatFile = $this->_pathDataDir . 'fluazu.stat';
-		$this->_pathTransfers = $this->_pathDataDir . 'cur/';
-		$this->_pathTransfersRun = $this->_pathDataDir . 'run/';
-		$this->_pathTransfersDel = $this->_pathDataDir . 'del/';
+		$this->_pathDataDir      = $cfg["path"].'.fluazu/';
+		$this->_pathPidFile      = $this->_pathDataDir.'fluazu.pid';
+		$this->_pathCommandFile  = $this->_pathDataDir.'fluazu.cmd';
+		$this->_pathLogFile      = $this->_pathDataDir.'fluazu.log';
+		$this->_pathStatFile     = $this->_pathDataDir.'fluazu.stat';
+		$this->_pathTransfers    = $this->_pathDataDir.'cur/';
+		$this->_pathTransfersRun = $this->_pathDataDir.'run/';
+		$this->_pathTransfersDel = $this->_pathDataDir.'del/';
 		// check path
 		if (!checkDirectory($this->_pathDataDir)) {
 			@error("fluazu-Main-Path does not exist and cannot be created or is not writable",
@@ -338,13 +336,13 @@ class FluAzu
 	// public methods
 	// =========================================================================
 
-	function win32_fork($app, $params='', $startDir='') {
-		$win32_idl="
+	function win32_fork($app, $params = '', $startDir = '') {
+		$win32_idl = "
 		[lib='shell32.dll'] int ShellExecuteA(int handle, char *operation, char *file, char *param, char *directory, int show);
 		";
-		$ffi = new ffi($win32_idl);
-		$show = 7; //0: hided, 1: normal, 2: mini, 3:maxi, 4:inactive, 7:mini inactive
-		$result = $ffi->ShellExecuteA(0, "open", tfb_shellencode($app), $params, tfb_shellencode($startDir), $show);
+		$ffi       = new ffi($win32_idl);
+		$show      = 7; //0: hided, 1: normal, 2: mini, 3:maxi, 4:inactive, 7:mini inactive
+		$result    = $ffi->ShellExecuteA(0, "open", tfb_shellencode($app), $params, tfb_shellencode($startDir), $show);
 		return $result;
 	}
 
@@ -355,9 +353,9 @@ class FluAzu
 	 */
 	function instance_start() {
 		global $cfg;
-		
+
 		@unlink($this->_pathLogFile);
-		
+
 		if ($this->state == FLUAZU_STATE_RUNNING) {
 			AuditAction($cfg["constants"]["error"], "fluazu already started");
 			return false;
@@ -367,15 +365,15 @@ class FluAzu
 			if (@file_exists($cfg['pythonCmd']) !== true) {
 				$msg = "cannot start fluazu, specified python-binary does not exist: ".$cfg['pythonCmd'];
 				AuditAction($cfg["constants"]["error"], $msg);
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				// Set the state
 				$this->state = FLUAZU_STATE_ERROR;
 				// return
 				return false;
 			}
-			
+
 			// start it
-			$startParams  = " ".tfb_shellencode($cfg["path"]);
+			$startParams = " ".tfb_shellencode($cfg["path"]);
 			$startParams .= " ".tfb_shellencode($cfg["fluazu_host"]);
 			$startParams .= " ".tfb_shellencode($cfg["fluazu_port"]);
 			$startParams .= " ".tfb_shellencode($cfg["fluazu_secure"]);
@@ -385,25 +383,25 @@ class FluAzu
 			$startParams .= ($cfg["fluazu_pw"] == "")
 				? ' ""'
 				: " ".tfb_shellencode($cfg["fluazu_pw"]);
-			
+
 			if ($this->isWinOS) {
 				//$startCommand  = "cd ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/")."; SET HOME=".tfb_shellencode($cfg["path"]).";";
-				
-				$pythonParams  = " -OO";
+
+				$pythonParams = " -OO";
 				$pythonParams .= " ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/fluazu.py");
 				$pythonParams .= $startParams;
-				
-				$startCommand  = tfb_shellencode($cfg["pythonCmd"]).$pythonParams;
-				
+
+				$startCommand = tfb_shellencode($cfg["pythonCmd"]).$pythonParams;
+
 				$pythonParams .= " >".tfb_shellencode($this->_pathLogFile);
 				$pythonParams .= " 2>&1";
-				
+
 				//$startDir = tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/");
 				$startDir = tfb_shellencode($cfg["path"]);
 				//$startCommand = 'start /SEPARATE /MIN /D'.$startDir.' "fluazu" '.$startCommand;
 
 			} else {
-				$startCommand  = "cd ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/")."; HOME=".tfb_shellencode($cfg["path"]).";";
+				$startCommand = "cd ".tfb_shellencode($cfg["docroot"]."bin/clients/fluazu/")."; HOME=".tfb_shellencode($cfg["path"]).";";
 				$startCommand .= " export HOME;";
 				$startCommand .= " nohup";
 				$startCommand .= " ".$cfg["pythonCmd"]." -OO";
@@ -413,33 +411,32 @@ class FluAzu
 				$startCommand .= " 2>> ".tfb_shellencode($this->_pathLogFile);
 				$startCommand .= " &";
 			}
-			
+
 			// log the command
 			$this->instance_logMessage("executing command : \n".$startCommand."\n", true);
-			
+
 			// exec
 			if (!$this->isWinOS) {
 				$result = exec($startCommand);
-				$loop = true;
+				$loop   = true;
 			} else {
 				if (class_exists('ffi')) {
 					$result = $this->win32_fork($cfg["pythonCmd"], $pythonParams, $startDir);
-					if ($result == -1) $result=0;
+					if ($result == -1) $result = 0;
 					$loop = ($result != 0);
-				}
-				else
+				} else
 					$this->instance_logMessage("Fluazu cant be started from PHP on Windows\n", true);
 			}
-			
+
 			// check if fluazu could be started
 			$maxLoops = 125;
-			$loopCtr = 0;
-			$started = false;
+			$loopCtr  = 0;
+			$started  = false;
 			while ($loop) {
 				@clearstatcache();
-				if (file_exists($this->_pathStatFile)) { 
+				if (file_exists($this->_pathStatFile)) {
 					$started = true;
-					$loop = false;
+					$loop    = false;
 				} else {
 					$loopCtr++;
 					if ($loopCtr > $maxLoops)
@@ -475,8 +472,8 @@ class FluAzu
 			$this->instance_addCommand('q', true);
 			// check if fluazu still running
 			$maxLoops = 125;
-			$loopCtr = 0;
-			for (;;) {
+			$loopCtr  = 0;
+			for (; ;) {
 				@clearstatcache();
 				if ($this->instance_isRunning()) {
 					$loopCtr++;
@@ -495,7 +492,7 @@ class FluAzu
 		} else {
 			$msg = "errors stopping fluazu as was not running.";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// Set the state
 			$this->state = FLUAZU_STATE_ERROR;
 			return 0;
@@ -563,7 +560,7 @@ class FluAzu
 	 */
 	function instance_sendCommands() {
 		if (($this->state == FLUAZU_STATE_RUNNING) && (!empty($this->_commands))) {
-			$content = implode("\n", $this->_commands)."\n";
+			$content         = implode("\n", $this->_commands)."\n";
 			$this->_commands = array();
 			return $this->_writeCommandFile($content);
 		} else {
@@ -584,12 +581,12 @@ class FluAzu
 			if ($cfg['debuglevel'] > 0)
 				AuditAction($cfg["constants"]["debug"], "fluazu deleting transfer ".$transfer);
 			// write file
-			$file = $this->_pathTransfersDel.$transfer;
+			$file   = $this->_pathTransfersDel.$transfer;
 			$handle = false;
 			$handle = @fopen($file, "w");
 			if (!$handle) {
 				$msg = "cannot open file ".$file." for writing.";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 				return false;
 			}
@@ -597,7 +594,7 @@ class FluAzu
 			@fclose($handle);
 			if ($result === false) {
 				$msg = "cannot write content to file ".$file.".";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 				return false;
 			}
@@ -605,14 +602,14 @@ class FluAzu
 			$this->instance_addCommand('r', true);
 			// wait until file is gone (fluazu has processed the request)
 			$maxLoops = 75;
-			$loopCtr = 0;
-			for (;;) {
+			$loopCtr  = 0;
+			for (; ;) {
 				@clearstatcache();
 				if ($this->instance_transferExists($transfer)) {
 					$loopCtr++;
 					if ($loopCtr > $maxLoops) {
 						$msg = "fluazu did not delete transfer ".$transfer." after ".($maxLoops / 5)." seconds, giving up";
-						array_push($this->messages , $msg);
+						array_push($this->messages, $msg);
 						AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 						return false;
 					} else {
@@ -628,7 +625,7 @@ class FluAzu
 		} else {
 			$msg = "fluazu not running, cannot delete transfer ".$transfer;
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// Set the state
 			$this->state = FLUAZU_STATE_ERROR;
 			return false;
@@ -651,12 +648,12 @@ class FluAzu
 	 * @return array
 	 */
 	function instance_getStatus() {
-		$keys = $this->instance_getStatusKeys();
+		$keys   = $this->instance_getStatusKeys();
 		$retVal = array();
 		if ($this->state == FLUAZU_STATE_RUNNING) {
-			$data = @file_get_contents($this->_pathStatFile);
+			$data    = @file_get_contents($this->_pathStatFile);
 			$content = @explode("\n", $data);
-			$count = count($keys);
+			$count   = count($keys);
 			if (is_array($content) && (count($content) >= $count)) {
 				$content = array_map('trim', $content);
 				for ($i = 0; $i < $count; $i++)
@@ -752,7 +749,7 @@ class FluAzu
 		return true;
 	}
 
-	 /**
+	/**
 	 * write the command-file
 	 *
 	 * @param $content
@@ -764,7 +761,7 @@ class FluAzu
 		$handle = @fopen($this->_pathCommandFile, "w");
 		if (!$handle) {
 			$msg = "cannot open command-file ".$this->_pathCommandFile." for writing.";
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
 			return false;
 		}
@@ -772,7 +769,7 @@ class FluAzu
 		@fclose($handle);
 		if ($result === false) {
 			$msg = "cannot write content to command-file ".$this->_pathCommandFile.".";
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
 			return false;
 		}

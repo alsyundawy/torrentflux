@@ -4,30 +4,29 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // states
-define('RSSD_STATE_NULL', 0);                                            // null
-define('RSSD_STATE_OK', 1);                                                // ok
-define('RSSD_STATE_ERROR', -1);                                         // error
+define('RSSD_STATE_NULL', 0); // null
+define('RSSD_STATE_OK', 1); // ok
+define('RSSD_STATE_ERROR', -1); // error
 
 // modes
-define('RSSD_MODE_CLI', 1);                                               // cli
-define('RSSD_MODE_WEB', 2);                                               // web
+define('RSSD_MODE_CLI', 1); // cli
+define('RSSD_MODE_WEB', 2); // web
 
 // require SimpleHTTP
 require_once("inc/classes/SimpleHTTP.php");
@@ -38,8 +37,7 @@ require_once("inc/classes/lastRSS.php");
 /**
  * Rssd
  */
-class Rssd
-{
+class Rssd {
 	// public fields
 	var $name = "Rssd";
 
@@ -161,7 +159,7 @@ class Rssd
 			? RSSD_MODE_WEB
 			: RSSD_MODE_CLI;
 		// init lastRSS-instance
-		$this->_lastRSS = new lastRSS();
+		$this->_lastRSS            = new lastRSS();
 		$this->_lastRSS->cache_dir = '';
 		$this->_lastRSS->stripHTML = false;
 	}
@@ -185,30 +183,30 @@ class Rssd
 		// validate
 		if (!checkDirectory($sdir, 0777)) {
 			$this->state = RSSD_STATE_ERROR;
-			$msg = "Save-Dir ".$sdir." not valid.";
-			array_push($this->messages , $msg);
+			$msg         = "Save-Dir ".$sdir." not valid.";
+			array_push($this->messages, $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
 		if (!is_file($filter)) {
 			$this->state = RSSD_STATE_ERROR;
-			$msg = "Filter-File ".$filter." not valid.";
-			array_push($this->messages , $msg);
+			$msg         = "Filter-File ".$filter." not valid.";
+			array_push($this->messages, $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
 		// output
 		$this->_outputMessage("Processing feed ".$url." ...\n");
 		// set vars
-		$this->_dirSave = checkDirPathString($sdir);
+		$this->_dirSave     = checkDirPathString($sdir);
 		$this->_fileFilters = $filter;
 		$this->_fileHistory = $hist;
-		$this->_urlRSS = $url;
-		$this->_filters = array();
-		$this->_history = array();
-		$this->_historyNew = array();
-		$this->_data = array();
-		$this->_filesSaved = array();
+		$this->_urlRSS      = $url;
+		$this->_filters     = array();
+		$this->_history     = array();
+		$this->_historyNew  = array();
+		$this->_data        = array();
+		$this->_filesSaved  = array();
 		// load _filters
 		if (!$this->_loadFilters())
 			return false;
@@ -248,7 +246,7 @@ class Rssd
 	 * @return boolean
 	 */
 	function _loadFilters() {
-		$fifi = file($this->_fileFilters);
+		$fifi           = file($this->_fileFilters);
 		$this->_filters = array_map('rtrim', $fifi);
 		return true;
 	}
@@ -260,7 +258,7 @@ class Rssd
 	 */
 	function _loadHistory() {
 		if (is_file($this->_fileHistory)) {
-			$fihi = file($this->_fileHistory);
+			$fihi           = file($this->_fileHistory);
 			$this->_history = array_map('rtrim', $fihi);
 		} else {
 			$this->_history = array();
@@ -279,7 +277,7 @@ class Rssd
 			return (empty($this->_data) === false);
 		} else {
 			$msg = "Problem getting feed-data from ".$this->_urlRSS;
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
@@ -304,7 +302,7 @@ class Rssd
 				if (!isset($this->_data["items"][$i]["title"]) || empty($this->_data["items"][$i]["title"]))
 					continue;
 				// local vars
-				$link = html_entity_decode($this->_data["items"][$i]["link"]);
+				$link  = html_entity_decode($this->_data["items"][$i]["link"]);
 				$title = $this->_data["items"][$i]["title"];
 				// check if we have a match
 				if (preg_match('/'.$filter.'/i', $title)) {
@@ -339,8 +337,8 @@ class Rssd
 			$handle = @fopen($this->_fileHistory, "a");
 			if (!$handle) {
 				$this->state = RSSD_STATE_ERROR;
-				$msg = "cannot open history ".$this->_fileHistory." for writing.";
-				array_push($this->messages , $msg);
+				$msg         = "cannot open history ".$this->_fileHistory." for writing.";
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
@@ -349,8 +347,8 @@ class Rssd
 			@fclose($handle);
 			if ($result === false) {
 				$this->state = RSSD_STATE_ERROR;
-				$msg = "cannot write content to history ".$this->_fileHistory.".";
-				array_push($this->messages , $msg);
+				$msg         = "cannot write content to history ".$this->_fileHistory.".";
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
@@ -385,7 +383,7 @@ class Rssd
 						if (($filename === false) || (transferExists($filename))) {
 							// Error
 							$msg = "failed to get a valid transfer-filename for ".$url;
-							array_push($this->messages , $msg);
+							array_push($this->messages, $msg);
 							AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 							$this->_outputError($msg."\n");
 							return false;
@@ -399,7 +397,7 @@ class Rssd
 			if (@is_file($file)) {
 				// Error
 				$msg = "the file ".$file." already exists in ".$this->_dirSave;
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
@@ -409,7 +407,7 @@ class Rssd
 			$handle = @fopen($file, "w");
 			if (!$handle) {
 				$msg = "cannot open ".$file." for writing.";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
@@ -418,17 +416,17 @@ class Rssd
 			@fclose($handle);
 			if ($result === false) {
 				$msg = "cannot write content to ".$file.".";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}
 			// add to file-array
 			array_push($this->_filesSaved, array(
-				'url' => $url,
-				'title' => $title,
-				'filename' => $filename,
-				'file' => $file
+					'url'      => $url,
+					'title'    => $title,
+					'filename' => $filename,
+					'file'     => $file
 				)
 			);
 			// output
@@ -449,7 +447,7 @@ class Rssd
 	 * @param $message
 	 */
 	function _outputMessage($message) {
-                global $cfg;
+		global $cfg;
 		// only in cli-mode
 		if ($this->_mode == RSSD_MODE_CLI && (!isset($cfg['fluxd_loglevel']) || $cfg['fluxd_loglevel'] > 0))
 			printMessage($this->name, $message);

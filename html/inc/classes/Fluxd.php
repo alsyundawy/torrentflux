@@ -4,26 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // states
-define('FLUXD_STATE_NULL', 0);                                           // null
-define('FLUXD_STATE_RUNNING', 1);                                    //  running
-define('FLUXD_STATE_ERROR', -1);                                        // error
+define('FLUXD_STATE_NULL', 0); // null
+define('FLUXD_STATE_RUNNING', 1); //  running
+define('FLUXD_STATE_ERROR', -1); // error
 
 // delims of modList
 define('FLUXD_DELIM_MOD', ';');
@@ -32,8 +31,7 @@ define('FLUXD_DELIM_STATE', ':');
 /**
  * class Fluxd for integration of fluxd
  */
-class Fluxd
-{
+class Fluxd {
 	// public fields
 
 	// state
@@ -292,11 +290,11 @@ class Fluxd
 	function Fluxd() {
 		global $cfg;
 		// paths
-		$this->_pathDataDir = $cfg["path"] . '.fluxd/';
-		$this->_pathPidFile = $this->_pathDataDir . 'fluxd.pid';
-		$this->_pathSocket = $this->_pathDataDir . 'fluxd.sock';
-		$this->_pathLogFile = $this->_pathDataDir . 'fluxd.log';
-		$this->_pathLogFileError = $this->_pathDataDir . 'fluxd-error.log';
+		$this->_pathDataDir      = $cfg["path"].'.fluxd/';
+		$this->_pathPidFile      = $this->_pathDataDir.'fluxd.pid';
+		$this->_pathSocket       = $this->_pathDataDir.'fluxd.sock';
+		$this->_pathLogFile      = $this->_pathDataDir.'fluxd.log';
+		$this->_pathLogFileError = $this->_pathDataDir.'fluxd-error.log';
 		// check if fluxd running
 		if ($this->_isRunning())
 			$this->state = FLUXD_STATE_RUNNING;
@@ -322,7 +320,7 @@ class Fluxd
 			if (@file_exists($cfg['perlCmd']) !== true) {
 				$msg = "cannot start fluxd, specified Perl-binary does not exist: ".$cfg['perlCmd'];
 				AuditAction($cfg["constants"]["error"], $msg);
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				// Set the state
 				$this->state = FLUXD_STATE_ERROR;
 				// return
@@ -332,7 +330,7 @@ class Fluxd
 			if (@file_exists($cfg['bin_php']) !== true) {
 				$msg = "cannot start fluxd, specified php-cli-binary does not exist: ".$cfg['bin_php'];
 				AuditAction($cfg["constants"]["error"], $msg);
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				// Set the state
 				$this->state = FLUXD_STATE_ERROR;
 				// return
@@ -343,7 +341,7 @@ class Fluxd
 			if (!in_array("sockets", $loadedExtensions)) {
 				$msg = "refusing to start fluxd, PHP does not have support for sockets";
 				AuditAction($cfg["constants"]["error"], $msg);
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				// Set the state
 				$this->state = FLUXD_STATE_ERROR;
 				// return
@@ -352,7 +350,7 @@ class Fluxd
 			// start it
 			$startCommand = "cd ".tfb_shellencode($cfg["docroot"])."; HOME=".tfb_shellencode($cfg["path"]).";";
 			$startCommand .= " export HOME;";
-			$startCommand .= " nohup " . $cfg["perlCmd"];
+			$startCommand .= " nohup ".$cfg["perlCmd"];
 			$startCommand .= " -I ".tfb_shellencode($cfg["docroot"]."bin/fluxd");
 			$startCommand .= " -I ".tfb_shellencode($cfg["docroot"]."bin/lib");
 			$startCommand .= " ".tfb_shellencode($cfg["docroot"]."bin/fluxd/fluxd.pl");
@@ -368,15 +366,15 @@ class Fluxd
 			// exec
 			$result = exec($startCommand);
 			// check if fluxd could be started
-			$loop = true;
+			$loop     = true;
 			$maxLoops = 125;
-			$loopCtr = 0;
-			$started = false;
+			$loopCtr  = 0;
+			$started  = false;
 			while ($loop) {
 				@clearstatcache();
 				if ($this->_isRunning()) {
 					$started = true;
-					$loop = false;
+					$loop    = false;
 				} else {
 					$loopCtr++;
 					if ($loopCtr > $maxLoops)
@@ -396,7 +394,7 @@ class Fluxd
 				AuditAction($cfg["constants"]["error"], "errors starting fluxd");
 				// add startcommand to messages for debug
 				// TODO : set better message
-				array_push($this->messages , $startCommand);
+				array_push($this->messages, $startCommand);
 				// Set the state
 				$this->state = FLUXD_STATE_ERROR;
 				// return
@@ -415,8 +413,8 @@ class Fluxd
 			$this->instance_sendCommand('die', 0);
 			// check if fluxd still running
 			$maxLoops = 125;
-			$loopCtr = 0;
-			for (;;) {
+			$loopCtr  = 0;
+			for (; ;) {
 				@clearstatcache();
 				if ($this->_isRunning()) {
 					$loopCtr++;
@@ -435,7 +433,7 @@ class Fluxd
 		} else {
 			$msg = "errors stopping fluxd as was not running.";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// Set the state
 			$this->state = FLUXD_STATE_ERROR;
 			return 0;
@@ -546,8 +544,8 @@ class Fluxd
 	 * @return Null
 	 */
 	function instance_setConfig($key, $value) {
-	   if ($this->state == FLUXD_STATE_RUNNING)
-		   $this->instance_sendCommand('set '.$key.' '.$value, 0);
+		if ($this->state == FLUXD_STATE_RUNNING)
+			$this->instance_sendCommand('set '.$key.' '.$value, 0);
 	}
 
 	/**
@@ -600,7 +598,7 @@ class Fluxd
 			// create socket
 			$socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
 			if ($socket === false) {
-				array_push($this->messages , "socket_create() failed: reason: ".@socket_strerror(@socket_last_error()));
+				array_push($this->messages, "socket_create() failed: reason: ".@socket_strerror(@socket_last_error()));
 				$this->state = FLUXD_STATE_ERROR;
 				return null;
 			}
@@ -609,7 +607,7 @@ class Fluxd
 			// connect
 			$result = @socket_connect($socket, $this->_pathSocket);
 			if ($result === false) {
-				array_push($this->messages , "socket_connect() failed: reason: ".@socket_strerror(@socket_last_error()));
+				array_push($this->messages, "socket_connect() failed: reason: ".@socket_strerror(@socket_last_error()));
 				$this->state = FLUXD_STATE_ERROR;
 				@socket_close($socket);
 				return null;
@@ -617,7 +615,7 @@ class Fluxd
 			// write command
 			$result = @socket_write($socket, $command."\n");
 			if ($result === false) {
-				array_push($this->messages , "socket_write() failed: reason: ".@socket_strerror(@socket_last_error()));
+				array_push($this->messages, "socket_write() failed: reason: ".@socket_strerror(@socket_last_error()));
 				$this->state = FLUXD_STATE_ERROR;
 				@socket_close($socket);
 				return null;
@@ -629,7 +627,7 @@ class Fluxd
 					// read data
 					$data = @socket_read($socket, 4096, PHP_BINARY_READ);
 					if ($data === false) {
-						array_push($this->messages , "socket_read() failed: reason: ".@socket_strerror(@socket_last_error()));
+						array_push($this->messages, "socket_read() failed: reason: ".@socket_strerror(@socket_last_error()));
 						// Don't set global error in case of failure,
 						// other calls might still succeed (e.g. in
 						// case error was just a read timeout).

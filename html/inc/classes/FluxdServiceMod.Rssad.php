@@ -4,25 +4,23 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // class for the Fluxd-Service-module Rssad
-class FluxdRssad extends FluxdServiceMod
-{
+class FluxdRssad extends FluxdServiceMod {
 
 	// private fields
 
@@ -39,52 +37,52 @@ class FluxdRssad extends FluxdServiceMod
 	// public static methods
 	// =========================================================================
 
-    /**
-     * accessor for singleton
-     *
-     * @return FluxdRssad
-     */
-    function getInstance() {
+	/**
+	 * accessor for singleton
+	 *
+	 * @return FluxdRssad
+	 */
+	function getInstance() {
 		global $instanceFluxdRssad;
 		// initialize if needed
 		if (!isset($instanceFluxdRssad))
 			FluxdRssad::initialize();
 		return $instanceFluxdRssad;
-    }
+	}
 
-    /**
-     * initialize FluxdRssad.
-     */
-    function initialize() {
-    	global $instanceFluxdRssad;
-    	// create instance
-    	if (!isset($instanceFluxdRssad))
-    		$instanceFluxdRssad = new FluxdRssad();
-    }
+	/**
+	 * initialize FluxdRssad.
+	 */
+	function initialize() {
+		global $instanceFluxdRssad;
+		// create instance
+		if (!isset($instanceFluxdRssad))
+			$instanceFluxdRssad = new FluxdRssad();
+	}
 
 	/**
 	 * getState
 	 *
 	 * @return state
 	 */
-    function getState() {
+	function getState() {
 		global $instanceFluxdRssad;
 		return (isset($instanceFluxdRssad))
 			? $instanceFluxdRssad->state
 			: FLUXDMOD_STATE_NULL;
-    }
+	}
 
-    /**
-     * getMessages
-     *
-     * @return array
-     */
-    function getMessages() {
+	/**
+	 * getMessages
+	 *
+	 * @return array
+	 */
+	function getMessages() {
 		global $instanceFluxdRssad;
 		return (isset($instanceFluxdRssad))
 			? $instanceFluxdRssad->messages
 			: array();
-    }
+	}
 
 	/**
 	 * getModState
@@ -98,17 +96,17 @@ class FluxdRssad extends FluxdServiceMod
 			: FLUXDMOD_STATE_NULL;
 	}
 
-    /**
-     * isRunning
-     *
-     * @return boolean
-     */
-    function isRunning() {
+	/**
+	 * isRunning
+	 *
+	 * @return boolean
+	 */
+	function isRunning() {
 		global $instanceFluxdRssad;
 		return (isset($instanceFluxdRssad))
 			? ($instanceFluxdRssad->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
-    }
+	}
 
 	/**
 	 * check if filter exists
@@ -241,21 +239,21 @@ class FluxdRssad extends FluxdServiceMod
 	// ctor
 	// =========================================================================
 
-    /**
-     * ctor
-     */
-    function FluxdRssad() {
-    	global $cfg;
-    	// name
-        $this->moduleName = "Rssad";
+	/**
+	 * ctor
+	 */
+	function FluxdRssad() {
+		global $cfg;
+		// name
+		$this->moduleName = "Rssad";
 		// initialize
-        $this->instance_initialize();
-         // check our base-dir
-        if (!(checkDirectory($cfg["path"].$this->_basedir))) {
-        	array_push($this->messages , "Rssad base-dir ".$this->_basedir." error.");
-            $this->state = FLUXDMOD_STATE_ERROR;
-        }
-    }
+		$this->instance_initialize();
+		// check our base-dir
+		if (!(checkDirectory($cfg["path"].$this->_basedir))) {
+			array_push($this->messages, "Rssad base-dir ".$this->_basedir." error.");
+			$this->state = FLUXDMOD_STATE_ERROR;
+		}
+	}
 
 	// =========================================================================
 	// public methods
@@ -342,14 +340,14 @@ class FluxdRssad extends FluxdServiceMod
 		$handle = @fopen($file, "r");
 		if (!$handle) {
 			$msg = "cannot open ".$file.".";
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], "Rssad Filter Load-Error : ".$msg);
 			return false;
 		}
 		$data = "";
 		while (!@feof($handle))
 			$data .= @fgets($handle, 8192);
-		@fclose ($handle);
+		@fclose($handle);
 		return $data;
 	}
 
@@ -363,20 +361,20 @@ class FluxdRssad extends FluxdServiceMod
 	function instance_filterSave($filtername, $content) {
 		global $cfg;
 		// filter-file
-		$file = $cfg["path"].$this->_basedir.$filtername.".dat";
+		$file   = $cfg["path"].$this->_basedir.$filtername.".dat";
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {
 			$msg = "cannot open ".$file." for writing.";
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
-        $result = @fwrite($handle, str_replace("\r\n", "\n", $content));
+		$result = @fwrite($handle, str_replace("\r\n", "\n", $content));
 		@fclose($handle);
 		if ($result === false) {
 			$msg = "cannot write content to ".$file.".";
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
@@ -434,18 +432,18 @@ class FluxdRssad extends FluxdServiceMod
 		// savedir#url#filtername
 		if ((isset($cfg["fluxd_Rssad_jobs"])) && (strlen($cfg["fluxd_Rssad_jobs"]) > 0)) {
 			$joblist = array();
-			$jobs = explode($this->_delimJobs, trim($cfg["fluxd_Rssad_jobs"]));
+			$jobs    = explode($this->_delimJobs, trim($cfg["fluxd_Rssad_jobs"]));
 			if (count($jobs) > 0) {
 				foreach ($jobs as $job) {
-					$jobAry = explode($this->_delimJob, trim($job));
-					$savedir = trim(array_shift($jobAry));
-					$url = trim(array_shift($jobAry));
+					$jobAry     = explode($this->_delimJob, trim($job));
+					$savedir    = trim(array_shift($jobAry));
+					$url        = trim(array_shift($jobAry));
 					$filtername = trim(array_shift($jobAry));
 					if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
 						array_push($joblist, array(
-							'savedir' => $savedir,
-							'url' => $url,
-							'filtername' => $filtername
+								'savedir'    => $savedir,
+								'url'        => $url,
+								'filtername' => $filtername
 							)
 						);
 					}
@@ -486,7 +484,7 @@ class FluxdRssad extends FluxdServiceMod
 	function instance_jobAdd($savedir, $url, $filtername, $checkdir = false) {
 		if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
 			$jobsString = "";
-			$jobs = $this->instance_jobsGetList();
+			$jobs       = $this->instance_jobsGetList();
 			if (($jobs !== false) && (count($jobs) > 0)) {
 				foreach ($jobs as $job) {
 					$jobsString .= $job["savedir"].$this->_delimJob;
@@ -502,7 +500,7 @@ class FluxdRssad extends FluxdServiceMod
 			if ($checkdir) {
 				$check = checkDirectory($savedir);
 				if (!$check)
-					array_push($this->messages , "dir ".$savedir." does not exist and could not be created.");
+					array_push($this->messages, "dir ".$savedir." does not exist and could not be created.");
 			} else {
 				$check = true;
 			}
@@ -527,21 +525,21 @@ class FluxdRssad extends FluxdServiceMod
 			$jobs = $this->instance_jobsGetList();
 			if (($jobs !== false) && (count($jobs) > 0)) {
 				$result = array();
-				$idx = 1;
+				$idx    = 1;
 				while (count($jobs) > 0) {
 					$job = array_shift($jobs);
 					if ($idx != $jobNumber)
 						array_push($result, $job);
 					else
 						array_push($result, array(
-							'savedir' => trim(checkDirPathString($savedir)),
-							'url' => $url,
-							'filtername' => $filtername
+								'savedir'    => trim(checkDirPathString($savedir)),
+								'url'        => $url,
+								'filtername' => $filtername
 							)
 						);
 					$idx++;
 				}
-				$jobsString = "";
+				$jobsString  = "";
 				$resultCount = count($result);
 				for ($i = 0; $i < $resultCount; $i++) {
 					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
@@ -554,7 +552,7 @@ class FluxdRssad extends FluxdServiceMod
 				if ($checkdir) {
 					$check = checkDirectory($savedir);
 					if (!$check)
-						array_push($this->messages , "dir ".$savedir." does not exist and could not be created.");
+						array_push($this->messages, "dir ".$savedir." does not exist and could not be created.");
 				} else {
 					$check = true;
 				}
@@ -578,14 +576,14 @@ class FluxdRssad extends FluxdServiceMod
 			$jobs = $this->instance_jobsGetList();
 			if (($jobs !== false) && (count($jobs) > 0)) {
 				$result = array();
-				$idx = 1;
+				$idx    = 1;
 				while (count($jobs) > 0) {
 					$job = array_shift($jobs);
 					if ($idx != $jobNumber)
 						array_push($result, $job);
 					$idx++;
 				}
-				$jobsString = "";
+				$jobsString  = "";
 				$resultCount = count($result);
 				for ($i = 0; $i < $resultCount; $i++) {
 					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
@@ -603,7 +601,7 @@ class FluxdRssad extends FluxdServiceMod
 		}
 	}
 
-    // =========================================================================
+	// =========================================================================
 	// private methods
 	// =========================================================================
 
@@ -616,23 +614,23 @@ class FluxdRssad extends FluxdServiceMod
 	function _jobsUpdate($content) {
 		global $cfg;
 		$jobsSane = array();
-		$jobs = explode($this->_delimJobs, trim($content));
+		$jobs     = explode($this->_delimJobs, trim($content));
 		if (($jobs !== false) && (count($jobs) > 0)) {
 			while (count($jobs) > 0) {
-				$job = array_shift($jobs);
-				$jobAry = explode($this->_delimJob, trim($job));
-				$savedir = trim(array_shift($jobAry));
-				$url = trim(array_shift($jobAry));
+				$job        = array_shift($jobs);
+				$jobAry     = explode($this->_delimJob, trim($job));
+				$savedir    = trim(array_shift($jobAry));
+				$url        = trim(array_shift($jobAry));
 				$filtername = trim(array_shift($jobAry));
 				if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0))
 					array_push($jobsSane, array(
-						'savedir' => trim(checkDirPathString($savedir)),
-						'url' => $url,
-						'filtername' => $filtername
+							'savedir'    => trim(checkDirPathString($savedir)),
+							'url'        => $url,
+							'filtername' => $filtername
 						)
 					);
 			}
-			$jobsString = "";
+			$jobsString  = "";
 			$resultCount = count($jobsSane);
 			for ($i = 0; $i < $resultCount; $i++) {
 				$jobsString .= $jobsSane[$i]["savedir"].$this->_delimJob;

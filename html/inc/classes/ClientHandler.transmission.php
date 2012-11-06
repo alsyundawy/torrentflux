@@ -4,27 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * class ClientHandler for (patched) transmission-cli
  */
-class ClientHandlerTransmission extends ClientHandler
-{
+class ClientHandlerTransmission extends ClientHandler {
 
 	// =========================================================================
 	// ctor
@@ -34,8 +32,8 @@ class ClientHandlerTransmission extends ClientHandler
 	 * ctor
 	 */
 	function ClientHandlerTransmission() {
-		$this->type = "torrent";
-		$this->client = "transmission";
+		$this->type      = "torrent";
+		$this->client    = "transmission";
 		$this->binSystem = "transmission-cli";
 		$this->binSocket = "transmission-cli";
 		$this->binClient = "transmission-cli";
@@ -65,13 +63,13 @@ class ClientHandlerTransmission extends ClientHandler
 		// check to see if the path to the transmission-bin is valid
 		if (!is_executable($cfg["btclient_transmission_bin"])) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "transmission-cli cannot be executed";
+			$msg         = "transmission-cli cannot be executed";
 			AuditAction($cfg["constants"]["error"], $msg);
 			$this->logMessage($msg."\n", true);
 			array_push($this->messages, $msg);
 			array_push($this->messages, "btclient_transmission_bin : ".$cfg["btclient_transmission_bin"]);
 			// write error to stat
-			$sf = new StatFile($this->transfer, $this->owner);
+			$sf            = new StatFile($this->transfer, $this->owner);
 			$sf->time_left = 'Error';
 			$sf->write();
 			// return
@@ -89,7 +87,7 @@ class ClientHandlerTransmission extends ClientHandler
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
 				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				$this->logMessage($msg."\n", true);
 			}
 			// return
@@ -105,9 +103,9 @@ class ClientHandlerTransmission extends ClientHandler
 		// build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferTransmission
-		$this->command  = "cd ".tfb_shellencode($this->savepath).";";
+		$this->command = "cd ".tfb_shellencode($this->savepath).";";
 		$this->command .= " HOME=".tfb_shellencode($cfg["path"])."; export HOME;".
-		$this->command .= $this->umask;
+			$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= tfb_shellencode($cfg["btclient_transmission_bin"]);
@@ -131,14 +129,14 @@ class ClientHandlerTransmission extends ClientHandler
 
 	function stop($transfer, $kill = false, $transferPid = 0) {
 		global $cfg;
-		
+
 		$this->_setVarsForTransfer($transfer);
-		
+
 		AuditAction($cfg["constants"]["debug"], $this->client."-stop : $transfer.");
-		
+
 		// stop the client
-		$this->_stop($kill,$transferPid);
-		
+		$this->_stop($kill, $transferPid);
+
 		// flag the transfer as stopped (in db)
 		stopTransferSettings($transfer);
 
@@ -170,20 +168,20 @@ class ClientHandlerTransmission extends ClientHandler
 	function getTransferCurrent($transfer) {
 		global $db, $transfers;
 		$retVal = array();
-		
+
 		// set vars
 		$this->_setVarsForTransfer($transfer);
-		
+
 		// transfer from stat-file
-		$sf = new StatFile($transfer);
-		$retVal["uptotal"] = $sf->uptotal;
+		$sf                  = new StatFile($transfer);
+		$retVal["uptotal"]   = $sf->uptotal;
 		$retVal["downtotal"] = $sf->downtotal;
 		// transfer from db
 		$torrentId = getTransferHash($transfer);
-		$uid = (int) GetUID($this->owner);
-		$sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid IN(0, $uid) ORDER BY uid DESC";
-		$result = $db->Execute($sql);
-		$row = $result->FetchRow();
+		$uid       = (int)GetUID($this->owner);
+		$sql       = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid IN(0, $uid) ORDER BY uid DESC";
+		$result    = $db->Execute($sql);
+		$row       = $result->FetchRow();
 		if (!empty($row)) {
 			$retVal["uptotal"] -= $row["uptotal"];
 			$retVal["downtotal"] -= $row["downtotal"];
@@ -202,8 +200,8 @@ class ClientHandlerTransmission extends ClientHandler
 	 */
 	function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
 		global $transfers;
-		$retVal = array();
-		$retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+		$retVal              = array();
+		$retVal["uptotal"]   = (isset($transfers['totals'][$tid]['uptotal']))
 			? $sfu - $transfers['totals'][$tid]['uptotal']
 			: $sfu;
 		$retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
