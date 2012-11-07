@@ -214,8 +214,8 @@ if ($cfg["transmission_rpc_enable"]) {
 			'format_af_size'  => formatBytesTokBMBGBTB($aTorrent['totalSize']),
 			'uptotal'         => $aTorrent['uploadedEver'],
 			'downtotal'       => $aTorrent['downloadedEver'],
-			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateDownload']).'/s' : '&nbsp;'),
-			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateUpload']).'/s' : '&nbsp;'),
+			'down_speed'	  => ($aTorrent['rateDownload']),
+			'up_speed'	  	  => ($aTorrent['rateUpload']),
 			'error'           => (int)$aTorrent['error'],
 			'errorString'     => $aTorrent['errorString']
 		);
@@ -245,17 +245,6 @@ if ($cfg["transmission_rpc_enable"]) {
 			$tArray['percentage'] = $tArray['percentage']."%";
 
 			$arUserTorrent[$hash] = $tArray;
-		}
-		//var_dump($aTorrent);
-
-		// Adds the transfer rate for this torrent to the total transfer rate
-		if ($transferRunning) {
-			if (!isset($cfg["total_upload"]))
-				$cfg["total_upload"] = 0;
-			if (!isset($cfg["total_download"]))
-				$cfg["total_download"] = 0;
-			$cfg["total_upload"]   = $cfg["total_upload"] + GetSpeedValue($aTorrent["rateUpload"] / 1000);
-			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($aTorrent["rateDownload"] / 1000);
 		}
 	}
 }
@@ -455,11 +444,19 @@ foreach ($arList as $mtimecrc => $transfer) {
 							$sf->peers        = $trStat['peers'];
 							$sf->sharing      = floatval($trStat['sharing']);
 							$sf->percent_done = floatval($trStat['percentage']);
-							$sf->down_speed   = $trStat['down_speed'];
+
 							$sf->graph_width  = (int)$trStat['graph_width'];
 							$sf->graph_width  = (int)$trStat['graph_width'];
-							$sf->up_speed     = $trStat['up_speed'];
 							$sf->time_left    = $trStat['estTime'];
+
+							// we need to store the current speed value in kB for the total speed stats
+							$sf->up_speed     = $trStat['up_speed'] / 1000;
+							$sf->down_speed   = $trStat['down_speed'] / 1000;
+
+							// and separately in B for formatting in template. not sure why this is needed though
+							$sf->up_speed_B	  = $trStat['up_speed'];
+							$sf->down_speed_B = $trStat['down_speed'];
+
 							$sf->isRPC        = TRUE;
 
 							// re-add $transferowner, because we'll stop relying on statfiles, though they apply an empty string,
@@ -662,6 +659,10 @@ foreach ($arList as $mtimecrc => $transfer) {
 	if ($settings[6] != 0) {
 		if ($transferRunning == 1)
 			$down_speed = (trim($sf->down_speed) != "") ? $sf->down_speed : '&nbsp;';
+
+			// specialcase transmissionrpc transfers
+			if ($sf->isRPC && $cfg["transmission_rpc_enable"] && $cfg['transmission_rpc_enable'] == 1)
+				$down_speed = formatBytesFromDecPrefixTokBMBGBTB($sf->down_speed_B).'/s';
 		else
 			$down_speed = "&nbsp;";
 	} else {
@@ -672,6 +673,9 @@ foreach ($arList as $mtimecrc => $transfer) {
 	if ($settings[7] != 0) {
 		if ($transferRunning == 1)
 			$up_speed = (trim($sf->up_speed) != "") ? $sf->up_speed : '&nbsp;';
+			// specialcase transmissionrpc transfers
+			if ($sf->isRPC && $cfg["transmission_rpc_enable"] && $cfg['transmission_rpc_enable'] == 1)
+				$up_speed = formatBytesFromDecPrefixTokBMBGBTB($sf->up_speed_B).'/s';
 		else
 			$up_speed = "&nbsp;";
 	} else {

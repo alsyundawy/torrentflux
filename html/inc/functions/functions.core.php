@@ -579,9 +579,12 @@ function formatBytesTokBMBGBTB($inBytes) {
 	if ($inBytes > 1099511627776)
 		return round($inBytes / 1099511627776, 2)." TiB";
 	elseif ($inBytes > 1073741824)
-		return round($inBytes / 1073741824, 2)." GiB"; elseif ($inBytes > 1048576)
-		return round($inBytes / 1048576, 2)." MiB"; elseif ($inBytes > 1024)
-		return round($inBytes / 1024, 1)." kiB"; else
+		return round($inBytes / 1073741824, 2)." GiB";
+	elseif ($inBytes > 1048576)
+		return round($inBytes / 1048576, 2)." MiB";
+	elseif ($inBytes > 1024)
+		return round($inBytes / 1024, 1)." kiB";
+	else
 		return $inBytes." B";
 }
 
@@ -596,9 +599,12 @@ function formatBytesFromDecPrefixTokBMBGBTB($inBytes) {
 	if ($inBytes > 1000000000000)
 		return round($inBytes / 1000000000000, 2)." TB";
 	elseif ($inBytes > 1000000000)
-		return round($inBytes / 1000000000, 2)." GB"; elseif ($inBytes > 1000000)
-		return round($inBytes / 1000000, 2)." MB"; elseif ($inBytes > 1000)
-		return round($inBytes / 1000, 1)." kB"; else
+		return round($inBytes / 1000000000, 2)." GB";
+	elseif ($inBytes > 1000000)
+		return round($inBytes / 1000000, 2)." MB";
+	elseif ($inBytes > 1000)
+		return round($inBytes / 1000, 1)." kB";
+	else
 		return $inBytes." B";
 }
 
