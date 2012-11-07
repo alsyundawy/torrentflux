@@ -136,7 +136,7 @@ if ($cfg["transmission_rpc_enable"]) {
 				$transferRunning = false;
 				if ($aTorrent['percentDone'] >= 1) {
 					$status = "Done";
-					$eta    = '';
+					$eta    = 'Download Succeeded';
 				} else {
 					$status = "Stopped";
 					$eta    = 'Torrent Stopped'; # this might be fixed in a cleaner way
@@ -190,7 +190,7 @@ if ($cfg["transmission_rpc_enable"]) {
 
 		$tArray = array(
 			'is_owner'        => ($cfg['isAdmin']) ? true : IsOwner($cfg["user"], $transferowner),
-			'transferowner'   => getOwner($hash),
+			'transferowner'   => $transferowner,
 			'transferRunning' => (int)$transferRunning,
 			'rpc_status'      => $aTorrent['status'],
 			'clientType'      => 'torrent',
@@ -214,8 +214,8 @@ if ($cfg["transmission_rpc_enable"]) {
 			'format_af_size'  => formatBytesTokBMBGBTB($aTorrent['totalSize']),
 			'uptotal'         => $aTorrent['uploadedEver'],
 			'downtotal'       => $aTorrent['downloadedEver'],
-			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateDownload'] * 1.024).'/s' : '&nbsp;'),
-			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateUpload'] * 1.024).'/s' : '&nbsp;'),
+			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateDownload']).'/s' : '&nbsp;'),
+			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateUpload']).'/s' : '&nbsp;'),
 			'error'           => (int)$aTorrent['error'],
 			'errorString'     => $aTorrent['errorString']
 		);
@@ -386,6 +386,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 							$sf->sharing    = $rpcStat['sharing'];
 
 							$sf->rpc_status = $rpcStat['status'];
+							$sf->isRPC      = TRUE;
 
 							if (!$sf->seedlimit)
 								$sf->seedlimit = $settingsAry["sharekill"];
@@ -459,6 +460,11 @@ foreach ($arList as $mtimecrc => $transfer) {
 							$sf->graph_width  = (int)$trStat['graph_width'];
 							$sf->up_speed     = $trStat['up_speed'];
 							$sf->time_left    = $trStat['estTime'];
+							$sf->isRPC        = TRUE;
+
+							// re-add $transferowner, because we'll stop relying on statfiles, though they apply an empty string,
+							// because it doesnt get updated after starting the torrent
+							$sf->transferowner = $transferowner;
 
 							$sf->sharing   = $trStat['sharing'];
 							$sf->seedlimit = $trStat['seedlimit'];
@@ -543,6 +549,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 	$estTime   = "&nbsp;";
 	$statusStr = "&nbsp;";
 	$show_run  = true;
+
 	switch ($transferRunning) {
 		case 2: // new
 			$statusStr  = "New";
@@ -592,12 +599,11 @@ foreach ($arList as $mtimecrc => $transfer) {
 				} else $statusStr = "Leeching";
 			}
 			// pid-file
-			//fixme: error handling for transmissionrpc
+			// is_no_file seems like a relic from spawned transfers and not compatible with rpc
 			$is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
-			if ($sf->error !== 0) $is_no_file = 1;
+			if ($sf->error !== 0 || ($sf->isRPC && $transferRunning === 0)) $is_no_file = 1;
 			break;
 	}
-
 	// ==================================================================== name
 
 	// =================================================================== owner
@@ -730,7 +736,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 	// create temp-array
 	$tArray = array(
 		'is_owner'               => ($cfg['isAdmin']) ? true : $owner,
-		'is_rpc'                 => (int)$bUseRPC,
+		'is_rpc'                 => (int)$sf->isRPC,
 		'transferRunning'        => $transferRunning,
 		'url_entry'              => urlencode($transfer),
 		'hd_image'               => $hd->image,

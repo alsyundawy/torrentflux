@@ -44,6 +44,7 @@ class StatFile {
 	var $size = "";
 	var $error = 0;
 	var $errorString = "";
+	var $isRPC = FALSE;
 
 	// =========================================================================
 	// public static methods
