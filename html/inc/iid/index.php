@@ -214,8 +214,8 @@ if ($cfg["transmission_rpc_enable"]) {
 			'format_af_size'  => formatBytesTokBMBGBTB($aTorrent['totalSize']),
 			'uptotal'         => $aTorrent['uploadedEver'],
 			'downtotal'       => $aTorrent['downloadedEver'],
-			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateDownload']).'/s' : '&nbsp;'),
-			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateUpload']).'/s' : '&nbsp;'),
+			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateDownload'] * 1.024).'/s' : '&nbsp;'),
+			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesTokBMBGBTB($aTorrent['rateUpload'] * 1.024).'/s' : '&nbsp;'),
 			'error'           => (int)$aTorrent['error'],
 			'errorString'     => $aTorrent['errorString']
 		);

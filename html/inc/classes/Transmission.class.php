@@ -80,6 +80,11 @@ class Transmission {
 	 */
 	public $version;
 
+	/**
+	 * Unit info (KiB/KB/1000/1024)
+	 */
+	public $units;
+
 	/*
 	 * Constructor
 	*/
@@ -107,6 +112,12 @@ class Transmission {
 			$cfg['transmissionrpc_version'] = $req['arguments']['version'];
 		}
 		$this->version = $cfg['transmissionrpc_version'];
+
+		if (!isset($cfg['transmissionrpc_units'])) {
+			$req                            = $this->session_get(array("units"));
+			$cfg['transmissionrpc_units'] = $req['arguments']['units'];
+		}
+		$this->units = $cfg['transmissionrpc_units'];
 
 		global $Transmission_inst;
 		$Transmission_inst = & $this;
