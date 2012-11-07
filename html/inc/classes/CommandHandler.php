@@ -4,27 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * CommandHandler
  */
-class CommandHandler
-{
+class CommandHandler {
 	// private fields
 
 	// messages-array
@@ -44,7 +42,7 @@ class CommandHandler
 	 * @param $command
 	 * @return boolean
 	 */
-   function add($transfer, $command) {
+	function add($transfer, $command) {
 		global $instanceCommandHandler;
 		// initialize if needed
 		if (!isset($instanceCommandHandler))
@@ -184,12 +182,12 @@ class CommandHandler
 	 */
 	function _writeCommandFile($transfer) {
 		global $cfg;
-		$file = $cfg["transfer_file_path"].$transfer.'.cmd';
+		$file   = $cfg["transfer_file_path"].$transfer.'.cmd';
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {
 			$msg = "cannot open command-file ".$file." for writing.";
-			array_push($this->_messages , $msg);
+			array_push($this->_messages, $msg);
 			AuditAction($cfg["constants"]["error"], "CommandHandler _writeCommandFile-Error : ".$msg);
 			return false;
 		}
@@ -197,7 +195,7 @@ class CommandHandler
 		@fclose($handle);
 		if ($result === false) {
 			$msg = "cannot write content to command-file ".$file.".";
-			array_push($this->_messages , $msg);
+			array_push($this->_messages, $msg);
 			AuditAction($cfg["constants"]["error"], "CommandHandler _writeCommandFile-Error : ".$msg);
 			return false;
 		}

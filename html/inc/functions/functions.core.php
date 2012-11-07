@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /*
  * auth
@@ -73,7 +72,7 @@ require_once("inc/functions/functions.core.user.php");
  */
 function IsForceReadMsg() {
 	global $cfg, $db;
-	return (int) ($db->GetOne("SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1") >= 1);
+	return (int)($db->GetOne("SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1") >= 1);
 }
 
 /**
@@ -83,7 +82,7 @@ function IsForceReadMsg() {
  */
 function numUnreadMsg() {
 	global $cfg, $db;
-	return (int) ($db->GetOne("SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND IsNew=1") >= 1);
+	return (int)($db->GetOne("SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND IsNew=1") >= 1);
 }
 
 /**
@@ -157,7 +156,7 @@ function getServerStats() {
 	array_push($serverStats, $speedDown);
 	// speedUp
 	$speedUp = "n/a";
-	$speedUp =  @number_format($cfg["total_upload"], 2);
+	$speedUp = @number_format($cfg["total_upload"], 2);
 	array_push($serverStats, $speedUp);
 	// speedTotal
 	$speedTotal = "n/a";
@@ -184,14 +183,14 @@ function getServerStats() {
 	array_push($serverStats, $queued);
 	// speedDownPercent
 	$percentDownload = 0;
-	$maxDownload = $cfg["bandwidth_down"] / 8;
+	$maxDownload     = $cfg["bandwidth_down"] / 8;
 	$percentDownload = ($maxDownload > 0)
 		? @number_format(($cfg["total_download"] / $maxDownload) * 100, 0)
 		: 0;
 	array_push($serverStats, $percentDownload);
 	// speedUpPercent
 	$percentUpload = 0;
-	$maxUpload = $cfg["bandwidth_up"] / 8;
+	$maxUpload     = $cfg["bandwidth_up"] / 8;
 	$percentUpload = ($maxUpload > 0)
 		? @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0)
 		: 0;
@@ -225,21 +224,21 @@ function printError($mod, $msg) {
 }
 
 /**
- * store messages in jGrowl array 
+ * store messages in jGrowl array
  *
  * @param $mod
  * @param $msg
  */
-function addGrowlMessage($mod, $msg, $theme="redround") {
+function addGrowlMessage($mod, $msg, $theme = "redround") {
 	global $cfg;
 	if (isset($cfg['growl'])) {
 		//no double quotes
 		$growl_msg = array(
-			'title'=> str_replace("\"","", $mod),
-			'msg'=> str_replace("\"","", $msg),
+			'title'  => str_replace("\"", "", $mod),
+			'msg'    => str_replace("\"", "", $msg),
 			'sticky' => false,
 			'life'   => '5000',
-			'theme'   => $theme,
+			'theme'  => $theme,
 		);
 		if ($mod == 'Audit') {
 			$growl_msg['theme'] = 'audit';
@@ -255,16 +254,16 @@ function addGrowlMessage($mod, $msg, $theme="redround") {
  */
 function getGrowlMessages() {
 	global $cfg;
-	$jGrowls="";
-	foreach($cfg['growl'] as $msg) {
-		if ($msg['msg']!='H') // !!?!
-		$msg['msg'] = rtrim($msg['msg']);
+	$jGrowls = "";
+	foreach ($cfg['growl'] as $msg) {
+		if ($msg['msg'] != 'H') // !!?!
+			$msg['msg'] = rtrim($msg['msg']);
 		$jGrowls .= "jQuery.jGrowl('".addslashes($msg['title'].'<br/><br/>'.$msg['msg'])."',".
-		"{".
-		" sticky:".($msg['sticky'] ? 'true':'false').",".
-		" life:".intval($msg['life']).",".
-		" theme: '".$msg['theme']."'".
-		"}); ";
+			"{".
+			" sticky:".($msg['sticky'] ? 'true' : 'false').",".
+			" life:".intval($msg['life']).",".
+			" theme: '".$msg['theme']."'".
+			"}); ";
 	}
 	return $jGrowls;
 }
@@ -284,21 +283,21 @@ function clearGrowlMessages() {
  * @param $file
  */
 function AuditAction($action, $file = "") {
-    global $cfg, $db;
-    // add entry to the log
-    $db->Execute("INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
-    	." VALUES ("
-    	. $db->qstr($cfg["user"]).","
-    	. $db->qstr($file).","
-    	. $db->qstr(($action != "") ? $action : "unset").","
-    	. $db->qstr($cfg['ip']).","
-    	. $db->qstr($cfg['ip_resolved']).","
-    	. $db->qstr($cfg['user_agent']).","
-    	. $db->qstr(time())
-    	.")"
-    );
-    if ($action != 'HIT')
-    	addGrowlMessage('Audit',"$action $file");
+	global $cfg, $db;
+	// add entry to the log
+	$db->Execute("INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
+			." VALUES ("
+			.$db->qstr($cfg["user"]).","
+			.$db->qstr($file).","
+			.$db->qstr(($action != "") ? $action : "unset").","
+			.$db->qstr($cfg['ip']).","
+			.$db->qstr($cfg['ip_resolved']).","
+			.$db->qstr($cfg['user_agent']).","
+			.$db->qstr(time())
+			.")"
+	);
+	if ($action != 'HIT')
+		addGrowlMessage('Audit', "$action $file");
 }
 
 /**
@@ -313,7 +312,8 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 	global $cfg, $argv;
 	// web/cli/tfbf
 	if ((empty($argv[0])) &&
-		(!("tfbf" == @substr($cfg['user_agent'], 0, 4)))) { // web
+		(!("tfbf" == @substr($cfg['user_agent'], 0, 4)))
+	) { // web
 		// theme
 		$theme = CheckandSetUserTheme();
 		// template
@@ -336,15 +336,15 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 		$_tmpl->pparse();
 		// get out here
 		exit();
- 	} else { // cli/tfbf
-    	// message
-    	$exitMsg = "Error: ".$msg."\n";
-    	// messages
-    	if (!empty($msgs))
-    		$exitMsg .= implode("\n", $msgs)."\n";
-    	// get out here
-    	exit($exitMsg);
-    }
+	} else { // cli/tfbf
+		// message
+		$exitMsg = "Error: ".$msg."\n";
+		// messages
+		if (!empty($msgs))
+			$exitMsg .= implode("\n", $msgs)."\n";
+		// get out here
+		exit($exitMsg);
+	}
 }
 
 /**
@@ -354,7 +354,7 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
  * @return string with dirPath
  */
 function checkDirPathString($dirPath) {
-	if (((strlen($dirPath) > 0)) && (substr($dirPath, -1 ) != "/"))
+	if (((strlen($dirPath) > 0)) && (substr($dirPath, -1) != "/"))
 		$dirPath .= "/";
 	return $dirPath;
 }
@@ -385,14 +385,14 @@ function checkDirectory($dir, $mode = 0755, $depth = 0) {
  * @return boolean
  */
 function isFile($file) {
-    $rtnValue = False;
-    if (@is_file($file)) {
-        $rtnValue = True;
-    } else {
-        if ($file == @trim(shell_exec("ls 2>/dev/null ".tfb_shellencode($file))))
-            $rtnValue = True;
-    }
-    return $rtnValue;
+	$rtnValue = False;
+	if (@is_file($file)) {
+		$rtnValue = True;
+	} else {
+		if ($file == @trim(shell_exec("ls 2>/dev/null ".tfb_shellencode($file))))
+			$rtnValue = True;
+	}
+	return $rtnValue;
 }
 
 /**
@@ -414,10 +414,10 @@ function file_size($file) {
  * @param $file
  */
 function avddelete($file) {
-	@chmod($file,0777);
+	@chmod($file, 0777);
 	if (@is_dir($file)) {
 		$handle = @opendir($file);
-		while($filename = readdir($handle)) {
+		while ($filename = readdir($handle)) {
 			if ($filename != "." && $filename != "..")
 				avddelete($file."/".$filename);
 		}
@@ -474,7 +474,7 @@ function convertArrayToByte($dataArray) {
 	foreach ($dataArray as $key => $value)
 		$dataArray[$key] = ($value) ? 1 : 0;
 	$binString = strrev(implode('', $dataArray));
-	$bitByte = bindec($binString);
+	$bitByte   = bindec($binString);
 	return $bitByte;
 }
 
@@ -487,7 +487,7 @@ function convertArrayToByte($dataArray) {
 function convertByteToArray($dataByte) {
 	if (($dataByte > 255) || ($dataByte < 0)) return false;
 	$binString = strrev(str_pad(decbin($dataByte), 8, "0", STR_PAD_LEFT));
-	$bitArray = explode(":", chunk_split($binString, 1, ":"));
+	$bitArray  = explode(":", chunk_split($binString, 1, ":"));
 	return $bitArray;
 }
 
@@ -501,7 +501,7 @@ function convertArrayToInteger($dataArray) {
 	if (count($dataArray) > 31) return false;
 	foreach ($dataArray as $key => $value)
 		$dataArray[$key] = ($value) ? 1 : 0;
-	$binString = strrev(implode('', $dataArray));
+	$binString  = strrev(implode('', $dataArray));
 	$bitInteger = bindec($binString);
 	return $bitInteger;
 }
@@ -515,7 +515,7 @@ function convertArrayToInteger($dataArray) {
 function convertIntegerToArray($dataInt) {
 	if (($dataInt > 2147483647) || ($dataInt < 0)) return false;
 	$binString = strrev(str_pad(decbin($dataInt), 31, "0", STR_PAD_LEFT));
-	$bitArray = explode(":", chunk_split($binString, 1, ":"));
+	$bitArray  = explode(":", chunk_split($binString, 1, ":"));
 	return $bitArray;
 }
 
@@ -527,13 +527,14 @@ function convertIntegerToArray($dataInt) {
  */
 function convertTime($seconds) {
 	// sanity-check
-	if ($seconds < -1) $seconds=0-$seconds;
+	if ($seconds < -1) $seconds = 0 - $seconds;
 	// one week is enough
 	if ($seconds >= 604800) return '-';
 	// format time-delta
-	$periods = array (/* 31556926, 2629743, 604800,*/ 86400, 3600, 60, 1);
+	$periods = array( /* 31556926, 2629743, 604800,*/
+		86400, 3600, 60, 1);
 	$seconds = floatval($seconds);
-	$values = array();
+	$values  = array();
 	$leading = true;
 	foreach ($periods as $period) {
 		$count = floor($seconds / $period);
@@ -558,15 +559,30 @@ function convertTimeText($seconds) {
 	$hour_fmt = convertTime($seconds);
 	if ($hour_fmt == '-')
 		return '-';
-	$parts = explode(':',$hour_fmt);
+	$parts = explode(':', $hour_fmt);
 	if (count($parts) >= 4)
 		return $parts[0]."d.";
 	elseif (count($parts) == 3)
-		return $parts[0]."h.";
-	elseif (count($parts) == 2)
-		return $parts[0]."m.";
-	else
+		return $parts[0]."h."; elseif (count($parts) == 2)
+		return $parts[0]."m."; else
 		return $parts[0]."s.";
+}
+
+/**
+ * Returns a string in format of TiB, GiB, MiB, or KiB depending on the size
+ *
+ * @param $inBytes
+ * @return string
+ */
+function formatBytesTokBMBGBTB($inBytes) {
+	if (!is_numeric($inBytes)) return "";
+	if ($inBytes > 1099511627776)
+		return round($inBytes / 1099511627776, 2)." TiB";
+	elseif ($inBytes > 1073741824)
+		return round($inBytes / 1073741824, 2)." GiB"; elseif ($inBytes > 1048576)
+		return round($inBytes / 1048576, 2)." MiB"; elseif ($inBytes > 1024)
+		return round($inBytes / 1024, 1)." kiB"; else
+		return $inBytes." B";
 }
 
 /**
@@ -575,18 +591,15 @@ function convertTimeText($seconds) {
  * @param $inBytes
  * @return string
  */
-function formatBytesTokBMBGBTB($inBytes) {
-	if(!is_numeric($inBytes)) return "";
-	if ($inBytes > 1099511627776)
-		return round($inBytes / 1099511627776, 2) . " TB";
-	elseif ($inBytes > 1073741824)
-		return round($inBytes / 1073741824, 2) . " GB";
-	elseif ($inBytes > 1048576)
-		return round($inBytes / 1048576, 1) . " MB";
-	elseif ($inBytes > 1024)
-		return round($inBytes / 1024, 1) . " kB";
-	else
-		return $inBytes . " B";
+function formatBytesFromDecPrefixTokBMBGBTB($inBytes) {
+	if (!is_numeric($inBytes)) return "";
+	if ($inBytes > 1000000000000)
+		return round($inBytes / 1000000000000, 2)." TB";
+	elseif ($inBytes > 1000000000)
+		return round($inBytes / 1000000000, 2)." GB"; elseif ($inBytes > 1000000)
+		return round($inBytes / 1000000, 2)." MB"; elseif ($inBytes > 1000)
+		return round($inBytes / 1000, 1)." kB"; else
+		return $inBytes." B";
 }
 
 /**
@@ -597,11 +610,10 @@ function formatBytesTokBMBGBTB($inBytes) {
  */
 function formatFreeSpace($freeSpace) {
 	if ($freeSpace > 1048576)
-		return number_format($freeSpace / 1048576, 2)." TB";
+		return number_format($freeSpace / 1048576, 2)." TiB";
 	elseif ($freeSpace > 1024)
-		return number_format($freeSpace / 1024, 2)." GB";
-	else
-		return number_format($freeSpace, 2)." MB";
+		return number_format($freeSpace / 1024, 2)." GiB"; else
+		return number_format($freeSpace, 2)." MiB";
 }
 
 /**

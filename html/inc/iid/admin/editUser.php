@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -35,45 +34,45 @@ $user_id = tfb_getRequestVar('user_id');
 tmplInitializeInstance($cfg["theme"], "page.admin.editUser.tmpl");
 
 // set vars
-$editUserImage = "themes/".$cfg['theme']."/images/user.gif";
-$selected_n = "selected";
-$selected_a = "";
-$hide_checked = "";
+$editUserImage  = "themes/".$cfg['theme']."/images/user.gif";
+$selected_n     = "selected";
+$selected_a     = "";
+$hide_checked   = "";
 $total_activity = GetActivityCount();
-$sql= "SELECT user_id, email_address, hits, last_visit, time_created, user_level, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($user_id);
+$sql            = "SELECT user_id, email_address, hits, last_visit, time_created, user_level, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($user_id);
 list($user_id, $email_address, $hits, $last_visit, $time_created, $user_level, $hide_offline, $theme, $language_file) = $db->GetRow($sql);
 $user_type = $cfg['_NORMALUSER'];
 if ($user_level == 1) {
-	$user_type = $cfg['_ADMINISTRATOR'];
-	$selected_n = "";
-	$selected_a = "selected";
+	$user_type     = $cfg['_ADMINISTRATOR'];
+	$selected_n    = "";
+	$selected_a    = "selected";
 	$editUserImage = "themes/".$cfg['theme']."/images/admin_user.gif";
 }
 if ($user_level >= 2) {
-	$user_type = $cfg['_SUPERADMIN'];
+	$user_type     = $cfg['_SUPERADMIN'];
 	$editUserImage = "themes/".$cfg['theme']."/images/superadmin.gif";
 }
 if ($hide_offline == 1)
 	$hide_checked = "checked";
 $user_activity = GetActivityCount($user_id);
-$user_percent = ($user_activity != 0) ? number_format(($user_activity / $total_activity) * 100) : 0;
+$user_percent  = ($user_activity != 0) ? number_format(($user_activity / $total_activity) * 100) : 0;
 // to do FluxFTPD Settings
-$tmpl->setvar('ftpEnabled',false);
-$tmpl->setvar('Dir','');
-$tmpl->setvar('ftpUid','');
-$tmpl->setvar('ftpGid','');
-$tmpl->setvar('ftpUploadBand','');
-$tmpl->setvar('ftpDownloadBand','');
-$tmpl->setvar('ftpQuotaSize','');
-$tmpl->setvar('ftpQuotaFiles','');
+$tmpl->setvar('ftpEnabled', false);
+$tmpl->setvar('Dir', '');
+$tmpl->setvar('ftpUid', '');
+$tmpl->setvar('ftpGid', '');
+$tmpl->setvar('ftpUploadBand', '');
+$tmpl->setvar('ftpDownloadBand', '');
+$tmpl->setvar('ftpQuotaSize', '');
+$tmpl->setvar('ftpQuotaFiles', '');
 //
 $tmpl->setvar('editUserImage', $editUserImage);
 $tmpl->setvar('user_id', $user_id);
 $tmpl->setvar('email_address', $email_address);
 $tmpl->setvar('time_created', date($cfg['_DATETIMEFORMAT'], $time_created));
 $tmpl->setvar('last_visit', date($cfg['_DATETIMEFORMAT'], $last_visit));
-$tmpl->setvar('percent1', $user_percent*2);
-$tmpl->setvar('percent2', (200 - ($user_percent*2)));
+$tmpl->setvar('percent1', $user_percent * 2);
+$tmpl->setvar('percent2', (200 - ($user_percent * 2)));
 $tmpl->setvar('user_activity', $user_activity);
 $tmpl->setvar('user_percent', $user_percent);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);

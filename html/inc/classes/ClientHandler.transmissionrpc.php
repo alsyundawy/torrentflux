@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 require_once("inc/classes/Transmission.class.php");
 
@@ -28,8 +27,7 @@ require_once("inc/functions/functions.rpc.transmission.php");
 /**
  * class ClientHandler for future compatible transmission-daemon RPC interface...
  */
-class ClientHandlerTransmissionRPC extends ClientHandler
-{
+class ClientHandlerTransmissionRPC extends ClientHandler {
 
 	// =========================================================================
 	// constructor
@@ -38,7 +36,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	public function __construct() {
 		global $cfg;
 
-		$this->type = "torrent";
+		$this->type   = "torrent";
 		$this->client = "transmissionrpc";
 
 		$this->binSocket = "transmission-daemon"; //for ps grep
@@ -64,20 +62,20 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 
 		// set vars
 		$this->_setVarsForTransfer($transfer);
-		addGrowlMessage($this->client."-start",$transfer);
+		addGrowlMessage($this->client."-start", $transfer);
 
 		if (!Transmission::isRunning()) {
 			$msg = "Transmission RPC not reacheable, cannot start transfer ".$transfer;
 			$this->logMessage($this->client."-start : ".$msg."\n", true);
 			AuditAction($cfg["constants"]["error"], $msg);
 			$this->logMessage($msg."\n", true);
-			addGrowlMessage($this->client."-start",$msg);
-			
+			addGrowlMessage($this->client."-start", $msg);
+
 			// write error to stat
-			$sf = new StatFile($this->transfer, $this->owner);
+			$sf            = new StatFile($this->transfer, $this->owner);
 			$sf->time_left = 'Error: RPC down';
 			$sf->write();
-			
+
 			// return
 			return false;
 		}
@@ -97,13 +95,13 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		}
 		*/
 
-                //$owner = getOwner($transfer);
+		//$owner = getOwner($transfer);
 		if (!is_dir($cfg['path'].$this->owner)) {
-			mkdir($cfg['path'].$this->owner,0777);
+			mkdir($cfg['path'].$this->owner, 0777);
 		}
-		
+
 		$this->command = "";
-                // we don't want to change the transfer owner just because someone else started it
+		// we don't want to change the transfer owner just because someone else started it
 		/*if (getOwner($transfer) != $cfg['user']) {
 			//directory must be changed for different users ?
 			changeOwner($transfer,$cfg['user']);
@@ -119,7 +117,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		} else {
 			$this->command = "downloading to ".$this->savepath;
 		}*/
-                $this->command = "downloading to ".$this->savepath;
+		$this->command = "downloading to ".$this->savepath;
 
 		// no client needed
 		$this->state = CLIENTHANDLER_STATE_READY;
@@ -128,42 +126,42 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		$this->_start();
 
 		$hash = getTransferHash($transfer);
-                $uid = (int) GetUID($this->owner);
-		
+		$uid  = (int)GetUID($this->owner);
+
 		if (empty($hash) || !isTransmissionTransfer($hash)) {
-                        //fixme: will this still work without the above part?
-			$hash = addTransmissionTransfer( $cfg['uid'], $cfg['transfer_file_path'].$transfer, $cfg['path'].$cfg['user'] );
+			//fixme: will this still work without the above part?
+			$hash = addTransmissionTransfer($cfg['uid'], $cfg['transfer_file_path'].$transfer, $cfg['path'].$cfg['user']);
 			if (is_array($hash) && $hash["result"] == "duplicate torrent") {
 				$this->command = 'torrent-add skipped, already exists '.$transfer; //log purpose
-				$hash="";
-				$sql = "SELECT hash FROM tf_transfers WHERE transfer = ".$db->qstr($transfer);
-				$result = $db->Execute($sql);
-				$row = $result->FetchRow();
+				$hash          = "";
+				$sql           = "SELECT hash FROM tf_transfers WHERE transfer = ".$db->qstr($transfer);
+				$result        = $db->Execute($sql);
+				$row           = $result->FetchRow();
 				if (!empty($row)) {
-					$hash=$row['hash'];
+					$hash = $row['hash'];
 				}
 			} else {
 				$this->command .= "\n".'torrent-add '.$transfer.' '.$hash; //log purpose
 			}
 		} else {
-			$this->command .= "\n". 'torrent-start '.$transfer.' '.$hash; //log purpose
+			$this->command .= "\n".'torrent-start '.$transfer.' '.$hash; //log purpose
 		}
 		if (!empty($hash)) {
-			
+
 			if ($this->sharekill > 100) {
 				// bad sharekill, must be 2.5 for 250%
-				$this->sharekill = round((float) $this->sharekill / 100.0,2);
+				$this->sharekill = round((float)$this->sharekill / 100.0, 2);
 			}
 
 			$params = array(
-			'downloadLimit'  => intval($this->drate),
-			'downloadLimited'=> intval($this->drate > 0),
-			'uploadLimit'    => intval($this->rate),
-			'uploadLimited'  => intval($this->rate > 0),
-			'seedRatioLimit' => (float) $this->sharekill,
-			'seedRatioMode' => intval($this->sharekill > 0.1)
+				'downloadLimit'   => intval($this->drate),
+				'downloadLimited' => intval($this->drate > 0),
+				'uploadLimit'     => intval($this->rate),
+				'uploadLimited'   => intval($this->rate > 0),
+				'seedRatioLimit'  => (float)$this->sharekill,
+				'seedRatioMode'   => intval($this->sharekill > 0.1)
 			);
-			$res = (int) startTransmissionTransfer($hash, $enqueue, $params, $uid);
+			$res    = (int)startTransmissionTransfer($hash, $enqueue, $params, $uid);
 		}
 		if (!$res) {
 			$this->command .= "\n".$rpc->LastError;
@@ -193,7 +191,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 
 		// only if Transmission running
 		if (!Transmission::isRunning()) {
-			array_push($this->messages , "Transmission not running, cannot stop transfer ".$transfer);
+			array_push($this->messages, "Transmission not running, cannot stop transfer ".$transfer);
 			return false;
 		}
 
@@ -210,7 +208,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 
 		if (!stopTransmissionTransfer($hash)) {
 			$rpc = Transmission::getInstance();
-			$msg = $transfer." :". $rpc->lastError;
+			$msg = $transfer." :".$rpc->lastError;
 			$this->logMessage($msg."\n", true);
 			AuditAction($cfg["constants"]["debug"], $this->client."-stop : error $msg.");
 		}
@@ -239,7 +237,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 
 		// only if vuze running and transfer exists in fluazu
 		if (!Transmission::isRunning()) {
-			array_push($this->messages , "Transmission not running, cannot stop transfer ".$transfer);
+			array_push($this->messages, "Transmission not running, cannot stop transfer ".$transfer);
 			return false;
 		}
 
@@ -260,18 +258,18 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		global $db, $transfers;
 		// set vars
 		$this->_setVarsForTransfer($transfer);
-		
+
 		$retVal = array();
 		// transfer from stat-file
-		$sf = new StatFile($transfer);
-		$retVal["uptotal"] = $sf->uptotal;
+		$sf                  = new StatFile($transfer);
+		$retVal["uptotal"]   = $sf->uptotal;
 		$retVal["downtotal"] = $sf->downtotal;
 		// transfer from db
 		$torrentId = getTransferHash($transfer);
-		$uid = (int) GetUID($this->owner);
-		$sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid=$uid";
-		$result = $db->Execute($sql);
-		$row = $result->FetchRow();
+		$uid       = (int)GetUID($this->owner);
+		$sql       = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid=$uid";
+		$result    = $db->Execute($sql);
+		$row       = $result->FetchRow();
 		if (!empty($row)) {
 			// to check
 			//$retVal["uptotal"] -= $row["uptotal"];
@@ -291,8 +289,8 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	 */
 	function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
 		global $transfers;
-		$retVal = array();
-		$retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+		$retVal              = array();
+		$retVal["uptotal"]   = (isset($transfers['totals'][$tid]['uptotal']))
 			? abs($sfu - $transfers['totals'][$tid]['uptotal'])
 			: $sfu;
 		$retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
@@ -355,11 +353,11 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		$this->rate = intval($uprate);
 
 		$result = true;
-		
+
 		$msg = "$uprate autosend=".serialize($autosend);
 		if ($autosend) {
 			$rpc = Transmission::getInstance();
-			
+
 			$sess = $rpc->session_get(array("speed-limit-up"));
 			if ($sess["arguments"]["speed-limit-up"] < $this->rate) {
 				$msg = "session_set speed-limit-up ".$this->rate;
@@ -371,19 +369,19 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 				$hash = $transfer;
 			else
 				$hash = getTransferHash($transfer);
-				
+
 			$tid = getTransmissionTransferIdByHash($hash);
 			if ($tid > 0) {
 				//$byterate = 1024 * $this->rate;
-				$req = $rpc->set($tid, array('uploadLimit' => $this->rate, 'uploadLimited' => ($this->rate > 0)) );
+				$req = $rpc->set($tid, array('uploadLimit' => $this->rate, 'uploadLimited' => ($this->rate > 0)));
 				if (!isset($req['result']) || $req['result'] != 'success') {
-					$msg = $req['result'];
+					$msg    = $req['result'];
 					$result = false;
 				} else {
 					//Check if setting is applied
-					$req = $rpc->get($tid,array('uploadLimit'));
+					$req = $rpc->get($tid, array('uploadLimit'));
 					if (!isset($req['result']) || $req['result'] != 'success') {
-						$msg = $req['result'];
+						$msg    = $req['result'];
 						$result = false;
 					} elseif (!empty($req['arguments']['torrents'])) {
 						$torrent = array_pop($req['arguments']['torrents']);
@@ -394,7 +392,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 				}
 			} else
 				$msg = "bad tid $hash $transfer ".$req['result'];
-			
+
 			$this->logMessage("setRateUpload : ".$msg."\n", true);
 		}
 		AuditAction($cfg["constants"]["debug"], $this->client."-setRateUpload : $msg.");
@@ -422,9 +420,9 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			if ($sess["arguments"]["speed-limit-down"] < $this->drate) {
 				//in kB
 				$msg = "session_set speed-limit-down ".$this->drate;
-				$rpc->session_set(array("speed-limit-down" => $this->drate));// ??? doesnt works so... disable limit
+				$rpc->session_set(array("speed-limit-down" => $this->drate)); // ??? doesnt works so... disable limit
 				$rpc->session_set(array("speed-limit-down" => 0, "speed-limit-down-enabled" => 0));
-				
+
 				AuditAction($cfg["constants"]["debug"], $this->client."->setRateDownload : $msg.".$rpc->lastError);
 			}
 
@@ -432,19 +430,19 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 				$hash = $transfer;
 			else
 				$hash = getTransferHash($transfer);
-				
+
 			$tid = getTransmissionTransferIdByHash($hash);
 			if ($tid > 0) {
 				//$byterate = 1024 * $this->drate;
-				$req = $rpc->set($tid, array('downloadLimit' => $this->drate, 'downloadLimited' => ($this->drate > 0)) );
+				$req = $rpc->set($tid, array('downloadLimit' => $this->drate, 'downloadLimited' => ($this->drate > 0)));
 				if (!isset($req['result']) || $req['result'] != 'success') {
-					$msg = $req['result'];
+					$msg    = $req['result'];
 					$result = false;
 				} else {
 					//Check if setting is applied
-					$req = $rpc->get($tid,array('downloadLimit'));
+					$req = $rpc->get($tid, array('downloadLimit'));
 					if (!isset($req['result']) || $req['result'] != 'success') {
-						$msg = $req['result'];
+						$msg    = $req['result'];
 						$result = false;
 					} elseif (!empty($req['arguments']['torrents'])) {
 						$torrent = array_pop($req['arguments']['torrents']);
@@ -456,7 +454,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 				}
 			} else
 				$msg = "bad tid $hash $transfer ".$req['result'];
-			
+
 			$this->logMessage("setRateDownload : ".$msg."\n", true);
 		}
 		AuditAction($cfg["constants"]["debug"], $this->client."->setRateDownload : $msg.");
@@ -474,9 +472,9 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	function setSharekill($transfer, $sharekill, $autosend = false) {
 		// set sharekill
 		$this->sharekill = round(floatval($sharekill) / 100, 2);
-		
+
 		$result = true;
-		
+
 		$msg = "$sharekill, autosend=".serialize($autosend);
 		if ($autosend) {
 			$rpc = Transmission::getInstance();
@@ -488,23 +486,23 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 
 			$tid = getTransmissionTransferIdByHash($hash);
 			if ($tid > 0) {
-				$req = $rpc->set($tid, array('seedRatioLimit' => $this->sharekill, 'seedRatioMode' => 1) );
+				$req = $rpc->set($tid, array('seedRatioLimit' => $this->sharekill, 'seedRatioMode' => 1));
 				if (!isset($req['result']) || $req['result'] != 'success') {
-					$msg = $req['result'];
+					$msg    = $req['result'];
 					$result = false;
 				} else {
 					//Check if setting is applied
-					$req = $rpc->get($tid,array('seedRatioLimit'));
+					$req = $rpc->get($tid, array('seedRatioLimit'));
 					if (!isset($req['result']) || $req['result'] != 'success') {
-						$msg = $req['result'];
+						$msg    = $req['result'];
 						$result = false;
 					} elseif (!empty($req['arguments']['torrents'])) {
 						$torrent = array_pop($req['arguments']['torrents']);
-						if (round($torrent['seedRatioLimit'],2) != round($this->sharekill,2)) {
+						if (round($torrent['seedRatioLimit'], 2) != round($this->sharekill, 2)) {
 							// $msg = "sharekill not set correctly ".serialize($torrent->seedRatioLimit);
 							//if fact, we always need to set it globally (vuze limitation)
-							if (getTransmissionShareKill() < (int) $sharekill) {
-								$msg = "sharekill set by session ".round($this->sharekill,2);
+							if (getTransmissionShareKill() < (int)$sharekill) {
+								$msg = "sharekill set by session ".round($this->sharekill, 2);
 								$req = $rpc->session_set(array('seedRatioLimit' => $this->sharekill));
 							}
 						}
@@ -512,7 +510,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 				}
 			} else
 				$msg = "bad tid $hash $transfer ".$req['result'];
-			
+
 			$this->logMessage("setSharekill : ".$msg."\n", true);
 		}
 		global $cfg;
@@ -530,13 +528,13 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	function runningTransfers() {
 		global $cfg;
 
-		$host = $cfg['transmission_rpc_host'].":".$cfg['transmission_rpc_port'];
+		$host   = $cfg['transmission_rpc_host'].":".$cfg['transmission_rpc_port'];
 		$userpw = $cfg['transmission_rpc_user'];
 		if (!empty($cfg['transmission_rpc_password']))
 			$userpw .= ':'.$cfg['transmission_rpc_password'];
 
 		$screenStatus = shell_exec("/usr/bin/transmission-remote $userpw@$host --list");
-		$retAry = explode("\n",$screenStatus);
+		$retAry       = explode("\n", $screenStatus);
 		print_r($retAry);
 		return $retAry;
 	}
@@ -558,9 +556,9 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	 * @param $transfer string torrent name
 	 * @return boolean
 	 */
-	function updateStatFiles($transfer="") {
+	function updateStatFiles($transfer = "") {
 		global $cfg, $db;
-		
+
 		//$rpc = Transmission::getInstance();
 		$tfs = $this->monitorRunningTransfers();
 		if (!is_array($tfs)) {
@@ -577,14 +575,14 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			foreach ($tfs as $hash => $t) {
 				$hashes[] = "'".strtolower($hash)."'";
 			}
-			$sql .= " AND hash IN (".implode(',',$hashes).")";
+			$sql .= " AND hash IN (".implode(',', $hashes).")";
 		}
 
 		$recordset = $db->Execute($sql);
 
 		while (list($hash, $transfer, $sharekill) = $recordset->FetchRow()) {
-			$hash = strtolower($hash);
-			$hashes[$hash] = $transfer;
+			$hash              = strtolower($hash);
+			$hashes[$hash]     = $transfer;
 			$sharekills[$hash] = $sharekill;
 		}
 
@@ -593,19 +591,19 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		foreach ($tfs as $hash => $t) {
 			if (!isset($hashes[$hash]))
 				continue;
-			
+
 			$transfer = $hashes[$hash];
-			$sf = new StatFile($transfer);
-			
-			$sf->running = Transmission::status_to_tf($t['status']);
-			$sf->percent_done = round($t['percentDone']*100,2);
-			if ($t['status']==8 || $t['status']==9) {
-				$sf->sharing = round($t['uploadRatio']*100,2);
+			$sf       = new StatFile($transfer);
+
+			$sf->running      = Transmission::status_to_tf($t['status']);
+			$sf->percent_done = round($t['percentDone'] * 100, 2);
+			if ($t['status'] == 5 || $t['status'] == 6) {
+				$sf->sharing = round($t['uploadRatio'] * 100, 2);
 			}
-			
+
 			$sf->downtotal = $t['downloadedEver'];
-			$sf->uptotal = $t['uploadedEver'];
-			
+			$sf->uptotal   = $t['uploadedEver'];
+
 			$sf->write();
 		}
 
@@ -613,7 +611,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		foreach ($tfs as $hash => $t) {
 			if (!isset($sharekills[$hash]))
 				continue;
-			if (($t['status']==8 || $t['status']==9) && ($t['uploadRatio']*100) > $sharekills[$hash]) {
+			if (($t['status'] == 5 || $t['status'] == 6) && ($t['uploadRatio'] * 100) > $sharekills[$hash]) {
 				$transfer = $hashes[$hash];
 				if (stopTransmissionTransfer($hash)) {
 					AuditAction($cfg["constants"]["stop_transfer"], $this->client."-stat. : sharekill stopped $transfer");
@@ -630,7 +628,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 	 *
 	 * @return array (stat) or Error String
 	 */
-	function monitorTransfer($transfer, $format="rpc") {
+	function monitorTransfer($transfer, $format = "rpc") {
 		//by default, monitoring not available.
 
 		// set vars
@@ -646,7 +644,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		}
 
 		//original rpc format, you can add fields here
-		$fields = array(
+		$fields   = array(
 			'id', 'name', 'status', 'hashString', 'totalSize',
 			'downloadedEver', 'uploadedEver',
 			'percentDone', 'uploadRatio',
@@ -654,18 +652,18 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 			'rateDownload', 'rateUpload',
 			'downloadLimit', 'uploadLimit',
 			'downloadLimited', 'uploadLimited',
-			'seedRatioLimit','seedRatioMode',
-			'downloadDir','eta',
+			'seedRatioLimit', 'seedRatioMode',
+			'downloadDir', 'eta',
 			'error', 'errorString',
-			
+
 			//'files', 'fileStats', 'trackerStats'
 		);
 		$stat_rpc = getTransmissionTransfer($hash, $fields);
 
 		$rpc = Transmission::getInstance();
 		if (is_array($stat_rpc)) {
-			if ($format=="rpc") 
-				return $stat_rpc; 
+			if ($format == "rpc")
+				return $stat_rpc;
 			else {
 				return $rpc->rpc_to_tf($stat_rpc);
 			}
@@ -694,9 +692,9 @@ class ClientHandlerTransmissionRPC extends ClientHandler
 		//by default, monitoring not available.
 		$aTorrent = getUserTransmissionTransfers();
 
-		$stat=array();
+		$stat = array();
 		foreach ($aTorrent as $t) {
-			if ( $t['status']==4 || $t['status']==8 ) $stat[$t['hashString']]=$t;
+			if ($t['status'] == 4 || $t['status'] == 6) $stat[$t['hashString']] = $t;
 		}
 		return $stat;
 	}

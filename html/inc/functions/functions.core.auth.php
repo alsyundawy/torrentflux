@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * try to get Credentials
@@ -31,10 +30,10 @@ function getCredentials() {
 	// be wrong credentials fetched)
 	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
-			$retVal = array();
+			$retVal             = array();
 			$retVal['username'] = strtolower($_SERVER['PHP_AUTH_USER']);
 			$retVal['password'] = addslashes($_SERVER['PHP_AUTH_PW']);
-			$retVal['md5pass'] = "";
+			$retVal['md5pass']  = "";
 			return $retVal;
 		}
 	}
@@ -42,16 +41,16 @@ function getCredentials() {
 	if (($cfg['auth_type'] != 4) && ($cfg['auth_type'] != 5)) {
 		if (isset($_REQUEST['username'])) {
 			if (isset($_REQUEST['md5pass'])) {
-				$retVal = array();
+				$retVal             = array();
 				$retVal['username'] = strtolower($_REQUEST['username']);
 				$retVal['password'] = "";
-				$retVal['md5pass'] = $_REQUEST['md5pass'];
+				$retVal['md5pass']  = $_REQUEST['md5pass'];
 				return $retVal;
 			} elseif (isset($_REQUEST['iamhim'])) {
-				$retVal = array();
+				$retVal             = array();
 				$retVal['username'] = strtolower($_REQUEST['username']);
 				$retVal['password'] = addslashes($_REQUEST['iamhim']);
-				$retVal['md5pass'] = "";
+				$retVal['md5pass']  = "";
 				return $retVal;
 			}
 		}
@@ -59,11 +58,11 @@ function getCredentials() {
 	// check for cookie-supplied credentials (only if activated)
 	if ($cfg['auth_type'] == 1 || $cfg['auth_type'] == 6) {
 		if (isset($_COOKIE["autologin"])) {
-			$creds = explode('|', $_COOKIE["autologin"]);
-			$retVal = array();
+			$creds              = explode('|', $_COOKIE["autologin"]);
+			$retVal             = array();
 			$retVal['username'] = strtolower($creds[0]);
 			$retVal['password'] = "";
-			$retVal['md5pass'] = $creds[1];
+			$retVal['md5pass']  = $creds[1];
 			return $retVal;
 		}
 	}

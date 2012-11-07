@@ -4,27 +4,25 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * class ClientHandler for azureus-client
  */
-class ClientHandlerAzureus extends ClientHandler
-{
+class ClientHandlerAzureus extends ClientHandler {
 
 	// =========================================================================
 	// ctor
@@ -34,8 +32,8 @@ class ClientHandlerAzureus extends ClientHandler
 	 * ctor
 	 */
 	function ClientHandlerAzureus() {
-		$this->type = "torrent";
-		$this->client = "azureus";
+		$this->type      = "torrent";
+		$this->client    = "azureus";
 		$this->binSystem = "java";
 		$this->binSocket = "java";
 		$this->binClient = "fluazu.py";
@@ -68,12 +66,12 @@ class ClientHandlerAzureus extends ClientHandler
 		// check to see if fluazu is running
 		if (!FluAzu::isRunning()) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "fluazu not running, cannot start transfer ".$transfer;
+			$msg         = "fluazu not running, cannot start transfer ".$transfer;
 			AuditAction($cfg["constants"]["error"], $msg);
 			$this->logMessage($msg."\n", true);
 			array_push($this->messages, $msg);
 			// write error to stat
-			$sf = new StatFile($this->transfer, $this->owner);
+			$sf            = new StatFile($this->transfer, $this->owner);
 			$sf->time_left = 'Error: fluazu down';
 			$sf->write();
 			// return
@@ -87,7 +85,7 @@ class ClientHandlerAzureus extends ClientHandler
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
 				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
-				array_push($this->messages , $msg);
+				array_push($this->messages, $msg);
 				$this->logMessage($msg."\n", true);
 			}
 			// return
@@ -95,7 +93,7 @@ class ClientHandlerAzureus extends ClientHandler
 		}
 
 		// build the command-string
-		$content  = $cfg['user']."\n";
+		$content = $cfg['user']."\n";
 		$content .= $this->savepath."\n";
 		$content .= $this->rate."\n";
 		$content .= $this->drate."\n";
@@ -108,7 +106,7 @@ class ClientHandlerAzureus extends ClientHandler
 		$content .= $this->maxcons."\n";
 		$content .= $this->rerequest;
 
-		$this->command  = "echo -e ".tfb_shellencode($content)." > ".tfb_shellencode($cfg["path"].'.fluazu/run/'.$transfer);
+		$this->command = "echo -e ".tfb_shellencode($content)." > ".tfb_shellencode($cfg["path"].'.fluazu/run/'.$transfer);
 		$this->command .= " && ";
 		$this->command .= "echo r > ".tfb_shellencode($cfg["path"].'.fluazu/fluazu.cmd');
 
@@ -135,7 +133,7 @@ class ClientHandlerAzureus extends ClientHandler
 		require_once("inc/classes/FluAzu.php");
 		// only if fluazu running and transfer exists in fluazu
 		if (!FluAzu::isRunning()) {
-			array_push($this->messages , "fluazu not running, cannot stop transfer ".$transfer);
+			array_push($this->messages, "fluazu not running, cannot stop transfer ".$transfer);
 			return false;
 		}
 		if (!FluAzu::transferExists($transfer)) {
@@ -164,16 +162,15 @@ class ClientHandlerAzureus extends ClientHandler
 		if (FluAzu::transferExists($transfer)) {
 			// only if fluazu running
 			if (!FluAzu::isRunning()) {
-				array_push($this->messages , "fluazu not running, cannot delete transfer ".$transfer);
+				array_push($this->messages, "fluazu not running, cannot delete transfer ".$transfer);
 				return false;
-			}
-			else
-			// remove from azu
-			if (!FluAzu::delTransfer($transfer)) {
-				array_push($this->messages , $this->client.": error when deleting transfer ".$transfer." :");
-				$this->messages = array_merge($this->messages, FluAzu::getMessages());
-				return false;
-			}
+			} else
+				// remove from azu
+				if (!FluAzu::delTransfer($transfer)) {
+					array_push($this->messages, $this->client.": error when deleting transfer ".$transfer." :");
+					$this->messages = array_merge($this->messages, FluAzu::getMessages());
+					return false;
+				}
 		} else {
 			$msg = "transfer ".$transfer." does not exist in fluazu, deleting pid file (delete).";
 			$this->logMessage($msg."\n", true);
@@ -192,20 +189,20 @@ class ClientHandlerAzureus extends ClientHandler
 	function getTransferCurrent($transfer) {
 		global $db, $transfers;
 		$retVal = array();
-		
+
 		// set vars
 		$this->_setVarsForTransfer($transfer);
-		
+
 		// transfer from stat-file
-		$sf = new StatFile($transfer);
-		$retVal["uptotal"] = $sf->uptotal;
+		$sf                  = new StatFile($transfer);
+		$retVal["uptotal"]   = $sf->uptotal;
 		$retVal["downtotal"] = $sf->downtotal;
 		// transfer from db
 		$torrentId = getTransferHash($transfer);
-		$uid = (int) GetUID($this->owner);
-		$sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid IN(0, $uid) ORDER BY uid DESC";
-		$result = $db->Execute($sql);
-		$row = $result->FetchRow();
+		$uid       = (int)GetUID($this->owner);
+		$sql       = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = ".$db->qstr($torrentId)." AND uid IN(0, $uid) ORDER BY uid DESC";
+		$result    = $db->Execute($sql);
+		$row       = $result->FetchRow();
 		if (!empty($row)) {
 			$retVal["uptotal"] -= $row["uptotal"];
 			$retVal["downtotal"] -= $row["downtotal"];
@@ -224,8 +221,8 @@ class ClientHandlerAzureus extends ClientHandler
 	 */
 	function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
 		global $transfers;
-		$retVal = array();
-		$retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+		$retVal              = array();
+		$retVal["uptotal"]   = (isset($transfers['totals'][$tid]['uptotal']))
 			? $sfu - $transfers['totals'][$tid]['uptotal']
 			: $sfu;
 		$retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
@@ -328,8 +325,8 @@ class ClientHandlerAzureus extends ClientHandler
 		// send command to client
 		if ($autosend)
 			CommandHandler::send($transfer);
-			// return
-			return true;
+		// return
+		return true;
 	}
 
 	/**
@@ -340,13 +337,13 @@ class ClientHandlerAzureus extends ClientHandler
 	 */
 	function cleanStoppedStatFile($transfer) {
 		@unlink($this->transferFilePath.".pid");
-		$sf = new StatFile($this->transfer, $this->owner);
-		$sf->running = "0";
-		$sf->percent_done=100;
-		$sf->peers = "";
-		$sf->time_left = "Stopped";
-		$sf->down_speed = "";
-		$sf->up_speed = "";
+		$sf               = new StatFile($this->transfer, $this->owner);
+		$sf->running      = "0";
+		$sf->percent_done = 100;
+		$sf->peers        = "";
+		$sf->time_left    = "Stopped";
+		$sf->down_speed   = "";
+		$sf->up_speed     = "";
 		//var_dump($sf);die();
 		return $sf->write();
 	}

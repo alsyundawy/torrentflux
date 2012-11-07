@@ -1,23 +1,22 @@
 <?php
 /*******************************************************************************
- Set tabs to 4.
+Set tabs to 4.
 
- $Id: main.core.php $
+$Id: main.core.php $
 
- @package torrentflux
- @license LICENSE http://www.gnu.org/copyleft/gpl.html
+@package torrentflux
+@license LICENSE http://www.gnu.org/copyleft/gpl.html
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-
-*******************************************************************************/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+ *******************************************************************************/
 
 // cache
 require_once('inc/main.cache.php');
@@ -36,37 +35,37 @@ if (@is_file('version.php')) {
 	require_once('version.php');
 	$cfg["version"] = _VERSION;
 } else {
-	$cfg["version"] =  "unknown";
+	$cfg["version"] = "unknown";
 }
 
 // constants
-$cfg["constants"] = array();
-$cfg["constants"]["url_upload"] = "URL Upload";
-$cfg["constants"]["reset_owner"] = "Reset Owner";
-$cfg["constants"]["start_torrent"] = "Started Transfer";
-$cfg["constants"]["stop_transfer"] = "Stopped Transfer";
-$cfg["constants"]["queued_transfer"] = "Added to Queue";
+$cfg["constants"]                      = array();
+$cfg["constants"]["url_upload"]        = "URL Upload";
+$cfg["constants"]["reset_owner"]       = "Reset Owner";
+$cfg["constants"]["start_torrent"]     = "Started Transfer";
+$cfg["constants"]["stop_transfer"]     = "Stopped Transfer";
+$cfg["constants"]["queued_transfer"]   = "Added to Queue";
 $cfg["constants"]["unqueued_transfer"] = "Removed from Queue";
-$cfg["constants"]["QManager"] = "QManager";
-$cfg["constants"]["fluxd"] = "fluxd";
-$cfg["constants"]["access_denied"] = "ACCESS DENIED";
-$cfg["constants"]["delete_transfer"] = "Delete Transfer";
-$cfg["constants"]["fm_delete"] = "File Manager Delete";
-$cfg["constants"]["fm_download"] = "File Download";
-$cfg["constants"]["kill_transfer"] = "Kill Transfer";
-$cfg["constants"]["file_upload"] = "File Upload";
-$cfg["constants"]["error"] = "ERROR";
-$cfg["constants"]["hit"] = "HIT";
-$cfg["constants"]["update"] = "UPDATE";
-$cfg["constants"]["admin"] = "ADMIN";
-$cfg["constants"]["debug"] = "DEBUG";
+$cfg["constants"]["QManager"]          = "QManager";
+$cfg["constants"]["fluxd"]             = "fluxd";
+$cfg["constants"]["access_denied"]     = "ACCESS DENIED";
+$cfg["constants"]["delete_transfer"]   = "Delete Transfer";
+$cfg["constants"]["fm_delete"]         = "File Manager Delete";
+$cfg["constants"]["fm_download"]       = "File Download";
+$cfg["constants"]["kill_transfer"]     = "Kill Transfer";
+$cfg["constants"]["file_upload"]       = "File Upload";
+$cfg["constants"]["error"]             = "ERROR";
+$cfg["constants"]["hit"]               = "HIT";
+$cfg["constants"]["update"]            = "UPDATE";
+$cfg["constants"]["admin"]             = "ADMIN";
+$cfg["constants"]["debug"]             = "DEBUG";
 asort($cfg["constants"]);
 
 // valid file extensions
 $cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
 // do NOT (!) touch the next 2 lines
 $cfg["file_types_regexp"] = implode("|", $cfg["file_types_array"]);
-$cfg["file_types_label"] = implode(", ", $cfg["file_types_array"]);
+$cfg["file_types_label"]  = implode(", ", $cfg["file_types_array"]);
 
 // upload-limit (metafiles)
 $cfg["upload_limit"] = 8000000;
@@ -78,10 +77,10 @@ $cfg["user"] = "";
 
 // ip + hostname
 if (isset($_SERVER['REMOTE_ADDR'])) {
-	$cfg['ip'] = htmlentities($_SERVER['REMOTE_ADDR'], ENT_QUOTES);
+	$cfg['ip']          = htmlentities($_SERVER['REMOTE_ADDR'], ENT_QUOTES);
 	$cfg['ip_resolved'] = htmlentities(@gethostbyaddr($_SERVER['REMOTE_ADDR']), ENT_QUOTES);
 } else {
-	$cfg['ip'] = "127.0.0.1";
+	$cfg['ip']          = "127.0.0.1";
 	$cfg['ip_resolved'] = "localhost";
 }
 
@@ -93,37 +92,34 @@ $cfg['user_agent'] = (isset($_SERVER['HTTP_USER_AGENT']))
 // get os
 $osString = @php_uname('s');
 if (isset($osString)) {
-    if (!(stristr($osString, 'linux') === false)) /* linux */
-    	$cfg["_OS"] = 1;
-    elseif (!(stristr($osString, 'bsd') === false)) /* bsd */
-    	$cfg["_OS"] = 2;
-    elseif (!(stristr($osString, 'darwin') === false)) /* darwin */
-        $cfg["_OS"] = 2;
-    elseif (!(stristr($osString, 'win') === false)) /* windows */
-        $cfg["_OS"] = 3;
-    else /* well... linux ;) */
-    	$cfg["_OS"] = 1;
+	if (!(stristr($osString, 'linux') === false)) /* linux */
+		$cfg["_OS"] = 1;
+	elseif (!(stristr($osString, 'bsd') === false)) /* bsd */
+		$cfg["_OS"] = 2; elseif (!(stristr($osString, 'darwin') === false)) /* darwin */
+		$cfg["_OS"] = 2; elseif (!(stristr($osString, 'win') === false)) /* windows */
+		$cfg["_OS"] = 3; else /* well... linux ;) */
+		$cfg["_OS"] = 1;
 } else { /* well... linux ;) */
 	$cfg["_OS"] = 1;
 }
 
 // main menu
 $cfg['mainMenu'] = array(
-	"index" => "home",
-	"readrss" => "home",
-	"multiup" => "home",
+	"index"       => "home",
+	"readrss"     => "home",
+	"multiup"     => "home",
 	"serverStats" => "home",
-	"images" => "home",
-	"dir" => "dir",
-	"history" => "history",
-	"profile" => "profile",
-	"readmsg" => "msg",
-	"message" => "msg",
-	"admin" => "admin"
+	"images"      => "home",
+	"dir"         => "dir",
+	"history"     => "history",
+	"profile"     => "profile",
+	"readmsg"     => "msg",
+	"message"     => "msg",
+	"admin"       => "admin"
 );
 
 // initialize jGrowl messages
-if ( !isset($cfg['growl']) ) {
+if (!isset($cfg['growl'])) {
 	$cfg['growl'] = array();
 }
 
@@ -134,9 +130,9 @@ if (@is_file('inc/config/config.db.php')) {
 	require_once('inc/config/config.db.php');
 
 	// check db-type
-	$databaseTypes = array();
-	$databaseTypes['mysql'] = 'mysql_connect';
-	$databaseTypes['sqlite'] = 'sqlite_open';
+	$databaseTypes             = array();
+	$databaseTypes['mysql']    = 'mysql_connect';
+	$databaseTypes['sqlite']   = 'sqlite_open';
 	$databaseTypes['postgres'] = 'pg_connect';
 	if (array_key_exists($cfg["db_type"], $databaseTypes)) {
 		if (!function_exists($databaseTypes[$cfg["db_type"]]))
@@ -158,7 +154,7 @@ if (@is_file('inc/config/config.db.php')) {
 	loadSettings('tf_settings_stats');
 
 	// load users
-	$arUsers = GetUsers();
+	$arUsers      = GetUsers();
 	$cfg['users'] = ((isset($arUsers)) && (is_array($arUsers)))
 		? $arUsers
 		: array($cfg['user']);
@@ -169,8 +165,8 @@ if (@is_file('inc/config/config.db.php')) {
 		$linklist = array();
 		foreach ($arLinks as $link) {
 			array_push($linklist, array(
-				'link_url' => $link['url'],
-				'link_sitename' => $link['sitename']
+					'link_url'      => $link['url'],
+					'link_sitename' => $link['sitename']
 				)
 			);
 		}
@@ -186,19 +182,19 @@ if (@is_file('inc/config/config.db.php')) {
 } else {
 
 	// error in cli-mode, send redir in webapp
-    if (empty($argv[0])) {
-    	if (!isset($_SESSION['check']['dbconf'])) {
-    		$_SESSION['check']['dbconf'] = 1;
-	    	// redir to login ... (which may redir to upgrade.php / setup.php)
+	if (empty($argv[0])) {
+		if (!isset($_SESSION['check']['dbconf'])) {
+			$_SESSION['check']['dbconf'] = 1;
+			// redir to login ... (which may redir to upgrade.php / setup.php)
 			@ob_end_clean();
 			@header("location: login.php");
 			exit();
-    	} else {
-    		@error("database-settings-file config.db.php is missing");
-    	}
-    } else {
+		} else {
+			@error("database-settings-file config.db.php is missing");
+		}
+	} else {
 		@error("database-settings-file config.db.php is missing");
-    }
+	}
 }
 
 // load configs
@@ -214,7 +210,7 @@ foreach ($configs as $configFile => $configError) {
 	} else {
 		// error
 		@error($configError);
-    }
+	}
 }
 
 ?>

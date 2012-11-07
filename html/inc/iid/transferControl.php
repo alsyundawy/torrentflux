@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -76,7 +75,7 @@ $sf = new StatFile($transfer);
 //
 if (empty($pageop)) {
 	if ($ch->running == 1) {
-		$pageop = "control";
+		$pageop      = "control";
 		$sf->running = 1;
 	} else {
 		switch ($sf->running) {
@@ -100,15 +99,15 @@ $tmpl->setvar('pageop', $pageop);
 // get details vars to extract Annouce URL (Epsylon3)
 transfer_setDetailsVars();
 
-$announceUrl = strstr($tmpl->_vars['transferMetaInfo'],'announce url..: ');
-$announceUrl = str_replace('announce url..: ','',$announceUrl);
-if (strstr($announceUrl,"\n")) $announceUrl = substr($announceUrl,0,strpos($announceUrl,"\n"));
+$announceUrl = strstr($tmpl->_vars['transferMetaInfo'], 'announce url..: ');
+$announceUrl = str_replace('announce url..: ', '', $announceUrl);
+if (strstr($announceUrl, "\n")) $announceUrl = substr($announceUrl, 0, strpos($announceUrl, "\n"));
 $tmpl->setvar('announceUrl', $announceUrl);
 
 // op-switch
 switch ($pageop) {
 
-	case "control":                                                /* control */
+	case "control": /* control */
 
 		switch ($sf->running) {
 
@@ -116,15 +115,15 @@ switch ($pageop) {
 				// state
 				$tmpl->setvar('state', "running");
 				// get pid
-				$pid = 0;
-		        $running = $ch->runningProcesses();
-		        foreach ($running as $rng) {
-		            $rt = RunningTransfer::getInstance($rng['pinfo'], $ch->client);
-		            if ($rt->transferFile == $transfer) {
-		            	$pid = $rt->processId;
+				$pid     = 0;
+				$running = $ch->runningProcesses();
+				foreach ($running as $rng) {
+					$rt = RunningTransfer::getInstance($rng['pinfo'], $ch->client);
+					if ($rt->transferFile == $transfer) {
+						$pid = $rt->processId;
 						break;
 					}
-		        }
+				}
 				if ($pid == 0)
 					$pid = getTransferPid($transfer);
 				$tmpl->setvar('pid', $pid);
@@ -141,7 +140,7 @@ switch ($pageop) {
 		// break
 		break;
 
-	case "start":                                                    /* start */
+	case "start": /* start */
 
 		// client-chooser
 		if ($ch->type == "torrent") {
@@ -197,7 +196,7 @@ switch ($pageop) {
 		// break
 		break;
 
-	case "rewrite":                                                /* btreannounce*/
+	case "rewrite": /* btreannounce*/
 
 		$newUrl = tfb_getRequestVar('announceUrl');
 		if ($newUrl != $announceUrl) {
@@ -205,7 +204,7 @@ switch ($pageop) {
 		}
 		break;
 
-	default:                                                       /* default */
+	default: /* default */
 		@error("Invalid pageop", "", "", array($pageop));
 
 }

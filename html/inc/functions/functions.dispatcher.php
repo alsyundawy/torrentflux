@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * startTransfer
@@ -30,7 +29,7 @@ function dispatcher_startTransfer($transfer) {
 
 	if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		if ( isValidTransmissionTransfer($cfg['uid'],$transfer) ) {
+		if (isValidTransmissionTransfer($cfg['uid'], $transfer)) {
 			startTransmissionTransfer($transfer);
 			return;
 		}
@@ -85,7 +84,7 @@ function dispatcher_stopTransfer($transfer) {
 
 	if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		if ( isValidTransmissionTransfer($cfg['uid'],$transfer) ) {
+		if (isValidTransmissionTransfer($cfg['uid'], $transfer)) {
 			stopTransmissionTransfer($transfer);
 			return;
 		}
@@ -104,7 +103,7 @@ function dispatcher_stopTransfer($transfer) {
 	$ch->stop($transfer);
 	// check
 	if (count($ch->messages) > 0)
-	@error("There were Problems", "", "", $ch->messages);
+		@error("There were Problems", "", "", $ch->messages);
 }
 
 /**
@@ -145,7 +144,7 @@ function dispatcher_forceStopTransfer($transfer, $pid) {
 	$ch->stop($transfer, true, $pid);
 	// check
 	if (count($ch->messages) > 0)
-    	@error("There were Problems", "", "", $ch->messages);
+		@error("There were Problems", "", "", $ch->messages);
 }
 
 /**
@@ -156,10 +155,10 @@ function dispatcher_forceStopTransfer($transfer, $pid) {
 function dispatcher_deleteTransfer($transfer) {
 	global $cfg;
 
-	if ($cfg["transmission_rpc_enable"] && isHash($transfer) ) {
+	if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		if ( isValidTransmissionTransfer($cfg['uid'],$transfer) ) {
-			deleteTransmissionTransfer($cfg['uid'],$transfer);
+		if (isValidTransmissionTransfer($cfg['uid'], $transfer)) {
+			deleteTransmissionTransfer($cfg['uid'], $transfer);
 			return;
 		}
 	}
@@ -181,7 +180,7 @@ function dispatcher_deleteTransfer($transfer) {
 		// stop first
 		$ch->stop($transfer);
 		if (count($ch->messages) > 0)
-		@error("There were Problems", "", "", $ch->messages);
+			@error("There were Problems", "", "", $ch->messages);
 		// is transfer running ?
 		$tRunningFlag = isTransferRunning($transfer);
 	}
@@ -194,7 +193,7 @@ function dispatcher_deleteTransfer($transfer) {
 		$ch->delete($transfer);
 		// check
 		if (count($ch->messages) > 0)
-		@error("There were Problems", "", "", $ch->messages);
+			@error("There were Problems", "", "", $ch->messages);
 	}
 
 }
@@ -209,8 +208,8 @@ function dispatcher_deleteDataTransfer($transfer) {
 
 	if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 		require_once('inc/functions/functions.rpc.transmission.php');
-		if ( isValidTransmissionTransfer($cfg['uid'],$transfer) ) {
-			deleteTransmissionTransferWithData($cfg['uid'],$transfer);
+		if (isValidTransmissionTransfer($cfg['uid'], $transfer)) {
+			deleteTransmissionTransferWithData($cfg['uid'], $transfer);
 			return;
 		}
 	}
@@ -232,7 +231,7 @@ function dispatcher_deleteDataTransfer($transfer) {
 		// stop first
 		$ch->stop($transfer);
 		if (count($ch->messages) > 0)
-		@error("There were Problems", "", "", $ch->messages);
+			@error("There were Problems", "", "", $ch->messages);
 		// is transfer running ?
 		$tRunningFlag = isTransferRunning($transfer);
 	}
@@ -276,7 +275,7 @@ function dispatcher_wipeTransfer($transfer) {
 		// stop first
 		$ch->stop($transfer);
 		if (count($ch->messages) > 0)
-    		@error("There were Problems", "", "", $ch->messages);
+			@error("There were Problems", "", "", $ch->messages);
 		// is transfer running ?
 		$tRunningFlag = isTransferRunning($transfer);
 	}
@@ -376,7 +375,7 @@ function dispatcher_set($key, $val) {
 			foreach ($keys as $settingKey)
 				$_SESSION['settings'][$settingKey] = $val;
 		} elseif ($key == "_refresh_") {
-			$_SESSION['settings']['index_ajax_update'] = $val;
+			$_SESSION['settings']['index_ajax_update']  = $val;
 			$_SESSION['settings']['index_meta_refresh'] = $val;
 		} else {
 			$_SESSION['settings'][$key] = $val;
@@ -415,7 +414,7 @@ function dispatcher_bulk($op) {
 			break;
 		case "resume":
 			$transferList = getTransferArray();
-			$sf = new StatFile("");
+			$sf           = new StatFile("");
 			foreach ($transferList as $transfer) {
 				$sf->init($transfer);
 				if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
@@ -474,24 +473,24 @@ function dispatcher_multi($action) {
 		$isTransmissionTorrent = false;
 		if ($cfg["transmission_rpc_enable"] && isHash($transfer)) {
 			require_once('inc/functions/functions.rpc.transmission.php');
-			$theTorrent = getTransmissionTransfer($transfer, array('id'));
+			$theTorrent            = getTransmissionTransfer($transfer, array('id'));
 			$isTransmissionTorrent = is_array($theTorrent);
 			//	$torrentId = $theTorrent['id'];
-			
+
 			if ($isTransmissionTorrent)
-			switch ($action) {
-				case "transferData":
-					deleteTransmissionTransfer($cfg['uid'], $transfer, true);
-					$dispatcherMessages[] = "Torrent deleted with data";
-					break;
-				case "transfer":
-					deleteTransmissionTransfer($cfg['uid'], $transfer, false);
-					$dispatcherMessages[] = "Torrent deleted";
-					break;
-			}
+				switch ($action) {
+					case "transferData":
+						deleteTransmissionTransfer($cfg['uid'], $transfer, true);
+						$dispatcherMessages[] = "Torrent deleted with data";
+						break;
+					case "transfer":
+						deleteTransmissionTransfer($cfg['uid'], $transfer, false);
+						$dispatcherMessages[] = "Torrent deleted";
+						break;
+				}
 		}
 
-		if ( !$isTransmissionTorrent ) {
+		if (!$isTransmissionTorrent) {
 			// is valid transfer ? + check permissions
 			$invalid = true;
 			if (tfb_isValidTransfer($transfer) === true) {
@@ -551,7 +550,7 @@ function dispatcher_multi($action) {
 					$ch = ClientHandler::getInstance($client);
 					$ch->start($transfer, false, FluxdQmgr::isRunning());
 					if (count($ch->messages) > 0)
-                		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
+						$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 				}
 				break;
 
@@ -668,14 +667,14 @@ function dispatcher_processDownload($url, $type = 'torrent') {
  */
 function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent') {
 	global $cfg;
-	$filename = "";
+	$filename         = "";
 	$downloadMessages = array();
-	$origurl = $url; // Added by deadeyes; copied as later $url gets changed
+	$origurl          = $url; // Added by deadeyes; copied as later $url gets changed
 	if (!empty($url)) {
 
 		$hash = false;
 		// Added by deadeyes to detect a magnet link
-		if ( $type === 'torrent' && strlen( stristr( $url, 'magnet:' ) ) > 0 ) {
+		if ($type === 'torrent' && strlen(stristr($url, 'magnet:')) > 0) {
 
 			$client = getTransferClient('magnet.torrent');
 			// We have a magnet link :D
@@ -684,7 +683,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 				$hash = addTransmissionTransfer($cfg['uid'], $url, $cfg['path'].$cfg['user']);
 				if (isHash($hash)) startTransmissionTransfer($hash);
 			}
-			if (($client == 'vuzerpc' || $client == 'azureus')  && $cfg["vuze_rpc_enable"]) {
+			if (($client == 'vuzerpc' || $client == 'azureus') && $cfg["vuze_rpc_enable"]) {
 				require_once('inc/functions/functions.rpc.vuze.php');
 				$hash = addVuzeMagnetTransfer($cfg['uid'], $url, $cfg['transfer_file_path']);
 			}
@@ -694,17 +693,16 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 
 		}
 
-		if (!$hash)
-		{
+		if (!$hash) {
 			// not a magnet torrent..
 
-			$arURL = explode("/", $url);
-			$filename = urldecode($arURL[count($arURL)-1]); // get the file name
-			$filename = str_replace(array("'",","), "", $filename);
+			$arURL    = explode("/", $url);
+			$filename = urldecode($arURL[count($arURL) - 1]); // get the file name
+			$filename = str_replace(array("'", ","), "", $filename);
 			$filename = stripslashes($filename);
 			// Check to see if url has something like ?passkey=12345
 			// If so remove it.
-			if (($point = strrpos($filename, "?")) !== false )
+			if (($point = strrpos($filename, "?")) !== false)
 				$filename = substr($filename, 0, $point);
 			$ret = strrpos($filename, ".");
 			if ($ret === false) {
@@ -716,7 +714,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 			$url = str_replace(" ", "%20", $url);
 			// This is to support Sites that pass an id along with the url for downloads.
 			$tmpId = tfb_getRequestVar("id");
-			if(!empty($tmpId))
+			if (!empty($tmpId))
 				$url .= "&id=".$tmpId;
 			// retrieve the file
 			require_once("inc/classes/SimpleHTTP.php");
@@ -732,14 +730,14 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 			}
 			if ((SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
 				$fileNameBackup = $filename;
-				$filename = SimpleHTTP::getFilename();
+				$filename       = SimpleHTTP::getFilename();
 				if ($filename != "") {
 					$filename = ((strpos($filename, $ext) !== false))
 						? tfb_cleanFileName($filename)
 						: tfb_cleanFileName($filename.$ext);
 				}
 				if (empty($filename) || (transferExists($filename))) {
-					$filename = substr($cfg['user'],0,3)."_".date('ymdHis')."_".sprintf('%x', crc32($filename) ).$ext;
+					$filename = substr($cfg['user'], 0, 3)."_".date('ymdHis')."_".sprintf('%x', crc32($filename)).$ext;
 				}
 				/*
 				if (($filename == "") || ($filename === false) || (transferExists($filename))) {
@@ -934,14 +932,14 @@ function _dispatcher_processUpload($name, $tmp_name, $size, $actionId, &$uploadM
 					@chmod($cfg["transfer_file_path"].$filename, 0644);
 					AuditAction($cfg["constants"]["file_upload"], $filename);
 
-					if ($cfg["transmission_rpc_enable"]==2 && $cfg['btclient'] == 'transmissionrpc') {
+					if ($cfg["transmission_rpc_enable"] == 2 && $cfg['btclient'] == 'transmissionrpc') {
 						// only if default client is transmissionrpc with deadeyes method (may be deleted later)
 						require_once('inc/functions/functions.rpc.transmission.php');
-						$hash = addTransmissionTransfer( $cfg['uid'], $cfg['transfer_file_path'].$filename, $cfg['path'].$cfg['user'] );
+						$hash = addTransmissionTransfer($cfg['uid'], $cfg['transfer_file_path'].$filename, $cfg['path'].$cfg['user']);
 						@unlink($cfg['transfer_file_path'].$filename);
-						if ( $actionId > 1 ) {
-							startTransmissionTransfer( $hash );
-							array_push($tStack,$filename);
+						if ($actionId > 1) {
+							startTransmissionTransfer($hash);
+							array_push($tStack, $filename);
 						}
 						return true;
 					}
@@ -950,13 +948,13 @@ function _dispatcher_processUpload($name, $tmp_name, $size, $actionId, &$uploadM
 					injectTransfer($filename);
 					// instant action ?
 					if ($actionId > 1)
-						array_push($tStack,$filename);
+						array_push($tStack, $filename);
 					// return
 					return true;
 				} else {
 					array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
 					return false;
-			  	}
+				}
 			}
 		} else {
 			array_push($uploadMessages, "File not uploaded, file size limit is ".$cfg["upload_limit"].". file has ".$size);
@@ -988,7 +986,7 @@ function dispatcher_sendMetafile($mfile) {
 			if (substr($mfile, -8) == ".torrent")
 				@header("Content-type: application/x-bittorrent\n");
 			else
-				@header( "Content-type: application/octet-stream\n" );
+				@header("Content-type: application/octet-stream\n");
 			@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
 			@header("Content-transfer-encoding: binary\n");
 			@header("Content-length: ".@filesize($cfg["transfer_file_path"].$mfile)."\n");

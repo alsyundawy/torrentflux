@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * html_entity_decode for for PHP < 4.3
@@ -29,8 +28,8 @@
  */
 if (!function_exists('html_entity_decode')) {
 	function html_entity_decode($string, $opt = ENT_COMPAT) {
-		$trans_tbl = get_html_translation_table (HTML_ENTITIES);
-		$trans_tbl = array_flip ($trans_tbl);
+		$trans_tbl = get_html_translation_table(HTML_ENTITIES);
+		$trans_tbl = array_flip($trans_tbl);
 		if ($opt & 1) {
 			// Translating single quotes
 			// Add single quote to translation table;
@@ -42,7 +41,7 @@ if (!function_exists('html_entity_decode')) {
 			// Remove double quote from translation table
 			unset($trans_tbl["&quot;"]);
 		}
-		return strtr ($string, $trans_tbl);
+		return strtr($string, $trans_tbl);
 	}
 }
 
@@ -55,8 +54,8 @@ if (!function_exists('html_entity_decode')) {
  */
 function ScrubDescription($desc, $title) {
 	$rtnValue = "";
-	$parts = explode("</a>", $desc);
-	$replace = preg_replace('#">.*$', '">'.$title."</a>#", $parts[0]);
+	$parts    = explode("</a>", $desc);
+	$replace  = preg_replace('#">.*$', '">'.$title."</a>#", $parts[0]);
 	if (strpos($parts[1], "Search:") !== false)
 		$parts[1] = $parts[1]."</a>\n";
 	for ($inx = 2; $inx < count($parts); $inx++) {
@@ -79,7 +78,7 @@ function ScrubDescription($desc, $title) {
 function GetRSSLinks() {
 	global $cfg, $db;
 	$link_array = array();
-	$sql = "SELECT rid, url FROM tf_rss ORDER BY rid";
+	$sql        = "SELECT rid, url FROM tf_rss ORDER BY rid";
 	$link_array = $db->GetAssoc($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	return $link_array;

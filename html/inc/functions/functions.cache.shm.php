@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // size of shared memory to allocate
 define("_WEBAPP_CACHE_SHM_SIZE_CONFIG", 16384); // (ok : 16384)
@@ -51,7 +50,7 @@ function cacheInit($username) {
 	global $cfg;
 	// attach
 	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID_CONFIG)))
-	    error("shmem_attach failed", "", "");
+		error("shmem_attach failed", "", "");
 	// get var from shared mem
 	$cfg = shm_get_var($mkey, 1);
 }
@@ -96,7 +95,7 @@ function cacheTransfersInit() {
 	global $transfers;
 	// attach
 	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID_TRANSFERS)))
-	    error("shmem_attach failed", "", "");
+		error("shmem_attach failed", "", "");
 	// get var from shared mem
 	$transfers = shm_get_var($mkey, 1);
 }
@@ -134,15 +133,15 @@ function cacheTransfersFlush() {
 function _cacheShmSet($shmname, $shmid, $shmsize, &$var) {
 	// attach
 	if (!($mkey = shm_attach($shmid, $shmsize, 0666)))
-	    error("shmem_attach failed", "", "");
+		error("shmem_attach failed", "", "");
 	// save id in session-var
 	$_SESSION[$shmname] = $mkey;
 	// get sem
 	if (!($skey = sem_get($shmid, 1, 0666)))
-	    error("sem_get failed", "", "");
+		error("sem_get failed", "", "");
 	// acquire sem
 	if (!sem_acquire($skey))
-	    error("sem_acquire failed", "", "");
+		error("sem_acquire failed", "", "");
 	// put var to shared mem
 	if (!shm_put_var($mkey, 1, $var))
 		error("Fail to put var to Shared memory ".$mkey.".", "", "");
@@ -160,9 +159,9 @@ function _cacheShmSet($shmname, $shmid, $shmsize, &$var) {
 function _cacheShmFlush($shmname, $shmid) {
 	// keys
 	if (!($skey = sem_get($shmid, 1)))
-	    error("sem_get failed", "", "");
+		error("sem_get failed", "", "");
 	if (!($mkey = shm_attach($shmid)))
-	    error("shmem_attach failed", "", "");
+		error("shmem_attach failed", "", "");
 	// remove var
 	@shm_remove_var($shmid, 1);
 	// Release semaphore

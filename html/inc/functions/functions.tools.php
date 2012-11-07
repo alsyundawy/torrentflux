@@ -1,20 +1,20 @@
 <?php
 
 /*******************************************************************************
- $Id functions.tools.php $
- @license http://www.gnu.org/copyleft/gpl.html
- @package Admin
- 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+$Id functions.tools.php $
+@license http://www.gnu.org/copyleft/gpl.html
+@package Admin
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-*******************************************************************************/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+ *******************************************************************************/
 
 /**
  * get list with files + checksums
@@ -24,10 +24,10 @@
  */
 function getFileChecksums($talk = false) {
 	global $cfg, $fileList;
-	$fileList = array();
+	$fileList          = array();
 	$fileList['files'] = array();
 	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
-	_getFileChecksums(substr($cfg['docroot'], 0 , -1), $talk);
+	_getFileChecksums(substr($cfg['docroot'], 0, -1), $talk);
 	return $fileList['files'];
 }
 
@@ -52,7 +52,7 @@ function _getFileChecksums($dir, $talk = false) {
 			foreach ($fileList['types'] as $ftype) {
 				$extLength = strlen($ftype);
 				if (($stringLength > $extLength) && (strtolower(substr($file, -($extLength))) === ($ftype))) {
-					$file = str_replace($cfg["docroot"], '', $fullpath);
+					$file                     = str_replace($cfg["docroot"], '', $fullpath);
 					$fileList['files'][$file] = md5_file($fullpath);
 					if ($talk)
 						sendLine('.');
@@ -72,27 +72,27 @@ function _getFileChecksums($dir, $talk = false) {
  */
 function printFileList($basedir, $type = 1, $mode = 2) {
 	global $fileList;
-	if (((strlen($basedir) > 0)) && (substr($basedir, -1 ) != "/"))
+	if (((strlen($basedir) > 0)) && (substr($basedir, -1) != "/"))
 		$basedir .= "/";
-	$dir = substr($basedir, 0 , -1);
+	$dir = substr($basedir, 0, -1);
 	if (!is_dir($dir))
 		return false;
 
-	define('_URL_SVNLOG','https://github.com/epsylon3/torrentflux/commits/master/html/');
-	define('_URL_SVNLOG_SUFFIX','');
-	define('_URL_SVNFILE','https://github.com/epsylon3/torrentflux/blob/master/html/');
-	define('_URL_SVNFILE_SUFFIX','');
+	define('_URL_SVNLOG', 'https://github.com/epsylon3/torrentflux/commits/master/html/');
+	define('_URL_SVNLOG_SUFFIX', '');
+	define('_URL_SVNFILE', 'https://github.com/epsylon3/torrentflux/blob/master/html/');
+	define('_URL_SVNFILE_SUFFIX', '');
 
 	//define('_URL_SVNLOG','http://svn.berlios.de/wsvn/tf-b4rt/trunk/?rev=');
 	//define('_URL_SVNLOG_SUFFIX','&sc=1');
 	//define('_URL_SVNFILE','http://svn.berlios.de/wsvn/tf-b4rt/trunk/html/');
 	//define('_URL_SVNFILE_SUFFIX','?op=log&rev=0&sc=0&isdir=0');
 
-	$fileList = array();
-	$fileList['files'] = array();
-	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py", ".sh");
-	$fileList['count'] = 0;
-	$fileList['size'] = 0;
+	$fileList             = array();
+	$fileList['files']    = array();
+	$fileList['types']    = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py", ".sh");
+	$fileList['count']    = 0;
+	$fileList['size']     = 0;
 	$fileList['revision'] = 1;
 	_printFileList($basedir, $dir, $type, $mode);
 	// footer in html
@@ -137,7 +137,7 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
 						case 1:
 							// vars
 							$_size = filesize($fullpath);
-							$_rev = getSVNRevisionFromId($fullpath);
+							$_rev  = getSVNRevisionFromId($fullpath);
 							// size
 							$fileList['size'] += $_size;
 							// rev
@@ -153,7 +153,7 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
 									echo $_file.';'.$_size.';'.$_rev."\n";
 									break;
 								case 2:
-									$line  = '<a href="'._URL_SVNFILE.$_file._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
+									$line = '<a href="'._URL_SVNFILE.$_file._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
 									$line .= formatHumanSize($_size).' | ';
 									$line .= ($_rev != 'NoID')
 										? '<a href="'._URL_SVNLOG.$_rev._URL_SVNLOG_SUFFIX.'" target="_blank">'.$_rev.'</a>'
@@ -193,12 +193,12 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
  */
 function getSVNRevisionFromId($filename) {
 	$data = file_get_contents($filename);
-	$len = strlen($data);
+	$len  = strlen($data);
 	for ($i = 0; $i < $len; $i++) {
 		if ($data{$i} == '$') {
-			if (($data{$i+1} == 'I') && ($data{$i+2} == 'd')) {
+			if (($data{$i + 1} == 'I') && ($data{$i + 2} == 'd')) {
 				$revision = "";
-				$j = $i + 3;
+				$j        = $i + 3;
 				while ($j < $len) {
 					if ($data{$j} == '$') {
 						$rev = explode(" ", $revision);
@@ -222,7 +222,7 @@ function getSVNRevisionFromId($filename) {
  */
 function getDataFromUrl($url) {
 	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", "TorrentFlux-NG/". _VERSION);
+	ini_set("user_agent", "TorrentFlux-NG/"._VERSION);
 	if ($urlHandle = @fopen($url, 'r')) {
 		stream_set_timeout($urlHandle, 15);
 		$info = stream_get_meta_data($urlHandle);
@@ -231,7 +231,7 @@ function getDataFromUrl($url) {
 			$data .= @fgets($urlHandle, 4096);
 			$info = stream_get_meta_data($urlHandle);
 		}
-		@fclose ($urlHandle);
+		@fclose($urlHandle);
 		return $data;
 	}
 }

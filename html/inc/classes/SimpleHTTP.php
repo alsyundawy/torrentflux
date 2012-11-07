@@ -4,32 +4,30 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // states
-define('SIMPLEHTTP_STATE_NULL', 0);                                      // null
-define('SIMPLEHTTP_STATE_OK', 1);                                          // ok
-define('SIMPLEHTTP_STATE_ERROR', -1);                                   // error
+define('SIMPLEHTTP_STATE_NULL', 0); // null
+define('SIMPLEHTTP_STATE_OK', 1); // ok
+define('SIMPLEHTTP_STATE_ERROR', -1); // error
 
 /**
  * SimpleHTTP
  */
-class SimpleHTTP
-{
+class SimpleHTTP {
 	// public fields
 
 	// timeout
@@ -38,37 +36,37 @@ class SimpleHTTP
 	/**
 	 * Temporarily use HTTP/1.0 until chunked encoding is sorted out
 	 * Valid values are '1.0' or '1.1'
-	 * @param	string	$httpVersion
+	 * @param    string    $httpVersion
 	 */
 	var $httpVersion = "1.0";
 
 	/**
 	 * Cookie string used in raw HTTP request
-	 * @param	string	$cookie
+	 * @param    string    $cookie
 	 */
 	var $cookie = "";
 
 	/**
 	 * URI/path used in GET request:
-	 * @param	string	$getcmd
+	 * @param    string    $getcmd
 	 */
-	var $getcmd	= "";
+	var $getcmd = "";
 
 	/**
 	 * the raw HTTP request to send to the remote webserver
-	 * @param	string	$request
+	 * @param    string    $request
 	 */
 	var $request = "";
 
 	/**
 	 * the raw HTTP response received from the remote webserver
-	 * @param	string	$responseBody
+	 * @param    string    $responseBody
 	 */
 	var $responseBody = "";
 
 	/**
 	 * Array of HTTP response headers
-	 * @param	array	$responseHeaders
+	 * @param    array    $responseHeaders
 	 */
 	var $responseHeaders = array();
 
@@ -76,13 +74,13 @@ class SimpleHTTP
 	 * Indicates if we got the response line or not from webserver
 	 * 'HTTP/1.1 200 OK
 	 * etc
-	 * @param	bool	$gotResponseLine
+	 * @param    bool    $gotResponseLine
 	 */
 	var $gotResponseLine = false;
 
 	/**
 	 * Status code of webserver response
-	 * @param	string	$status
+	 * @param    string    $status
 	 */
 	var $status = "";
 
@@ -93,13 +91,13 @@ class SimpleHTTP
 
 	/**
 	 * Error string
-	 * @param	string	$errstr
+	 * @param    string    $errstr
 	 */
 	var $errstr = "";
 
 	/**
 	 * Error number
-	 * @param	int		$errno
+	 * @param    int        $errno
 	 */
 	var $errno = 0;
 
@@ -135,7 +133,7 @@ class SimpleHTTP
 
 	// Charset prefered, then charset of content if set
 	var $charset = "";
-	
+
 	// HTTP Method
 	var $method = "GET";
 	var $postquery = "";
@@ -266,9 +264,9 @@ class SimpleHTTP
 
 	function getRealUrl($durl) {
 		global $instanceSimpleHTTP;
-		$url=$durl;
-		if ($instanceSimpleHTTP->redirectUrl!="")
-			$url=$instanceSimpleHTTP->redirectUrl;
+		$url = $durl;
+		if ($instanceSimpleHTTP->redirectUrl != "")
+			$url = $instanceSimpleHTTP->redirectUrl;
 		return $url;
 	}
 
@@ -305,48 +303,48 @@ class SimpleHTTP
 
 		global $cfg, $db;
 		// set fields
-		$this->url = $get_url;
+		$this->url     = $get_url;
 		$this->referer = $get_referer;
 
 		// (re)set state
 		$this->state = SIMPLEHTTP_STATE_NULL;
 
 		// (re-)set some vars
-		$this->cookie = "";
-		$this->request = "";
-		$this->responseBody = "";
+		$this->cookie          = "";
+		$this->request         = "";
+		$this->responseBody    = "";
 		$this->responseHeaders = array();
 		$this->gotResponseLine = false;
-		$this->status = "";
-		$this->errstr = "";
-		$this->errno = 0;
-		$this->socket = 0;
+		$this->status          = "";
+		$this->errstr          = "";
+		$this->errno           = 0;
+		$this->socket          = 0;
 
 		/**
 		 * array of URL component parts for use in raw HTTP request
-		 * @param	array	$domain
+		 * @param    array    $domain
 		 */
 		$domain = parse_url($this->url);
 
 		if (
-			empty($domain) ||   // Check URL is a well-formed HTTP/HTTPS URL.
+			empty($domain) || // Check URL is a well-formed HTTP/HTTPS URL.
 			empty($domain['scheme']) || ($domain['scheme'] != 'http' && $domain['scheme'] != 'https') ||
 			empty($domain['host'])
 		) {
 			$this->state = SIMPLEHTTP_STATE_ERROR;
-			$msg = "Error fetching " . $this->url .".  This is not a valid HTTP/HTTPS URL.";
+			$msg         = "Error fetching ".$this->url.".  This is not a valid HTTP/HTTPS URL.";
 			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], $msg);
-			return($data="");
+			return ($data = "");
 		}
 
 		$secure = $domain['scheme'] == 'https';
 		if ($secure && !$this->_canTLS()) {
 			$this->state = SIMPLEHTTP_STATE_ERROR;
-			$msg = "Error fetching " . $this->url .".  PHP does not have module OpenSSL, which is needed for HTTPS.";
+			$msg         = "Error fetching ".$this->url.".  PHP does not have module OpenSSL, which is needed for HTTPS.";
 			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], $msg);
-			return($data="");
+			return ($data = "");
 		}
 
 		// get-command
@@ -358,7 +356,7 @@ class SimpleHTTP
 			$domain["query"] = "";
 
 		// append the query string if included:
-		$this->getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
+		$this->getcmd .= (!empty($domain["query"])) ? "?".$domain["query"] : "";
 
 		// Check to see if cookie required for this domain:
 		$sql = "SELECT c.data AS data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = ".$db->qstr($cfg["user"]);
@@ -374,8 +372,8 @@ class SimpleHTTP
 			$domain["port"] = $secure ? 443 : 80;
 
 		// Fetch the data using fsockopen():
-		$this->socket = @fsockopen(	// connect to server, let PHP handle TLS layer for an HTTPS connection
-			($secure ? 'tls://' : '') . $domain["host"], $domain["port"],
+		$this->socket = @fsockopen( // connect to server, let PHP handle TLS layer for an HTTPS connection
+			($secure ? 'tls://' : '').$domain["host"], $domain["port"],
 			$this->errno, $this->errstr, $this->timeout
 		);
 
@@ -393,25 +391,25 @@ class SimpleHTTP
 			// Cookie: uid=12345;pass=asdfasdf;
 			//
 			//$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
-			$this->request  = $this->method." ".$this->_fullURLEncode($this->getcmd)." HTTP/".$this->httpVersion."\r\n";
-			$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
+			$this->request = $this->method." ".$this->_fullURLEncode($this->getcmd)." HTTP/".$this->httpVersion."\r\n";
+			$this->request .= (!empty($this->referer)) ? "Referer: ".$this->referer."\r\n" : "";
 			$this->request .= "Accept: */*\r\n";
 			$this->request .= "Accept-Language: en, en-US, en-GB\r\n";
 			if (!empty($this->charset))
 				$this->request .= "Accept-Charset: ".$this->charset."\r\n";
 			$this->request .= "User-Agent: ".$this->userAgent."\r\n";
-			$this->request .= "Host: " . $domain["host"] . "\r\n";
+			$this->request .= "Host: ".$domain["host"]."\r\n";
 			//if($this->httpVersion=="1.1"){
-				$this->request .= "Connection: Close\r\n";
+			$this->request .= "Connection: Close\r\n";
 			//}
 			if ($this->method == 'POST') {
 				$this->request .= "Content-Length: ".strlen($this->postquery)."\r\n";
 				$this->request .= "Content-Type: application/x-www-form-urlencoded\r\n";
-				$this->request .= "Origin: http://".$domain["host"] . "\r\n";
-				$this->request .= "X-Requested-With: XMLHttpRequest" . "\r\n";
+				$this->request .= "Origin: http://".$domain["host"]."\r\n";
+				$this->request .= "X-Requested-With: XMLHttpRequest"."\r\n";
 			}
-			if(!empty($this->cookie)){
-				$this->request .= "Cookie: " . $this->cookie . "\r\n";
+			if (!empty($this->cookie)) {
+				$this->request .= "Cookie: ".$this->cookie."\r\n";
 			}
 			$this->request .= "\r\n";
 			if ($this->method == 'POST') {
@@ -432,14 +430,14 @@ class SimpleHTTP
 			// Get response headers:
 			while ((!$info['timed_out']) && ($line = @fgets($this->socket, 500000))) {
 				// First empty line/\r\n indicates end of response headers:
-				if($line == "\r\n"){
+				if ($line == "\r\n") {
 					break;
 				}
 
 				if (!$this->gotResponseLine) {
 					preg_match("@HTTP/[^ ]+ (\d\d\d)@", $line, $matches);
 					// TODO: Use this to see if we redirected (30x) and follow the redirect:
-					$this->status = $matches[1];
+					$this->status          = $matches[1];
 					$this->gotResponseLine = true;
 					continue;
 				}
@@ -456,13 +454,13 @@ class SimpleHTTP
 				$ctype = $this->responseHeaders["content-type"];
 				if (strpos($ctype, 'charset') !== false) {
 					$this->charset = $this->responseHeaders["content-type"];
-					$this->charset = substr($this->charset, strpos($this->charset, 'charset=')+8);
+					$this->charset = substr($this->charset, strpos($this->charset, 'charset=') + 8);
 					$this->charset = strtolower($this->charset);
 				}
 			}
 
-			if(
-				$this->httpVersion=="1.1"
+			if (
+				$this->httpVersion == "1.1"
 				&& isset($this->responseHeaders["transfer-encoding"])
 				&& !empty($this->responseHeaders["transfer-encoding"])
 			) {
@@ -484,7 +482,7 @@ class SimpleHTTP
 				*/
 
 				// Used to count total of all chunk lengths, the content-length:
-				$chunkLength=0;
+				$chunkLength = 0;
 
 				// Get first chunk size:
 				$chunkSize = hexdec(trim(fgets($this->socket)));
@@ -536,29 +534,29 @@ class SimpleHTTP
 		307 Temporary Redirect
 		*/
 
-		if( isset($this->responseHeaders["refresh"]) ) {
-			$refresh=$this->responseHeaders["refresh"];
-			$refresh=strstr($refresh,"url=");
+		if (isset($this->responseHeaders["refresh"])) {
+			$refresh = $this->responseHeaders["refresh"];
+			$refresh = strstr($refresh, "url=");
 			if (!empty($refresh)) {
-				$refresh = str_replace('url=','',$refresh);
-				$this->status = 301;
+				$refresh                           = str_replace('url=', '', $refresh);
+				$this->status                      = 301;
 				$this->responseHeaders["location"] = $refresh;
 			}
 		}
 
-		if( preg_match("/^30[0-37]$/D", $this->status) > 0 ){
+		if (preg_match("/^30[0-37]$/D", $this->status) > 0) {
 			// Check we're not already over the max redirects limit:
-			if ( $this->redirectCount > $this->redirectMax ) {
+			if ($this->redirectCount > $this->redirectMax) {
 				$this->state = SIMPLEHTTP_STATE_ERROR;
-				$msg = "Error fetching " . $this->url .".  The maximum number of allowed redirects ";
-				$msg .="(" .$this->redirectMax. ") was exceeded.  Last followed URL was: " .$this->redirectUrl;
-				array_push($this->messages , $msg);
+				$msg         = "Error fetching ".$this->url.".  The maximum number of allowed redirects ";
+				$msg .= "(".$this->redirectMax.") was exceeded.  Last followed URL was: ".$this->redirectUrl;
+				array_push($this->messages, $msg);
 				AuditAction($cfg["constants"]["error"], $msg);
-				return($data="");
+				return ($data = "");
 			} else {
 				$this->redirectCount++;
 				// Check we have a location to get redirected content:
-				if( isset($this->responseHeaders["location"]) && !empty($this->responseHeaders["location"]) ){
+				if (isset($this->responseHeaders["location"]) && !empty($this->responseHeaders["location"])) {
 					// 3 different cases for location header:
 					// - full URL (scheme://.../foobar) -- just go to that URL,
 					// - absolute URL (/foobar) -- keep everything up to host/port,
@@ -574,35 +572,35 @@ class SimpleHTTP
 						// Keep scheme/user/pass/host/port of current request.
 						$redirectUrlBase =
 							$domain['scheme'].'://'.
-							((isset($domain['user']) || isset($domain['pass'])) ?
-								((isset($domain['user']) ?     $domain['user'] : '').
-								 (isset($domain['pass']) ? ':'.$domain['pass'] : '').'@') : '').
-							$domain['host'].
-							(isset($domain['port']) ? ':'.$domain['port'] : '');
+								((isset($domain['user']) || isset($domain['pass'])) ?
+									((isset($domain['user']) ? $domain['user'] : '').
+										(isset($domain['pass']) ? ':'.$domain['pass'] : '').'@') : '').
+								$domain['host'].
+								(isset($domain['port']) ? ':'.$domain['port'] : '');
 						if ($redirectLocation[0] == '/') {
 							// Case 2: absolute URL.
 							// Append it to current request's base.
-							$this->redirectUrl = $redirectUrlBase . $redirectLocation;
+							$this->redirectUrl = $redirectUrlBase.$redirectLocation;
 						} else {
 							// Case 3: relative URL.
 							// Append it to current request's base + path stripped of its last component.
 							$domainPathAry = explode('/', $domain['path']);
 							array_splice($domainPathAry, -1, 1, $redirectLocation);
-							$domainPathNew = implode('/', $domainPathAry);
+							$domainPathNew     = implode('/', $domainPathAry);
 							$this->redirectUrl =
-								$redirectUrlBase .
-								((isset($domainPathNew) &&
-								  strlen($domainPathNew) > 0 &&
-								  $domainPathNew[0] == '/') ? '' : '/') .
-								$domainPathNew;
+								$redirectUrlBase.
+									((isset($domainPathNew) &&
+										strlen($domainPathNew) > 0 &&
+										$domainPathNew[0] == '/') ? '' : '/').
+									$domainPathNew;
 						}
 					}
 				} else {
-					$msg = "Error fetching " . $this->url .".  A redirect status code (" . $this->status . ")";
+					$msg = "Error fetching ".$this->url.".  A redirect status code (".$this->status.")";
 					$msg .= " was sent from the remote webserver, but no location header was set to obtain the redirected content from.";
 					AuditAction($cfg["constants"]["error"], $msg);
-					array_push($this->messages , $msg);
-					return($data="");
+					array_push($this->messages, $msg);
+					return ($data = "");
 				}
 				$this->instance_getData($this->redirectUrl);
 			}
@@ -616,7 +614,7 @@ class SimpleHTTP
 			// Content-disposition: attachment; filename="nameoffile":
 			// Don't think single quotes can be used to escape filename here, but just in case check for ' and ":
 			if (preg_match("/filename=(['\"])([^\\1]+)\\1/", $this->responseHeaders["content-disposition"], $matches)) {
-				if(isset($matches[2]) && !empty($matches[2])){
+				if (isset($matches[2]) && !empty($matches[2])) {
 					$file_name = $matches[2];
 					// Only accept filenames, not paths:
 					if (!preg_match("@/@", $file_name))
@@ -650,18 +648,18 @@ class SimpleHTTP
 		// Initialize file name:
 		$this->filename = "";
 
-		$domain	 = parse_url($durl);
+		$domain = parse_url($durl);
 
 		// Check we have a remote URL:
 		if (!isset($domain["host"])) {
 			// Not a remote URL:
 			$msg = "The torrent requested for download (".$durl.") is not a remote torrent. Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// state
 			$this->state = SIMPLEHTTP_STATE_ERROR;
 			// return empty data:
-			return ($data="");
+			return ($data = "");
 		}
 
 		if (strtolower(substr($domain["path"], -8)) != ".torrent") {
@@ -690,7 +688,7 @@ class SimpleHTTP
 				}
 				// Now fetch the torrent file
 				$data = $this->instance_getData($durl);
-			// demonoid
+				// demonoid
 			} elseif (strpos(strtolower($domain["host"]), "demonoid") !== false) {
 				// Sample (http://www.demonoid.com/rss/0.xml):
 				// http://www.demonoid.com/files/details/241739/6976998/
@@ -703,10 +701,10 @@ class SimpleHTTP
 				}
 				// Now fetch the torrent file
 				$data = $this->instance_getData($durl);
-			// isohunt
+				// isohunt
 			} elseif (strpos(strtolower($domain["host"]), "isohunt") !== false) {
 				// Sample (http://isohunt.com/js/rss.php):
-				$treferer = "http://" . $domain["host"] . "/btDetails.php?id=";
+				$treferer = "http://".$domain["host"]."/btDetails.php?id=";
 				// http://isohunt.com/torrent_details/7591035/
 				// http://isohunt.com/download/7591035/
 				// If the url points to the details page, change it to the download url
@@ -720,11 +718,11 @@ class SimpleHTTP
 				// If the url points to the details page, change it to the download url
 				if (strpos(strtolower($durl), "/btdetails.php?") !== false) {
 					// Need to make it grab the torrent
-					$durl = str_replace("/btDetails.php?", "/download.php?", $durl) . "&mode=bt";
+					$durl = str_replace("/btDetails.php?", "/download.php?", $durl)."&mode=bt";
 				}
 				// Now fetch the torrent file
 				$data = $this->instance_getData($durl, $treferer);
-			// details.php
+				// details.php
 			} elseif (strpos(strtolower($durl), "details.php?") !== false) {
 				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 				// http://www.bitmetv.org/details.php?id=18435&hit=1
@@ -733,37 +731,37 @@ class SimpleHTTP
 				// redirect to the same URL without the &hit=1.
 				$durl2 = preg_replace('/&hit=1$/', '', $durl);
 
-				$treferer = "http://" . $domain["host"] . "/details.php?id=";
-				$data = $this->instance_getData($durl2, $treferer);
+				$treferer = "http://".$domain["host"]."/details.php?id=";
+				$data     = $this->instance_getData($durl2, $treferer);
 
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
 				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
 					$torrent = substr($data_preg_match[0], 0, -1);
-					$turl2 = "http://" . $domain["host"] . "/" . $torrent;
-					$data = $this->instance_getData($turl2);
+					$turl2   = "http://".$domain["host"]."/".$torrent;
+					$data    = $this->instance_getData($turl2);
 				} else {
 					$msg = "Error: could not find link to torrent file in $durl";
 					AuditAction($cfg["constants"]["error"], $msg);
-					array_push($this->messages , $msg);
+					array_push($this->messages, $msg);
 					// state
 					$this->state = SIMPLEHTTP_STATE_ERROR;
 					// return empty data:
-					return($data="");
+					return ($data = "");
 				}
-			// torrentspy
+				// torrentspy
 			} elseif (strpos(strtolower($domain["host"]), "torrentspy") !== false) {
 				// Sample (http://torrentspy.com/rss.asp):
 				// http://www.torrentspy.com/torrent/1166188/gentoo_livedvd_i686_installer_2007_0
-				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
-				$data = $this->instance_getData($durl, $treferer);
+				$treferer = "http://".$domain["host"]."/download.asp?id=";
+				$data     = $this->instance_getData($durl, $treferer);
 				// If received a /download.asp?, a /directory.asp?mode=torrentdetails
 				// or a /torrent/, extract real torrent link
 				if (
 					strpos($durl, "/download.asp?") !== false ||
 					strpos($durl, "/directory.asp?mode=torrentdetails") !== false ||
 					strpos($durl, "/torrent/") !== false
-					) {
+				) {
 					// Check for the tag used in download details page
 					if (preg_match("#<a\s+id=\"downloadlink0\"[^>]*?\s+href=\"(http[^\"]+)\"#i", $data, $data_preg_match)) {
 						// This is the real torrent download link
@@ -772,11 +770,11 @@ class SimpleHTTP
 						$data = $this->instance_getData($durl);
 					}
 				}
-			// download.asp
+				// download.asp
 			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
-				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
-				$data = $this->instance_getData($durl, $treferer);
-			// default
+				$treferer = "http://".$domain["host"]."/download.asp?id=";
+				$data     = $this->instance_getData($durl, $treferer);
+				// default
 			} else {
 				// Fallback case for any URL not ending in .torrent and not matching the above cases:
 				$data = $this->instance_getData($durl);
@@ -785,22 +783,22 @@ class SimpleHTTP
 			$data = $this->instance_getData($durl);
 		}
 		// Make sure we have a torrent file
-		if (strpos($data, "d8:") === false)	{
+		if (strpos($data, "d8:") === false) {
 			// We don't have a Torrent File... it is something else.  Let the user know about it:
 			$msg = "Content returned from $durl does not appear to be a valid torrent.";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// Display the first part of $data if debuglevel higher than 1:
-			if ($cfg["debuglevel"] > 1){
+			if ($cfg["debuglevel"] > 1) {
 
-				if (strlen($data) > 0){
-					array_push($this->messages , "\n\nDisplaying first 2048 chars of output: ");
-					array_push($this->messages , substr($data, 0, 2048), ENT_QUOTES);
+				if (strlen($data) > 0) {
+					array_push($this->messages, "\n\nDisplaying first 2048 chars of output: ");
+					array_push($this->messages, substr($data, 0, 2048), ENT_QUOTES);
 				} else {
-					array_push($this->messages , "Output from $durl was empty.");
+					array_push($this->messages, "Output from $durl was empty.");
 				}
 			} else {
-				array_push($this->messages , "Set debuglevel = 2 in 'Admin, Webapps' to see the content returned from $durl.");
+				array_push($this->messages, "Set debuglevel = 2 in 'Admin, Webapps' to see the content returned from $durl.");
 			}
 
 			//Iframe to download the file directly
@@ -817,16 +815,16 @@ class SimpleHTTP
 			if ((!isset($this->filename)) || (strlen($this->filename) == 0)) {
 				// Get the name of the torrent, and make it the filename
 				if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $data, $data_preg_match)) {
-					$filelength = $data_preg_match[1];
-					$file_name = $data_preg_match[2];
+					$filelength     = $data_preg_match[1];
+					$file_name      = $data_preg_match[2];
 					$this->filename = substr($file_name, 0, $filelength).".torrent";
 				} else {
 					require_once('inc/classes/BDecode.php');
-					$btmeta = @BDecode($data);
+					$btmeta         = @BDecode($data);
 					$this->filename = ((is_array($btmeta)) && (!empty($btmeta['info'])) && (!empty($btmeta['info']['name'])))
 						? trim($btmeta['info']['name']).".torrent"
 						: "";
-					}
+				}
 			}
 			// state
 			$this->state = SIMPLEHTTP_STATE_OK;
@@ -852,18 +850,18 @@ class SimpleHTTP
 		// Initialize file name:
 		$this->filename = "";
 
-		$domain	 = parse_url($durl);
+		$domain = parse_url($durl);
 
 		// Check we have a remote URL:
 		if (!isset($domain["host"])) {
 			// Not a remote URL:
 			$msg = "The nzb requested for download (".$durl.") is not a remote nzb. Please enter a valid remote nzb URL such as http://example.com/example.nzb\n";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// state
 			$this->state = SIMPLEHTTP_STATE_ERROR;
 			// return empty data:
-			return ($data="");
+			return ($data = "");
 		}
 
 		if (strtolower(substr($domain["path"], -4)) != ".nzb") {
@@ -881,31 +879,31 @@ class SimpleHTTP
 				// redirect to the same URL without the &hit=1.
 				$durl2 = preg_replace('/&hit=1$/', '', $durl);
 
-				$treferer = "http://" . $domain["host"] . "/details.php?id=";
-				$data = $this->instance_getData($durl, $treferer);
+				$treferer = "http://".$domain["host"]."/details.php?id=";
+				$data     = $this->instance_getData($durl, $treferer);
 
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
 				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
-					$tr = substr($data_preg_match[0], 0, -1);
-					$turl2 = "http://" . $domain["host"] . "/" . $tr;
-					$data = $this->instance_getData($turl2);
+					$tr    = substr($data_preg_match[0], 0, -1);
+					$turl2 = "http://".$domain["host"]."/".$tr;
+					$data  = $this->instance_getData($turl2);
 				} else {
 					$msg = "Error: could not find link to nzb file in $durl";
 					AuditAction($cfg["constants"]["error"], $msg);
-					array_push($this->messages , $msg);
+					array_push($this->messages, $msg);
 					// state
 					$this->state = SIMPLEHTTP_STATE_ERROR;
 					// return empty data:
-					return($data="");
+					return ($data = "");
 				}
-			// download.asp
+				// download.asp
 			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
 				// Sample (TF's TorrentSpy Search):
 				// http://www.torrentspy.com/download.asp?id=519793
-				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
-				$data = $this->instance_getData($durl, $treferer);
-			// default
+				$treferer = "http://".$domain["host"]."/download.asp?id=";
+				$data     = $this->instance_getData($durl, $treferer);
+				// default
 			} else {
 				// Fallback case for any URL not ending in .nzb and not matching the above cases:
 				$data = $this->instance_getData($durl);
@@ -914,21 +912,21 @@ class SimpleHTTP
 			$data = $this->instance_getData($durl);
 		}
 		// Make sure we have a nzb file
-		if (strpos($data, "nzb") === false)	{
+		if (strpos($data, "nzb") === false) {
 			// We don't have a nzb File... it is something else.  Let the user know about it:
 			$msg = "Content returned from $durl does not appear to be a valid nzb.";
 			AuditAction($cfg["constants"]["error"], $msg);
-			array_push($this->messages , $msg);
+			array_push($this->messages, $msg);
 			// Display the first part of $data if debuglevel higher than 1:
-			if ($cfg["debuglevel"] > 1){
-				if (strlen($data) > 0){
-					array_push($this->messages , "Displaying first 1024 chars of output: ");
-					array_push($this->messages , htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
+			if ($cfg["debuglevel"] > 1) {
+				if (strlen($data) > 0) {
+					array_push($this->messages, "Displaying first 1024 chars of output: ");
+					array_push($this->messages, htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
 				} else {
-					array_push($this->messages , "Output from $durl was empty.");
+					array_push($this->messages, "Output from $durl was empty.");
 				}
 			} else {
-				array_push($this->messages , "Set debuglevel > 2 in 'Admin, Webapps' to see the content returned from $durl.");
+				array_push($this->messages, "Set debuglevel > 2 in 'Admin, Webapps' to see the content returned from $durl.");
 			}
 			$data = "";
 			// state
@@ -948,12 +946,12 @@ class SimpleHTTP
 	 */
 	function instance_getRemoteSize($durl) {
 		// set fields
-		$this->url = $durl;
-		$this->timeout = 8;
-		$this->status = "";
-		$this->errstr = "";
-		$this->errno = 0;
-		$this->redirectCount = 0;
+		$this->url             = $durl;
+		$this->timeout         = 8;
+		$this->status          = "";
+		$this->errstr          = "";
+		$this->errno           = 0;
+		$this->redirectCount   = 0;
 		$this->responseHeaders = array();
 		$this->gotResponseLine = false;
 		// domain
@@ -971,7 +969,7 @@ class SimpleHTTP
 		if (!$this->socket)
 			return 0;
 		// send HEAD request
-		$this->request  = "HEAD ".$domain["path"]." HTTP/1.0\r\nConnection: Close\r\n\r\n";
+		$this->request = "HEAD ".$domain["path"]." HTTP/1.0\r\nConnection: Close\r\n\r\n";
 		@fwrite($this->socket, $this->request);
 		// socket options
 		stream_set_timeout($this->socket, $this->timeout);
@@ -979,7 +977,7 @@ class SimpleHTTP
 		$info = stream_get_meta_data($this->socket);
 		// read the response
 		$this->responseBody = "";
-		$ctr = 0;
+		$ctr                = 0;
 		while ((!$info['timed_out']) && ($ctr < 25)) {
 			$s = @fgets($this->socket, 4096);
 			$this->responseBody .= $s;
@@ -989,7 +987,7 @@ class SimpleHTTP
 			if (!$this->gotResponseLine) {
 				preg_match("@HTTP/[^ ]+ (\d\d\d)@", $s, $matches);
 				// TODO: Use this to see if we redirected (30x) and follow the redirect:
-				$this->status = $matches[1];
+				$this->status          = $matches[1];
 				$this->gotResponseLine = true;
 				continue;
 			}
@@ -1035,8 +1033,8 @@ class SimpleHTTP
 		$fragments = preg_split('#[+:@/?=&]+|%[[:xdigit:]]{2}#', $url, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
 
 		for ($i = count($fragments) - 1; $i >= 0; $i--) {
-			$fragment = $fragments[$i];	# $fragment[0] is the fragment, $fragment[1] is its starting position.
-			$url = substr_replace($url, rawurlencode($fragment[0]), $fragment[1], strlen($fragment[0]));
+			$fragment = $fragments[$i]; # $fragment[0] is the fragment, $fragment[1] is its starting position.
+			$url      = substr_replace($url, rawurlencode($fragment[0]), $fragment[1], strlen($fragment[0]));
 		}
 
 		return $url;

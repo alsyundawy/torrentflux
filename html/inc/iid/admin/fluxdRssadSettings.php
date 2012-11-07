@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -92,9 +91,9 @@ switch ($pageop) {
 		} else {
 			if (FluxdRssad::filterIdCheck($filtername, true) === true) {
 				$filterstring = $filtername;
-				$maxFiles = 100;
-				$noMatch = true;
-				$idx = 1;
+				$maxFiles     = 100;
+				$noMatch      = true;
+				$idx          = 1;
 				while ($noMatch) {
 					if (FluxdRssad::filterExists($filtername) === false) {
 						$tmpl->setvar('filtername', $filtername);
@@ -155,9 +154,9 @@ switch ($pageop) {
 		break;
 
 	case "saveFilter":
-		$filtername = tfb_getRequestVar('filtername');
+		$filtername    = tfb_getRequestVar('filtername');
 		$filtercontent = tfb_getRequestVarRaw('rssad_filtercontent');
-		$new = tfb_getRequestVar('new');
+		$new           = tfb_getRequestVar('new');
 		if (empty($filtername)) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
@@ -179,7 +178,7 @@ switch ($pageop) {
 				} else {
 					$tmpl->setvar('filter_saved', 0);
 					$messages = array();
-					$msgs = FluxdRssad::getMessages();
+					$msgs     = FluxdRssad::getMessages();
 					foreach ($msgs as $msg)
 						array_push($messages, array('msg' => $msg));
 					$tmpl->setloop('messages', $messages);
@@ -207,7 +206,7 @@ switch ($pageop) {
 				} else {
 					$tmpl->setvar('filter_deleted', 0);
 					$messages = array();
-					$msgs = FluxdRssad::getMessages();
+					$msgs     = FluxdRssad::getMessages();
 					foreach ($msgs as $msg)
 						array_push($messages, array('msg' => $msg));
 					$tmpl->setloop('messages', $messages);
@@ -259,8 +258,8 @@ switch ($pageop) {
 						$filt = trim($filter);
 						if (strlen($filt) > 0)
 							array_push($filterlist, array(
-								"filtername" => $filt,
-								"selected" => ($filt == $job['filtername']) ? " selected" : ""
+									"filtername" => $filt,
+									"selected"   => ($filt == $job['filtername']) ? " selected" : ""
 								)
 							);
 					}
@@ -276,13 +275,13 @@ switch ($pageop) {
 		break;
 
 	case "saveJob":
-		$jobNumber = trim(tfb_getRequestVar('job'));
-		$savedir = tfb_getRequestVar('savedir');
-		$url = tfb_getRequestVarRaw('url');
-		$filtername = tfb_getRequestVar('filtername');
-		$checkdir = tfb_getRequestVar('checkdir');
-		$isNew = (empty($jobNumber)) ? true : false;
-		$doCheckdir = ($checkdir == "true") ? true : false;
+		$jobNumber   = trim(tfb_getRequestVar('job'));
+		$savedir     = tfb_getRequestVar('savedir');
+		$url         = tfb_getRequestVarRaw('url');
+		$filtername  = tfb_getRequestVar('filtername');
+		$checkdir    = tfb_getRequestVar('checkdir');
+		$isNew       = (empty($jobNumber)) ? true : false;
+		$doCheckdir  = ($checkdir == "true") ? true : false;
 		$paramErrors = 0;
 		if (empty($savedir))
 			$paramErrors++;
@@ -301,7 +300,7 @@ switch ($pageop) {
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
 					$messages = array();
-					$msgs = FluxdRssad::getMessages();
+					$msgs     = FluxdRssad::getMessages();
 					foreach ($msgs as $msg)
 						array_push($messages, array('msg' => $msg));
 					$tmpl->setloop('messages', $messages);
@@ -313,7 +312,7 @@ switch ($pageop) {
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
 					$messages = array();
-					$msgs = FluxdRssad::getMessages();
+					$msgs     = FluxdRssad::getMessages();
 					foreach ($msgs as $msg)
 						array_push($messages, array('msg' => $msg));
 					$tmpl->setloop('messages', $messages);

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * initialize global template-instance "$tmpl"
@@ -127,8 +126,8 @@ function tmplSetIidVars() {
 	$tmpl->setvar('mainMenu', (isset($cfg['mainMenu'][$_iid])) ? $cfg['mainMenu'][$_iid] : "home");
 	$tmpl->setvar('fluxlink_display', $cfg['ui_displayfluxlink']);
 	$fluxlink = getTorrentFluxLink();
-	$tmpl->setvar( 'fluxlink_url', $fluxlink['address'] );
-	$tmpl->setvar( 'fluxlink_name', $fluxlink['name'] );
+	$tmpl->setvar('fluxlink_url', $fluxlink['address']);
+	$tmpl->setvar('fluxlink_name', $fluxlink['name']);
 	// The width should be used on all sites
 	$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 }
@@ -144,25 +143,25 @@ function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fa
 	// set some vars
 	$tmpl->setvar('autoSubmit', $autoSubmit);
 	$handle = opendir("./inc/searchEngines");
-	while($entry = readdir($handle))
+	while ($entry = readdir($handle))
 		$entrys[] = $entry;
 	natcasesort($entrys);
 	$Engine_List = array();
-	foreach($entrys as $entry) {
-		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
-			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-			if (array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
-				$hreflink = $cfg['searchEngineLinks'][$tmpEngine];
+	foreach ($entrys as $entry) {
+		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry, "Engine.php")) {
+			$tmpEngine = str_replace("Engine", '', substr($entry, 0, strpos($entry, ".")));
+			if (array_key_exists($tmpEngine, $cfg['searchEngineLinks'])) {
+				$hreflink                                  = $cfg['searchEngineLinks'][$tmpEngine];
 				$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
 			} else {
-				$hreflink = getEngineLink($tmpEngine);
+				$hreflink                                  = getEngineLink($tmpEngine);
 				$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
-				$settingsNeedsSaving = true;
+				$settingsNeedsSaving                       = true;
 			}
 			array_push($Engine_List, array(
-				'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
-				'Engine' => $tmpEngine,
-				'hreflink' => $hreflink,
+					'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
+					'Engine'   => $tmpEngine,
+					'hreflink' => $hreflink,
 				)
 			);
 		}
@@ -201,7 +200,7 @@ function tmplSetBandwidthBars() {
 	global $cfg, $tmpl;
 	$tmpl->setvar('bandwidthbars_type', $cfg['bandwidthbar']);
 	// upload
-	$max_upload = $cfg["bandwidth_up"] / 8;
+	$max_upload     = $cfg["bandwidth_up"] / 8;
 	$percent_upload = ($max_upload > 0)
 		? @number_format(($cfg["total_upload"] / $max_upload) * 100, 0)
 		: 0;
@@ -209,11 +208,11 @@ function tmplSetBandwidthBars() {
 		($percent_upload > 0)
 			? @number_format($cfg["total_upload"], 2)
 			: "0.00");
-	$percent_upload = ($percent_upload >= 100)? 100:$percent_upload;
+	$percent_upload = ($percent_upload >= 100) ? 100 : $percent_upload;
 	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
 	$tmpl->setvar('bandwidthbars_upload_percent2', (100 - $percent_upload));
 	// download
-	$max_download = $cfg["bandwidth_down"] / 8;
+	$max_download     = $cfg["bandwidth_down"] / 8;
 	$percent_download = ($max_download > 0)
 		? @number_format(($cfg["total_download"] / $max_download) * 100, 0)
 		: 0;
@@ -221,7 +220,7 @@ function tmplSetBandwidthBars() {
 		($percent_download > 0)
 			? @number_format($cfg["total_download"], 2)
 			: "0.00");
-	$percent_download = ($percent_download >= 100)? 100:$percent_download;
+	$percent_download = ($percent_download >= 100) ? 100 : $percent_download;
 	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);
 	$tmpl->setvar('bandwidthbars_download_percent2', (100 - $percent_download));
 	// colors for xfer
@@ -231,13 +230,13 @@ function tmplSetBandwidthBars() {
 			$bgcolor = '#';
 			$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent_upload) / 150)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= str_pad(dechex(255 * ((100 - $percent_upload) / 150)), 2, 0, STR_PAD_LEFT);
-			$bgcolor .='00';
+			$bgcolor .= '00';
 			$tmpl->setvar('bandwidthbars_upload_bgcolor', $bgcolor);
 			// download
 			$bgcolor = '#';
 			$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent_download) / 150)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= str_pad(dechex(255 * ((100 - $percent_download) / 150)), 2, 0, STR_PAD_LEFT);
-			$bgcolor .='00';
+			$bgcolor .= '00';
 			$tmpl->setvar('bandwidthbars_download_bgcolor', $bgcolor);
 	}
 }
@@ -250,22 +249,21 @@ function tmplSetBandwidthBars() {
  * @param $title
  * @return string
  */
-function tmplGetXferBar($total, $used, $title, $type='xfer') {
+function tmplGetXferBar($total, $used, $title, $type = 'xfer') {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.xferBar.tmpl");
+	$tmpl      = tmplGetInstance($cfg["theme"], "component.xferBar.tmpl");
 	$remaining = $total - ($used / 1048576);
 	$remaining = max(0, min($total, $remaining));
-	$percent = round(($remaining / $total) * 100,0);
-	$text = ' ('.formatFreeSpace($remaining).') '.$cfg['_REMAINING'];
-	if($type=='xfer')
-	{
+	$percent   = round(($remaining / $total) * 100, 0);
+	$text      = ' ('.formatFreeSpace($remaining).') '.$cfg['_REMAINING'];
+	if ($type == 'xfer') {
 		$bgcolor = '#';
-		$bgcolor .= str_pad(dechex(255 - 255 * ($percent / 150)), 2 ,0, STR_PAD_LEFT);
+		$bgcolor .= str_pad(dechex(255 - 255 * ($percent / 150)), 2, 0, STR_PAD_LEFT);
 		$bgcolor .= str_pad(dechex(255 * ($percent / 150)), 2, 0, STR_PAD_LEFT);
-		$bgcolor .='00';
+		$bgcolor .= '00';
 		$tmpl->setvar('bgcolor', $bgcolor);
-	}	
+	}
 	$tmpl->setvar('title', $title);
 	$tmpl->setvar('percent', $percent);
 	$tmpl->setvar('text', $text);
@@ -296,17 +294,17 @@ function getTorrentFluxLink() {
  * @return string
  */
 function getEngineLink($searchEngine) {
-	$tmpLink = '';
+	$tmpLink    = '';
 	$engineFile = 'inc/searchEngines/'.$searchEngine.'Engine.php';
 	if (is_file($engineFile)) {
-		$fp = @fopen($engineFile,'r');
+		$fp = @fopen($engineFile, 'r');
 		if ($fp) {
 			$tmp = @fread($fp, filesize($engineFile));
-			@fclose( $fp );
-			$tmp = substr($tmp,strpos($tmp,'$this->mainURL'),100);
-			$tmp = substr($tmp,strpos($tmp,"=")+1);
-			$tmp = substr($tmp,0,strpos($tmp,";"));
-			$tmpLink = trim(str_replace(array("'","\""),"",$tmp));
+			@fclose($fp);
+			$tmp     = substr($tmp, strpos($tmp, '$this->mainURL'), 100);
+			$tmp     = substr($tmp, strpos($tmp, "=") + 1);
+			$tmp     = substr($tmp, 0, strpos($tmp, ";"));
+			$tmpLink = trim(str_replace(array("'", "\""), "", $tmp));
 		}
 	}
 	return $tmpLink;
@@ -319,7 +317,7 @@ function getEngineLink($searchEngine) {
  * @return string
  */
 function getStatusImage($sf) {
-	$hd = new HealthData();
+	$hd        = new HealthData();
 	$hd->image = "black.gif";
 	$hd->title = "";
 	if ($sf->running == "1") {

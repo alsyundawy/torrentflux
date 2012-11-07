@@ -4,79 +4,77 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * Stats
  */
-class Stats
-{
+class Stats {
 	// private fields
 
 	// ids of server-details
 	var $_serverIds = array(
-	0=>	"speedDown",          //  0
-		"speedUp",            //  1
-		"speedTotal",         //  2
-		"cons",               //  3
-		"freeSpace",          //  4
-		"loadavg",            //  5
-		"running",            //  6
-		"queued",             //  7
-		"speedDownPercent",   //  8
-		"speedUpPercent",     //  9
-		"driveSpacePercent"   // 10
+		0 => "speedDown", //  0
+		"speedUp", //  1
+		"speedTotal", //  2
+		"cons", //  3
+		"freeSpace", //  4
+		"loadavg", //  5
+		"running", //  6
+		"queued", //  7
+		"speedDownPercent", //  8
+		"speedUpPercent", //  9
+		"driveSpacePercent" // 10
 	);
 	var $_serverIdCount = 11;
 
 	// ids of transfer-details
 	var $_transferIds = array(
-	0=>	"running",            //  0
-		"speedDown",          //  1
-		"speedUp",            //  2
-		"downCurrent",        //  3
-		"upCurrent",          //  4
-		"downTotal",          //  5
-		"upTotal",            //  6
-		"percentDone",        //  7
-		"sharing",            //  8
-		"eta",                //  9
-		"seeds",              // 10
-		"peers",              // 11
-		"cons"                // 12
+		0 => "running", //  0
+		"speedDown", //  1
+		"speedUp", //  2
+		"downCurrent", //  3
+		"upCurrent", //  4
+		"downTotal", //  5
+		"upTotal", //  6
+		"percentDone", //  7
+		"sharing", //  8
+		"eta", //  9
+		"seeds", // 10
+		"peers", // 11
+		"cons" // 12
 	);
 	var $_transferIdCount = 13;
 
 	// ids of xfer-details
 	var $_xferIds = array(
-	0=>	"xferGlobalTotal",    // 0
-		"xferGlobalMonth",    // 1
-		"xferGlobalWeek",     // 2
-		"xferGlobalDay",      // 3
-		"xferUserTotal",      // 4
-		"xferUserMonth",      // 5
-		"xferUserWeek",       // 6
-		"xferUserDay"         // 7
+		0 => "xferGlobalTotal", // 0
+		"xferGlobalMonth", // 1
+		"xferGlobalWeek", // 2
+		"xferGlobalDay", // 3
+		"xferUserTotal", // 4
+		"xferUserMonth", // 5
+		"xferUserWeek", // 6
+		"xferUserDay" // 7
 	);
 	var $_xferIdCount = 8;
 
 	// ids of user-details
 	var $_userIds = array(
-	0=>	"state"               // 0
+		0 => "state" // 0
 	);
 	var $_userIdCount = 1;
 
@@ -181,7 +179,7 @@ class Stats
 	 */
 	function instance_processRequest() {
 		global $cfg, $db;
-		
+
 		// type-switch
 		switch ($this->_type) {
 			case "all":
@@ -200,7 +198,7 @@ class Stats
 				$this->_initUserStats();
 				break;
 			case "server":
-				$this->_indent = "";
+				$this->_indent       = "";
 				$this->_transferList = getTransferListArray();
 				$this->_initServerStats();
 				break;
@@ -216,7 +214,7 @@ class Stats
 				$this->_initXferStats();
 				break;
 			case "transfers":
-				$this->_indent = "";
+				$this->_indent       = "";
 				$this->_transferList = getTransferListArray();
 				if (!(($this->_format == "txt") && ($this->_header == 0)))
 					$this->_transferHeads = getTransferListHeadArray();
@@ -230,7 +228,7 @@ class Stats
 					AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$this->_transferID);
 					@error("Invalid Transfer", "", "", array($this->_transferID));
 				}
-				$this->_indent = "";
+				$this->_indent          = "";
 				$this->_transferDetails = getTransferDetails($this->_transferID, false);
 				break;
 			case "users":
@@ -273,7 +271,7 @@ class Stats
 			$contentCompressed = gzdeflate($this->_content, $cfg['stats_deflate_level']);
 			@header("Content-Type: application/octet-stream");
 			if ($sendAsAttachment != 0) {
-				@header("Content-Length: " .(string)(strlen($contentCompressed)) );
+				@header("Content-Length: ".(string)(strlen($contentCompressed)));
 				@header('Content-Disposition: attachment; filename="'.$fileName.'"');
 			}
 			@header("Content-Transfer-Encoding: binary\n");
@@ -342,7 +340,7 @@ class Stats
 					$this->_content .= $this->_indent.' <transfer name="'.$transferAry[0].'">'."\n";
 					$size = count($transferAry);
 					for ($i = 1; $i < $size; $i++)
-						$this->_content .= $this->_indent.'  <transferStat name="'.$this->_transferHeads[$i-1].'">'.$transferAry[$i].'</transferStat>'."\n";
+						$this->_content .= $this->_indent.'  <transferStat name="'.$this->_transferHeads[$i - 1].'">'.$transferAry[$i].'</transferStat>'."\n";
 					$this->_content .= $this->_indent.' </transfer>'."\n";
 				}
 				$this->_content .= $this->_indent.'</transfers>'."\n";
@@ -362,7 +360,7 @@ class Stats
 				break;
 		}
 		// no nbsp in XML
-		$this->_content = str_replace('&nbsp;',' ',$this->_content);
+		$this->_content = str_replace('&nbsp;', ' ', $this->_content);
 		// send content
 		$this->_sendContent("text/xml", "stats.xml", $this->_compressed, $this->_attachment);
 	}
@@ -436,7 +434,7 @@ class Stats
 					$this->_content .= "    <description>";
 					$size = count($transferAry);
 					for ($i = 1; $i < $size; $i++) {
-						$this->_content .= $this->_transferHeads[$i-1].': '.$transferAry[$i];
+						$this->_content .= $this->_transferHeads[$i - 1].': '.$transferAry[$i];
 						if ($i < ($size - 1))
 							$this->_content .= " || ";
 					}
@@ -462,7 +460,7 @@ class Stats
 		$this->_content .= " </channel>\n";
 		$this->_content .= "</rss>";
 		// no nbsp in XML
-		$this->_content = str_replace('&nbsp;',' ',$this->_content);
+		$this->_content = str_replace('&nbsp;', ' ', $this->_content);
 		// send content
 		$this->_sendContent("text/xml", "stats.xml", $this->_compressed, $this->_attachment);
 
@@ -473,10 +471,10 @@ class Stats
 	 */
 	function _sendTXT() {
 		global $cfg;
-		
+
 		// field separator
 		$delim = $cfg['stats_txt_delim'];
-		
+
 		// build content
 		$this->_content = "";
 		// server stats
@@ -484,30 +482,30 @@ class Stats
 			case "all":
 			case "server":
 				if ($this->_header) {
-					$this->_content .= implode($delim,$this->_serverLabels)."\n";
+					$this->_content .= implode($delim, $this->_serverLabels)."\n";
 				}
-				$this->_content .= implode($delim,$this->_serverStats)."\n";
+				$this->_content .= implode($delim, $this->_serverStats)."\n";
 		}
 		// xfer stats
 		switch ($this->_type) {
 			case "all":
 			case "xfer":
 				if ($this->_header) {
-					$this->_content .= implode($delim,$this->_xferLabels)."\n";
+					$this->_content .= implode($delim, $this->_xferLabels)."\n";
 				}
-				$this->_content .= implode($delim,$this->_xferStats)."\n";
+				$this->_content .= implode($delim, $this->_xferStats)."\n";
 		}
 		// user-list
 		switch ($this->_type) {
 			case "all":
 			case "users":
 				if ($this->_header == 1) {
-					$this->_content .= "name" . $delim;
+					$this->_content .= "name".$delim;
 					for ($i = 0; $i < $this->_userIdCount; $i++) {
 						$this->_content .= $this->_userIds[$i];
 						$this->_content .= $delim;
 					}
-					$this->_content = rtrim($this->_content,$delim)."\n";
+					$this->_content = rtrim($this->_content, $delim)."\n";
 				}
 				for ($i = 0; $i < $this->_userCount; $i++) {
 					$this->_content .= $this->_userList[$i][0].$delim;
@@ -515,7 +513,7 @@ class Stats
 						$this->_content .= $this->_userList[$i][$j];
 						$this->_content .= $delim;
 					}
-					$this->_content = rtrim($this->_content,$delim)."\n";
+					$this->_content = rtrim($this->_content, $delim)."\n";
 				}
 		}
 		// transfer-list
@@ -523,13 +521,13 @@ class Stats
 			case "all":
 			case "transfers":
 				if ($this->_header == 1) {
-					$this->_content .= "Name" . $delim;
+					$this->_content .= "Name".$delim;
 					$sizeHead = count($this->_transferHeads);
 					for ($i = 0; $i < $sizeHead; $i++) {
 						$this->_content .= $this->_transferHeads[$i];
 						$this->_content .= $delim;
 					}
-					$this->_content = rtrim($this->_content,$delim)."\n";
+					$this->_content = rtrim($this->_content, $delim)."\n";
 				}
 				foreach ($this->_transferList as $transferAry) {
 					$size = count($transferAry);
@@ -537,27 +535,27 @@ class Stats
 						$this->_content .= $transferAry[$i];
 						$this->_content .= $delim;
 					}
-					$this->_content = rtrim($this->_content,$delim)."\n";
+					$this->_content = rtrim($this->_content, $delim)."\n";
 				}
 		}
 		// transfer-details
 		switch ($this->_type) {
-		case "transfer":
-			if ($this->_header == 1) {
-				$this->_content .= implode($delim,$this->_transferIds)."\n";
-			}
-			for ($i = 0; $i < $this->_transferIdCount; $i++) {
-				if ( !array_key_exists($this->_transferIds[$i], $this->_transferDetails) )
-					$this->_content .= "ERROR";
-				else
-					$this->_content .= $this->_transferDetails[$this->_transferIds[$i]];
-				$this->_content .= $delim;
-			}
-			$this->_content = rtrim($this->_content,$delim)."\n";
+			case "transfer":
+				if ($this->_header == 1) {
+					$this->_content .= implode($delim, $this->_transferIds)."\n";
+				}
+				for ($i = 0; $i < $this->_transferIdCount; $i++) {
+					if (!array_key_exists($this->_transferIds[$i], $this->_transferDetails))
+						$this->_content .= "ERROR";
+					else
+						$this->_content .= $this->_transferDetails[$this->_transferIds[$i]];
+					$this->_content .= $delim;
+				}
+				$this->_content = rtrim($this->_content, $delim)."\n";
 		}
 		if ($delim == ';') {
 			//fix html chars like &nbsp; which contains the delim
-			$this->_content = html_entity_decode($this->_content,ENT_NOQUOTES,$cfg["_CHARSET"]);
+			$this->_content = html_entity_decode($this->_content, ENT_NOQUOTES, $cfg["_CHARSET"]);
 		}
 		// send content
 		$this->_sendContent("text/plain", "stats.txt", $this->_compressed, $this->_attachment);
@@ -583,7 +581,7 @@ class Stats
 			"Speed Up (Percent)",
 			"Drive Space (Percent)"
 		);
-		$this->_serverStats = getServerStats();
+		$this->_serverStats  = getServerStats();
 	}
 
 	/**
@@ -604,7 +602,7 @@ class Stats
 			'User : '.$cfg['_WEEKXFER'],
 			'User : '.$cfg['_DAYXFER']
 		);
-		$this->_xferStats = Xfer::getStatsFormatted();
+		$this->_xferStats  = Xfer::getStatsFormatted();
 	}
 
 	/**
@@ -612,7 +610,7 @@ class Stats
 	 */
 	function _initUserStats() {
 		global $cfg;
-		$this->_userList = array();
+		$this->_userList  = array();
 		$this->_userCount = count($cfg['users']);
 		for ($i = 0; $i < $this->_userCount; $i++) {
 			$userAry = array();
@@ -634,7 +632,7 @@ class Stats
 	function _sendUsage() {
 		global $cfg;
 		// content
-		$url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];
+		$url            = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];
 		$this->_content = '
 
 Params :

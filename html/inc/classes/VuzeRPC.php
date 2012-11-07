@@ -29,7 +29,7 @@ if (isset($_REQUEST['getUrl'])) {
 	require_once('inc/main.core.php');
 
 	// security replace (dl only local torrent files)
-	$transfer = str_replace('/','',$_REQUEST['getUrl']);
+	$transfer = str_replace('/', '', $_REQUEST['getUrl']);
 
 	global $cfg;
 	$path = $cfg["transfer_file_path"];
@@ -45,7 +45,7 @@ if (isset($_REQUEST['getUrl'])) {
 // for static calls, first create will affect this var
 // next calls will reuse it with VuzeRPC::getInstance()
 // usefull for curl, to keep connection (no curl_close)
-$VuzeRPC_instance=NULL;
+$VuzeRPC_instance = NULL;
 
 class VuzeRPC {
 
@@ -57,8 +57,8 @@ class VuzeRPC {
 	public $PASS = 'mypassword';
 
 	//info about last error
-	public $lastError="";
-	public $errMethod="";
+	public $lastError = "";
+	public $errMethod = "";
 
 	//vuze general config
 	public $session;
@@ -70,14 +70,14 @@ class VuzeRPC {
 	public $curl_info;
 
 	//filters
-	public $filter=array();
+	public $filter = array();
 
 	//internal vars, dont touch them
 
-		//torrentflux config array
-		protected $cfg;
-		//curl token
-		protected $ch = NULL;
+	//torrentflux config array
+	protected $cfg;
+	//curl token
+	protected $ch = NULL;
 
 	//xmwebui version (from session vars)
 	public $xmwebui_ver;
@@ -95,7 +95,7 @@ class VuzeRPC {
 
 		global $cfg;
 		if (!empty($_cfg)) {
-		 	if (!empty($cfg))
+			if (!empty($cfg))
 				$cfg = array_merge($cfg, $_cfg);
 			else
 				$cfg = $_cfg;
@@ -111,19 +111,19 @@ class VuzeRPC {
 			$this->PASS = $cfg['vuze_rpc_password'];
 
 		$this->cfg = & $cfg;
-		
+
 		if (!isset($cfg['vuzerpcinfo_xmwebui_version'])) {
-			$req = $this->session_get(array("version","az-version"));
+			$req = $this->session_get(array("version", "az-version"));
 			if ($req->result == "success") {
-				$this->xmwebui_ver = $req->arguments->version;
-				$key = "az-version";
-				$this->vuze_ver    = $req->arguments->$key;
-				$cfg['vuzerpcinfo_xmwebui_version']  = $this->xmwebui_ver;
-				$cfg['vuzerpcinfo_version'] = $this->vuze_ver;
+				$this->xmwebui_ver                  = $req->arguments->version;
+				$key                                = "az-version";
+				$this->vuze_ver                     = $req->arguments->$key;
+				$cfg['vuzerpcinfo_xmwebui_version'] = $this->xmwebui_ver;
+				$cfg['vuzerpcinfo_version']         = $this->vuze_ver;
 			}
 		}
 		$this->xmwebui_ver = $cfg['vuzerpcinfo_xmwebui_version'];
-		$this->vuze_ver = $cfg['vuzerpcinfo_version'];
+		$this->vuze_ver    = $cfg['vuzerpcinfo_version'];
 
 		global $VuzeRPC_instance;
 		$VuzeRPC_instance = & $this;
@@ -144,8 +144,8 @@ class VuzeRPC {
 	*/
 	public function set_curl_options() {
 
-		$HOST = $this->HOST;
-		$PORT = $this->PORT;
+		$HOST     = $this->HOST;
+		$PORT     = $this->PORT;
 		$this->ch = curl_init("http://$HOST:$PORT/transmission/rpc");
 
 		curl_setopt($this->ch, CURLOPT_MAXCONNECTS, 8);
@@ -156,7 +156,7 @@ class VuzeRPC {
 		curl_setopt($this->ch, CURLOPT_MAXREDIRS, 2);
 		curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 3);
 
-		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array (
+		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(
 			'Accept: application/json',
 			'Content-type: application/json' //no charset needed in json
 		));
@@ -169,7 +169,7 @@ class VuzeRPC {
 	 * RPC Call to xmwebui
 	 * @return false or object
 	*/
-	public function vuze_rpc($method, $arguments=NULL) {
+	public function vuze_rpc($method, $arguments = NULL) {
 
 		if (is_null($this->ch)) {
 			$this->set_curl_options();
@@ -186,7 +186,7 @@ class VuzeRPC {
 
 		//curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-		$res = curl_exec($this->ch);
+		$res             = curl_exec($this->ch);
 		$this->curl_info = curl_getinfo($this->ch);
 
 		$data = false;
@@ -197,24 +197,22 @@ class VuzeRPC {
 				var_dump($this->curl_info);
 				echo "</pre>";
 			}
-		}
-		elseif ($res{0} == "{") {
+		} elseif ($res{0} == "{") {
 
 			//ok
-			$data=json_decode($res);
+			$data = json_decode($res);
 
 			if ($data->result != 'success') {
 				$this->errMethod = $method;
 				$this->lastError = $data->result;
-				
+
 				//require_once('inc/functions/functions.core.php');
 				if (function_exists('AuditAction')) {
-					AuditAction($this->cfg["constants"]["debug"],"VuzeRPC.$method :".$this->lastError);
+					AuditAction($this->cfg["constants"]["debug"], "VuzeRPC.$method :".$this->lastError);
 				}
 			}
 
-		}
-		elseif ($this->DEBUG) {
+		} elseif ($this->DEBUG) {
 			//not json ???
 			echo '<pre>';
 			var_dump($res);
@@ -225,17 +223,17 @@ class VuzeRPC {
 	}
 
 	// Get xmwebui session variables (general config)
-	public function session_get($fields=array()) {
+	public function session_get($fields = array()) {
 		if (!empty($fields)) {
 			$args = new stdClass;
 			if (is_array($fields))
 				$args->fields = $fields;
 			else
 				$args->fields = array($fields);
-			$req = $this->vuze_rpc('session-get',$args);
+			$req = $this->vuze_rpc('session-get', $args);
 		} else {
 			//all sessions variables
-			$req = $this->vuze_rpc('session-get');
+			$req           = $this->vuze_rpc('session-get');
 			$this->session = $req->arguments;
 		}
 		return $req;
@@ -243,128 +241,127 @@ class VuzeRPC {
 
 	// Set Vuze data (general config)
 	public function session_set($key, $value) {
-		$args = new stdClass;
+		$args       = new stdClass;
 		$args->$key = $value;
-		$req = $this->vuze_rpc('session-set',$args);
+		$req        = $this->vuze_rpc('session-set', $args);
 		return $req;
 	}
-	
+
 	public function session_set_multi($values) {
 		$args = new stdClass;
 		foreach ($values as $key => $value)
 			$args->$key = $value;
-		$req = $this->vuze_rpc('session-set',$args);
+		$req = $this->vuze_rpc('session-set', $args);
 		return $req;
 	}
 
 	// Get Vuze data (all torrents)
-	public function torrent_get($ids=array(),$_fields=array()) {
+	public function torrent_get($ids = array(), $_fields = array()) {
 
 		//dont touch these ones, always required
 		$required = array(
 			"id",
 			"hashString"
 		);
-		
+
 		if (!empty($_fields)) {
 			if (is_array($_fields))
-				$fields = array_merge($required,$_fields);
+				$fields = array_merge($required, $_fields);
 			else
 				//string
 				$fields[] = $_fields;
-		}
-		else
-		//choose wanted torrents fields
-		$fields = array(
-			/*
-			"addedDate",
-			"announceURL",
-			"comment",
-			"creator",
-			"dateCreated",
-			"downloadedEver",
-			"error",
-			"errorString",
-			"eta",
-			"hashString",
-			"haveUnchecked",
-			"haveValid",
-			"id",
-			"isPrivate",
-			"leechers",
-			"leftUntilDone",
-			"name",
-			"peersConnected",
-			"peersGettingFromUs",
-			"peersSendingToUs",
-			"rateDownload",
-			"rateUpload",
-			"seeders",
-			"sizeWhenDone",
-			"status",
-			"swarmSpeed",
-			"totalSize",
-			"uploadedEver"
-			"pieceCount",
-			"pieceSize",
-			"metadataPercentComplete",
-			"recheckProgress"
-			"uploadRatio"
-			"seedRatioLimit"
-			"seedRatioMode"
-			"downloadDir"
-			*/
-			"id",
-			"name",
-			"hashString",
+		} else
+			//choose wanted torrents fields
+			$fields = array(
+				/*
+				"addedDate",
+				"announceURL",
+				"comment",
+				"creator",
+				"dateCreated",
+				"downloadedEver",
+				"error",
+				"errorString",
+				"eta",
+				"hashString",
+				"haveUnchecked",
+				"haveValid",
+				"id",
+				"isPrivate",
+				"leechers",
+				"leftUntilDone",
+				"name",
+				"peersConnected",
+				"peersGettingFromUs",
+				"peersSendingToUs",
+				"rateDownload",
+				"rateUpload",
+				"seeders",
+				"sizeWhenDone",
+				"status",
+				"swarmSpeed",
+				"totalSize",
+				"uploadedEver"
+				"pieceCount",
+				"pieceSize",
+				"metadataPercentComplete",
+				"recheckProgress"
+				"uploadRatio"
+				"seedRatioLimit"
+				"seedRatioMode"
+				"downloadDir"
+				*/
+				"id",
+				"name",
+				"hashString",
 
-			"status",
-			"rateDownload",
-			"rateUpload",
-			"downloadedEver",
-			"uploadedEver",
-			"sizeWhenDone",
-			"totalSize",
-			"eta",
+				"status",
+				"rateDownload",
+				"rateUpload",
+				"downloadedEver",
+				"uploadedEver",
+				"sizeWhenDone",
+				"totalSize",
+				"eta",
 
-			"seeders",
-			"leechers",
-			"peersConnected",
+				"seeders",
+				"leechers",
+				"peersConnected",
 
-			"error",
-			"errorString",
-			"downloadDir",
+				"error",
+				"errorString",
+				"downloadDir",
 
-			"speedLimitDownload",	// 0.2.9 min (xmwebui)
-			"speedLimitUpload",		// "
-			"trackerSeeds",			// "
-			"trackerLeechers",		// "
+				"speedLimitDownload", // 0.2.9 min (xmwebui)
+				"speedLimitUpload", // "
+				"trackerSeeds", // "
+				"trackerLeechers", // "
 
-			"seedRatioMode",
-			"seedRatioLimit"
-		);
+				"seedRatioMode",
+				"seedRatioLimit"
+			);
 
 		$args = new stdClass;
 		if (!empty($ids))
 			$args->ids = $ids;
 		$args->fields = $fields;
-		$req = $this->vuze_rpc('torrent-get',$args);
+		$req          = $this->vuze_rpc('torrent-get', $args);
 		return $req;
 	}
 
-	public function torrent_get_hashids($ids=array()) {
+	public function torrent_get_hashids($ids = array()) {
 		$fields = array(
 			"id",
 			"hashString"
 		);
-		$args = new stdClass;
+		$args   = new stdClass;
 		if (!empty($ids))
 			$args->ids = $ids;
 		$args->fields = $fields;
-		$req = $this->vuze_rpc('torrent-get',$args);
-		$hashes = array();
+		$req          = $this->vuze_rpc('torrent-get', $args);
+		$hashes       = array();
 		if ($req && $req->result == 'success') {
-			$tids = (array) $req->arguments->torrents;
+			$tids = (array)$req->arguments->torrents;
 			foreach ($tids as $k => $obj)
 				$hashes[$obj->hashString] = $obj->id;
 		}
@@ -375,11 +372,11 @@ class VuzeRPC {
 	 * Add Vuze Torrent (all torrents)
 	 * @return error string or object
 	*/
-	public function torrent_add($filename,$params=array()) {
-		$args = new stdClass;
+	public function torrent_add($filename, $params = array()) {
+		$args           = new stdClass;
 		$args->filename = $filename;
-		$args->paused = "false";
-		$req = $this->vuze_rpc('torrent-add',$args);
+		$args->paused   = "false";
+		$req            = $this->vuze_rpc('torrent-add', $args);
 
 		//O:8:"stdClass":3:{s:3:"tag";s:10:"1290615517";s:6:"result";s:7:"success";s:9:"arguments";O:8:"stdClass":1:{s:13:"torrent-added";O:8:"stdClass":3:{s:2:"id";i:1221;s:4:"name";s:13:"Winamp.v5.581";s:10:"hashString";s:40:"A9BD615FE09B401A770445A4D4FA4254A555577B";}}}
 		$member = "torrent-added";
@@ -388,6 +385,7 @@ class VuzeRPC {
 		else
 			return $req->result;
 	}
+
 	/*
 		JSONArray files_unwanted 	= (JSONArray)args.get( "files-unwanted" );
 		JSONArray files_wanted 		= (JSONArray)args.get( "files-wanted" );
@@ -395,52 +393,52 @@ class VuzeRPC {
 		JSONArray priority_normal	= (JSONArray)args.get( "priority-normal" );
 		JSONArray priority_low		= (JSONArray)args.get( "priority-low" );
 	*/
-	public function torrent_set($ids,$key,$value) {
-		$args = new stdClass;
-		$args->ids = $ids;
+	public function torrent_set($ids, $key, $value) {
+		$args       = new stdClass;
+		$args->ids  = $ids;
 		$args->$key = $value;
-		$req = $this->vuze_rpc('torrent-set',$args);
+		$req        = $this->vuze_rpc('torrent-set', $args);
 		return $req;
 	}
 
-	public function torrent_set_multi($ids,$values) {
-		$args = new stdClass;
+	public function torrent_set_multi($ids, $values) {
+		$args      = new stdClass;
 		$args->ids = $ids;
 		foreach ($values as $key => $value)
 			$args->$key = $value;
-		$req = $this->vuze_rpc('torrent-set',$args);
+		$req = $this->vuze_rpc('torrent-set', $args);
 		return $req;
 	}
 
 	public function torrent_stop($ids) {
-		$args = new stdClass;
+		$args      = new stdClass;
 		$args->ids = $ids;
-		$req = $this->vuze_rpc('torrent-stop',$args);
+		$req       = $this->vuze_rpc('torrent-stop', $args);
 		return $req;
 	}
 
 	public function torrent_start($ids) {
-		$args = new stdClass;
+		$args      = new stdClass;
 		$args->ids = $ids;
-		$req = $this->vuze_rpc('torrent-start',$args);
+		$req       = $this->vuze_rpc('torrent-start', $args);
 		return $req;
 	}
-	
+
 	public function torrent_verify($ids) {
-		$args = new stdClass;
+		$args      = new stdClass;
 		$args->ids = $ids;
-		$req = $this->vuze_rpc('torrent-verify',$args);
+		$req       = $this->vuze_rpc('torrent-verify', $args);
 		return $req;
 	}
-	
-	public function torrent_remove($ids,$bDeleteData=false) {
-		$args = new stdClass;
+
+	public function torrent_remove($ids, $bDeleteData = false) {
+		$args      = new stdClass;
 		$args->ids = $ids;
 
-		$member = "delete-local-data";
+		$member        = "delete-local-data";
 		$args->$member = ($bDeleteData ? 'true' : 'false');
 
-		$req = $this->vuze_rpc('torrent-remove',$args);
+		$req = $this->vuze_rpc('torrent-remove', $args);
 		return $req;
 	}
 
@@ -459,20 +457,20 @@ class VuzeRPC {
 		*/
 	}
 
-	public function torrent_add_tf($transfer,$content) {
+	public function torrent_add_tf($transfer, $content) {
 
-		$params = explode("\n",$content);
+		$params = explode("\n", $content);
 
 		$save_path = $params[1]; //ok, by session
 		$max_ul_kb = (int)$params[2]; // ok
 		//$max_dl_kb = (int)$params[3]; // ok
-		$max_uc = (int)$params[4];
-		$max_dc = (int)$params[5];
-		$diewhenok = (bool) $params[6];
+		$max_uc    = (int)$params[4];
+		$max_dc    = (int)$params[5];
+		$diewhenok = (bool)$params[6];
 		$sharekill = (int)$params[7]; //ok, by session 4.5.1.1-B31
-		$min_port = (int)$params[8];
-		$max_port = (int)$params[9];
-		$maxcons = (int)$params[10];
+		$min_port  = (int)$params[8];
+		$max_port  = (int)$params[9];
+		$maxcons   = (int)$params[10];
 		$rerequest = (int)$params[11];
 
 		//local file doesnt work before vuze 4.5.1.1-b30, waiting vuze version info
@@ -482,16 +480,16 @@ class VuzeRPC {
 			$url = $this->http_server()."inc/classes/VuzeRPC.php?getUrl=$transfer";
 
 		//set download directory
-		$this->session_set('download-dir',$save_path);
+		$this->session_set('download-dir', $save_path);
 
 		if ($this->xmwebui_ver <= '0.2.8') {
 			// global speed limit, not the right way
 			$limits = array(
-				'speed-limit-up' => $max_ul * 1024,
+				'speed-limit-up'         => $max_ul * 1024,
 				//'speed-limit-down' => $max_dl * 1024,
 				'speed-limit-up-enabled' => ($max_ul > 0),
 				//'speed-limit-down-enabled' => ($max_dl > 0),
-				'encryption' => 'preferred'
+				'encryption'             => 'preferred'
 			);
 			//alt-speed-down
 			//alt-speed-up
@@ -517,17 +515,17 @@ class VuzeRPC {
 			$this->session_set_multi($limits);
 		}
 
-		$req = $this->torrent_add($url,$params);
+		$req = $this->torrent_add($url, $params);
 		if (is_object($req)) {
-			$id = $req->id;
+			$id     = $req->id;
 			$values = array(
 				"speedLimitUpload" => $max_ul_kb * 1024,
 				//"speedLimitDownload" => $max_dl_kb * 1024,
-				'downloadDir' => $save_path,
-				'seedRatioLimit' => round((float)$sharekill / 100.0, 2), // need to be set by session but torrent-get value available in 0.2.9+
-				'seedRatioMode' => 1
+				'downloadDir'      => $save_path,
+				'seedRatioLimit'   => round((float)$sharekill / 100.0, 2), // need to be set by session but torrent-get value available in 0.2.9+
+				'seedRatioMode'    => 1
 			);
-			$req = $this->torrent_set_multi(array($id),$values);
+			$req    = $this->torrent_set_multi(array($id), $values);
 			return $id;
 		}
 
@@ -535,14 +533,14 @@ class VuzeRPC {
 	}
 
 	//for magnets
-	public function torrent_add_url($url,$content) {
-		$params = explode("\n",$content);
-		$save_path  = $params[1]; //ok, by session
-		
+	public function torrent_add_url($url, $content) {
+		$params    = explode("\n", $content);
+		$save_path = $params[1]; //ok, by session
+
 		//set download directory
-		$this->session_set('download-dir',$save_path);
-		
-		$req = $this->torrent_add($url,$params);
+		$this->session_set('download-dir', $save_path);
+
+		$req = $this->torrent_add($url, $params);
 		if (is_object($req))
 			return $req->id;
 
@@ -551,7 +549,7 @@ class VuzeRPC {
 
 	public function torrent_start_tf($hash) {
 		$torrents = $this->torrent_get_hashids();
-		if ( array_key_exists(strtoupper($hash),$torrents) ) {
+		if (array_key_exists(strtoupper($hash), $torrents)) {
 			$tid = $torrents[strtoupper($hash)];
 			$this->torrent_start(array($tid));
 			return true;
@@ -562,7 +560,7 @@ class VuzeRPC {
 
 	public function torrent_stop_tf($hash) {
 		$torrents = $this->torrent_get_hashids();
-		if ( array_key_exists(strtoupper($hash),$torrents) ) {
+		if (array_key_exists(strtoupper($hash), $torrents)) {
 			$tid = $torrents[strtoupper($hash)];
 			$this->torrent_stop(array($tid));
 			return true;
@@ -578,40 +576,40 @@ class VuzeRPC {
 	*/
 	public function vuze_to_tf($stat) {
 		$tfStat = array(
-			'running' => $this->vuze_status_to_tf($stat->status),
-			'speedDown' => (int) $stat->rateDownload,
-			'speedUp' => (int) $stat->rateUpload,
-			
-			'downTotal' => (float) $stat->downloadedEver,
-			'upTotal' => (float) $stat->uploadedEver,
-			'percentDone' => 0.0,
-			'sharing' => 0.0,
-			'eta' => $stat->eta,
-			'seeds' => max($stat->trackerSeeds,$stat->leechers),
-			'peers' => max($stat->trackerLeechers,$stat->seeders),
-			'cons' => $stat->peersConnected,
-			
-			'size' => (float) $stat->totalSize,
-			'status' => $stat->status,
+			'running'        => $this->vuze_status_to_tf($stat->status),
+			'speedDown'      => (int)$stat->rateDownload,
+			'speedUp'        => (int)$stat->rateUpload,
 
-			'rpcid' => $stat->id,
-			'name' => $stat->name,
-			"error" => $stat->error,
-			"errorString" => $stat->errorString,
-			'downloadDir' => $stat->downloadDir,
-			
-			'drate' => $stat->speedLimitDownload,	// xmwebui 0.2.9+
-			'urate' => $stat->speedLimitUpload,		// "
-			
+			'downTotal'      => (float)$stat->downloadedEver,
+			'upTotal'        => (float)$stat->uploadedEver,
+			'percentDone'    => 0.0,
+			'sharing'        => 0.0,
+			'eta'            => $stat->eta,
+			'seeds'          => max($stat->trackerSeeds, $stat->leechers),
+			'peers'          => max($stat->trackerLeechers, $stat->seeders),
+			'cons'           => $stat->peersConnected,
+
+			'size'           => (float)$stat->totalSize,
+			'status'         => $stat->status,
+
+			'rpcid'          => $stat->id,
+			'name'           => $stat->name,
+			"error"          => $stat->error,
+			"errorString"    => $stat->errorString,
+			'downloadDir'    => $stat->downloadDir,
+
+			'drate'          => $stat->speedLimitDownload, // xmwebui 0.2.9+
+			'urate'          => $stat->speedLimitUpload, // "
+
 			'seedRatioLimit' => round($stat->seedRatioLimit, 2), // xmwebui 0.2.9+
-			'seedRatioMode' => $stat->seedRatioMode // seems = 1
+			'seedRatioMode'  => $stat->seedRatioMode // seems = 1
 		);
 
 		if ($tfStat['size'] > 0) {
-			$tfStat['percentDone'] = round(100.0 * ($tfStat['downTotal'] / $tfStat['size']) ,2);
+			$tfStat['percentDone'] = round(100.0 * ($tfStat['downTotal'] / $tfStat['size']), 2);
 			if ($tfStat['percentDone'] > 100)
 				$tfStat['percentDone'] = 100;
-			$tfStat['sharing'] = round(100.0 * ($tfStat['upTotal'] / $tfStat['size']) ,2);
+			$tfStat['sharing'] = round(100.0 * ($tfStat['upTotal'] / $tfStat['size']), 2);
 		}
 
 		return $tfStat;
@@ -625,22 +623,23 @@ class VuzeRPC {
 		// 8 - seeding
 		// 9 - queued (complete)
 		// 16 - paused
-		switch ((int) $status) {
+		switch ((int)$status) {
 			case 1:
 			case 2:
 			case 4:
 			case 5:
-				$tfstatus=1;
+				$tfstatus = 1;
 				break;
 			case 8:
 			case 9:
-				$tfstatus=1;
+				$tfstatus = 1;
 				break;
 			case 0:
 			case 16:
 			default:
-				$tfstatus=0;
-		};
+				$tfstatus = 0;
+		}
+		;
 		//0: Stopped
 		//1: Running
 		//2: New
@@ -652,15 +651,15 @@ class VuzeRPC {
 	 * Get all torrents in torrentflux compatible format
 	 * @return array
 	*/
-	public function torrent_get_tf_array($ids=array()) {
+	public function torrent_get_tf_array($ids = array()) {
 
 		$this->torrents = array();
 
 		$req = $this->torrent_get($ids);
 		if ($req && $req->result == 'success') {
-			$vuze = (array) $req->arguments->torrents;
+			$vuze = (array)$req->arguments->torrents;
 
-			foreach($vuze as $t) {
+			foreach ($vuze as $t) {
 				$this->torrents[$t->hashString] = $this->vuze_to_tf($t);
 			}
 		}
@@ -711,7 +710,7 @@ class VuzeRPC {
 	 * Get all torrents in torrentflux compatible format (shell)
 	 * @return array
 	*/
-	public function torrent_get_tf($ids=array()) {
+	public function torrent_get_tf($ids = array()) {
 		return $this->torrent_get_tf_array($ids);
 	}
 
@@ -726,16 +725,16 @@ class VuzeRPC {
 
 		header('Content-type: application/json');
 
-		$request = new stdClass;
+		$request           = new stdClass;
 		$request->datetime = date('Y-M-d H:i:s');
-		$request->ts = date('U');
-		$request->status = '';
+		$request->ts       = date('U');
+		$request->status   = '';
 
 		$session = $this->session_get("version");
 		if ($session && $session->result == 'success') {
 
 			$request->torrents = $this->torrent_get_tf_array();
-			$request->status = 'OK';
+			$request->status   = 'OK';
 
 		}
 
@@ -756,24 +755,24 @@ class VuzeRPC {
 	//VuzeRPC::isRunning()
 	public function isRunning() {
 		$instance = VuzeRPC::getInstance();
-		$req = $instance->session_get("version");
-		return  (is_object($req) && $req->result == 'success');
+		$req      = $instance->session_get("version");
+		return (is_object($req) && $req->result == 'success');
 	}
 
 	//VuzeRPC::transferExists($transfer)
 	public function transferExists($hash) {
 		$instance = VuzeRPC::getInstance();
 		$torrents = $instance->torrent_get_hashids();
-		return array_key_exists(strtoupper($hash),$torrents);
+		return array_key_exists(strtoupper($hash), $torrents);
 	}
 
 	public function delTransfer($hash) {
 		$instance = VuzeRPC::getInstance();
 
 		$torrents = $instance->torrent_get_hashids();
-		if ( array_key_exists(strtoupper($hash),$torrents) ) {
+		if (array_key_exists(strtoupper($hash), $torrents)) {
 			$tid = $torrents[strtoupper($hash)];
-			$instance->torrent_remove(array($tid),false);
+			$instance->torrent_remove(array($tid), false);
 			return true;
 		}
 		//not found

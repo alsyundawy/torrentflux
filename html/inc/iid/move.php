@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -45,14 +44,15 @@ if ($cfg["enable_move"] != 1) {
 tmplInitializeInstance($cfg["theme"], "page.move.tmpl");
 
 // set vars
-if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
-	$path = stripslashes($_REQUEST['path']);
-	$dir = tfb_getRequestVar('path');
+if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
+	$path   = stripslashes($_REQUEST['path']);
+	$dir    = tfb_getRequestVar('path');
 	$source = $cfg["path"].$dir;
 	// only valid paths + entries with permission
 	if (!((tfb_isValidPath($source)) &&
 		(isValidEntry(basename($source))) &&
-		(hasPermission($dir, $cfg["user"], 'w')))) {
+		(hasPermission($dir, $cfg["user"], 'w')))
+	) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$dir);
 		@error("Illegal move. Action has been logged.", "", "");
 	}
@@ -63,7 +63,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$tmpl->setvar('move_start', 1);
-		$dirs = explode(":", trim($cfg["move_paths"]));
+		$dirs     = explode(":", trim($cfg["move_paths"]));
 		$dir_list = array();
 		foreach ($dirs as $dir) {
 			$target = trim($dir);
@@ -75,22 +75,23 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		$tmpl->setvar('move_start', 0);
 	}
 } else {
-	$file = $_POST['file'];
+	$file      = $_POST['file'];
 	$targetDir = "";
 	if (isset($_POST['dest'])) {
-		 $tempDir = trim(rawurldecode($_POST['dest']));
-		 if (strlen($tempDir) > 0) {
+		$tempDir = trim(rawurldecode($_POST['dest']));
+		if (strlen($tempDir) > 0) {
 			$targetDir = $tempDir;
-		 } else {
+		} else {
 			if (isset($_POST['selector']))
 				$targetDir = trim(urldecode($_POST['selector']));
-		 }
+		}
 	}
 	// only valid dirs + entries with permission
 	if (!((tfb_isValidPath($cfg["path"].$file)) &&
 		(tfb_isValidPath($targetDir)) &&
 		(isValidEntry(basename($cfg["path"].$file))) &&
-		(hasPermission($file, $cfg["user"], 'w')))) {
+		(hasPermission($file, $cfg["user"], 'w')))
+	) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$file." to ".$targetDir);
 		@error("Illegal move. Action has been logged.", "", "");
 	}
@@ -98,7 +99,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	// inform user .. don't move it into a fallback-dir which may be a hassle
 	$dirValid = true;
 	if (strlen($targetDir) <= 0) {
-		 $dirValid = false;
+		$dirValid = false;
 	} else {
 		if ($targetDir{0} != '/') {
 			$tmpl->setvar('not_absolute', 1);
@@ -122,9 +123,9 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		$handle = popen($cmd, 'r');
 		// get the output and print it.
 		$gotError = -1;
-		$buff= "";
+		$buff     = "";
 		while (!feof($handle)) {
-			$buff .= @fgets($handle,30);
+			$buff .= @fgets($handle, 30);
 			$gotError = $gotError + 1;
 		}
 		$tmpl->setvar('messages', nl2br($buff));

@@ -4,29 +4,27 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * Get the theme that is avaible and can be used
  *
  * @return string
  */
-function CheckandSetUserTheme()
-{
+function CheckandSetUserTheme() {
 	global $cfg;
 
 	// check personal theme
@@ -55,25 +53,20 @@ function CheckandSetUserTheme()
  *
  * @return string
  */
-function CheckandSetDefaultTheme()
-{
+function CheckandSetDefaultTheme() {
 	global $cfg;
 
-	if( isset($cfg["default_theme"]) && is_dir("themes/".$cfg["default_theme"]))
-	{
+	if (isset($cfg["default_theme"]) && is_dir("themes/".$cfg["default_theme"])) {
 		$theme = $cfg["default_theme"];
-	}
-	elseif ( is_dir("themes/default") )
-	{
+	} elseif (is_dir("themes/default")) {
 		$theme = "default";
-		$msg = "The default theme does not exist any more. System Administrator has to change default theme.";
-	}
-	else
+		$msg   = "The default theme does not exist any more. System Administrator has to change default theme.";
+	} else
 		die("Fatal Error: No suitable theme could be found and included.<br />Please check your Files.");
 
 	// This complettely breaks theme validation, but i haven't found a quick solution to get
 	// an error message displayed on all sites. I think we first need to change the theme-engine to be more flexible. -danez
-	if( isset($msg) ) echo $msg;
+	if (isset($msg)) echo $msg;
 	return $theme;
 }
 

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * set vars for form of index page settings
@@ -60,57 +59,57 @@ function tmplSetIndexPageFormVars() {
 	$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($cfg["searchEngine"]));
 	$transferWindowDefaultList = array();
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Stats',
-		'value' => 'transferStats',
-		'is_selected' => ('transferStats' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Stats',
+			'value'       => 'transferStats',
+			'is_selected' => ('transferStats' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Hosts',
-		'value' => 'transferHosts',
-		'is_selected' => ('transferHosts' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Hosts',
+			'value'       => 'transferHosts',
+			'is_selected' => ('transferHosts' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Scrape',
-		'value' => 'transferScrape',
-		'is_selected' => ('transferScrape' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Scrape',
+			'value'       => 'transferScrape',
+			'is_selected' => ('transferScrape' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Images',
-		'value' => 'transferImages',
-		'is_selected' => ('transferImages' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Images',
+			'value'       => 'transferImages',
+			'is_selected' => ('transferImages' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Log',
-		'value' => 'transferLog',
-		'is_selected' => ('transferLog' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Log',
+			'value'       => 'transferLog',
+			'is_selected' => ('transferLog' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Details',
-		'value' => 'transferDetails',
-		'is_selected' => ('transferDetails' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Details',
+			'value'       => 'transferDetails',
+			'is_selected' => ('transferDetails' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Files',
-		'value' => 'transferFiles',
-		'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Files',
+			'value'       => 'transferFiles',
+			'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Settings',
-		'value' => 'transferSettings',
-		'is_selected' => ('transferSettings' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Settings',
+			'value'       => 'transferSettings',
+			'is_selected' => ('transferSettings' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	array_push($transferWindowDefaultList, array(
-		'name' => 'Control',
-		'value' => 'transferControl',
-		'is_selected' => ('transferControl' == $cfg["transfer_window_default"]) ? 1 : 0
+			'name'        => 'Control',
+			'value'       => 'transferControl',
+			'is_selected' => ('transferControl' == $cfg["transfer_window_default"]) ? 1 : 0
 		)
 	);
 	$tmpl->setloop('transfer_window_default_list', $transferWindowDefaultList);
@@ -122,17 +121,17 @@ function tmplSetIndexPageFormVars() {
 /**
  * set vars for form of index page settings (0-2047)
  *
- * User			  [0]
- * Size			  [1]
- * DLed			  [2]
- * ULed			  [3]
- * Status		  [4]
- * Progress		  [5]
- * DL Speed		  [6]
- * UL Speed		  [7]
- * Seeds		  [8]
- * Peers		  [9]
- * ETA			 [10]
+ * User              [0]
+ * Size              [1]
+ * DLed              [2]
+ * ULed              [3]
+ * Status          [4]
+ * Progress          [5]
+ * DL Speed          [6]
+ * UL Speed          [7]
+ * Seeds          [8]
+ * Peers          [9]
+ * ETA             [10]
  * TorrentClient [11]
  *
  */
@@ -174,21 +173,21 @@ function tmplSetGoodLookingStatsForm() {
  */
 function tmplSetClientSelectForm($client = 'tornado') {
 	global $cfg, $tmpl;
-	$clients = array(
-		"tornado"			=> "BitTornado",
-		"transmission"		=> "Transmission Client", 
-		"transmissionrpc"	=> "Transmission Daemon", 
-		"mainline"			=> "BitTorrent Mainline", 
-		"azureus"			=> "Azureus (fluazu)", 
-		"vuzerpc"			=> "Vuze RPC"
+	$clients     = array(
+		"tornado"         => "BitTornado",
+		"transmission"    => "Transmission Client",
+		"transmissionrpc" => "Transmission Daemon",
+		"mainline"        => "BitTorrent Mainline",
+		"azureus"         => "Azureus (fluazu)",
+		"vuzerpc"         => "Vuze RPC"
 	);
-	$labels = array("BitTornado", "transmission", "transmissionrpc", "mainline", "azureus", "vuzerpc");
+	$labels      = array("BitTornado", "transmission", "transmissionrpc", "mainline", "azureus", "vuzerpc");
 	$client_list = array();
 	foreach ($clients as $clnt => $label) {
 		array_push($client_list, array(
-			'client' => $clnt,
-			'label' => $label,
-			'selected' => ($client == $clnt) ? 1 : 0
+				'client'   => $clnt,
+				'label'    => $label,
+				'selected' => ($client == $clnt) ? 1 : 0
 			)
 		);
 	}
@@ -206,10 +205,10 @@ function tmplSetDirTree($dir, $maxdepth) {
 	$tmpl->setvar('dirtree_dir', $dir);
 	if (is_numeric($maxdepth)) {
 		$retvar_list = array();
-		$last = ($maxdepth == 0)
+		$last        = ($maxdepth == 0)
 			? exec("find ".tfb_shellencode($dir)." -type d | sort && echo", $retval)
 			: exec("find ".tfb_shellencode($dir)." -maxdepth ".tfb_shellencode($maxdepth)." -type d | sort && echo", $retval);
-		for ($i = 1; $i < (count ($retval) - 1); $i++)
+		for ($i = 1; $i < (count($retval) - 1); $i++)
 			array_push($retvar_list, array('retval' => $retval[$i]));
 		$tmpl->setloop('dirtree_retvar_list', $retvar_list);
 	}
@@ -221,7 +220,7 @@ function tmplSetDirTree($dir, $maxdepth) {
 function tmplSetMoveSettings() {
 	global $cfg, $tmpl;
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
-		$dirs = explode(":", trim($cfg["move_paths"]));
+		$dirs     = explode(":", trim($cfg["move_paths"]));
 		$dir_list = array();
 		foreach ($dirs as $dir) {
 			$target = trim($dir);

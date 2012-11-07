@@ -4,25 +4,23 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // class for the Fluxd-Service-module Qmgr
-class FluxdQmgr extends FluxdServiceMod
-{
+class FluxdQmgr extends FluxdServiceMod {
 
 	// =========================================================================
 	// public static methods
@@ -217,7 +215,7 @@ class FluxdQmgr extends FluxdServiceMod
 		if ($this->modstate == FLUXDMOD_STATE_RUNNING) {
 			if (isTransferRunning($transfer)) {
 				// transfer has been started...log
-				AuditAction($cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
+				AuditAction($cfg["constants"]["unqueued_transfer"], $transfer."has been already started.");
 			} else {
 				// send command
 				Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.$transfer.';'.$user, 0);
@@ -249,14 +247,14 @@ class FluxdQmgr extends FluxdServiceMod
 		$sf = new StatFile($transfer, getOwner($transfer));
 		if ($sf->percent_done > 0 && $sf->percent_done < 100) {
 			// has downloaded something at some point, mark it is incomplete
-			$sf->running = "0";
+			$sf->running   = "0";
 			$sf->time_left = "Transfer Stopped";
 			$modded++;
 		}
 		if ($modded == 0) {
 			if ($sf->percent_done == 0 || $sf->percent_done == "") {
 				// We are going to write a '2' on the front of the stat file so that it will be set back to New Status
-				$sf->running = "2";
+				$sf->running   = "2";
 				$sf->time_left = "";
 				$modded++;
 			}
@@ -264,14 +262,14 @@ class FluxdQmgr extends FluxdServiceMod
 		if ($modded == 0) {
 			if ($sf->percent_done == 100) {
 				// transfer was done and is now being stopped
-				$sf->running = "0";
+				$sf->running   = "0";
 				$sf->time_left = "Download Succeeded!";
 				$modded++;
 			}
 		}
 		if ($modded == 0) {
 			// hmmm this stat-file is quite strange... just rewrite it stopped.
-			$sf->running = "0";
+			$sf->running   = "0";
 			$sf->time_left = "Transfer Stopped";
 		}
 		// Write out the new Stat File

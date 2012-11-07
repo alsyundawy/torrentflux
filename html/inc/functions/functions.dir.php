@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * checks if $user has the $permission on $object
@@ -128,11 +127,11 @@ function downloadFile($down) {
 	//	"test/tester's file/test.txt"
 	$down = stripslashes(stripslashes($down));
 	if (tfb_isValidPath($down)) {
-		$path = $cfg["path"].$down;
-		$p = explode(".", $path);
-		$pc = count($p);
-		$f = explode("/", $path);
-		$file = array_pop($f);
+		$path   = $cfg["path"].$down;
+		$p      = explode(".", $path);
+		$pc     = count($p);
+		$f      = explode("/", $path);
+		$file   = array_pop($f);
 		$arTemp = explode("/", $down);
 		if (count($arTemp) > 1) {
 			array_pop($arTemp);
@@ -140,7 +139,7 @@ function downloadFile($down) {
 		}
 		if (file_exists($path)) {
 			// size
-			$filesize = sprintf("%.0f",filesize($path));
+			$filesize = sprintf("%.0f", filesize($path));
 			// filenames in IE containing dots will screw up the filename
 			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 				? preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1)
@@ -151,7 +150,7 @@ function downloadFile($down) {
 				$bufsize = 32768;
 				if (preg_match("/^bytes=(\\d+)-(\\d*)$/D", $_SERVER['HTTP_RANGE'], $matches)) {
 					$from = $matches[1];
-					$to = $matches[2];
+					$to   = $matches[2];
 					if (empty($to))
 						$to = $filesize - 1;
 					$content_size = $to - $from + 1;
@@ -182,9 +181,9 @@ function downloadFile($down) {
 			} else {
 				// standard download
 				@header("Content-transfer-encoding: binary\n");
-				@header("Content-length: " . $filesize . "\n");
-				$fileExt = getExtension($headerName);
-				$is_image = preg_match("#(jpg|gif|png)#",$fileExt);
+				@header("Content-length: ".$filesize."\n");
+				$fileExt  = getExtension($headerName);
+				$is_image = preg_match("#(jpg|gif|png)#", $fileExt);
 				if (!$is_image) {
 					@header("Content-type: application/octet-stream\n");
 					@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
@@ -228,7 +227,7 @@ function downloadArchive($download) {
 	if (tfb_isValidPath($download)) {
 		// This prevents the script from getting killed off when running lengthy tar jobs.
 		@ini_set("max_execution_time", 3600);
-		$down = $cfg["path"].$download;
+		$down   = $cfg["path"].$download;
 		$arTemp = explode("/", $down);
 		if (count($arTemp) > 1) {
 			array_pop($arTemp);
@@ -241,7 +240,7 @@ function downloadArchive($download) {
 		if (is_dir($down)) {
 			$sendname = basename($down);
 
-			$dir_param = addcslashes($sendname,"\x00..\x2E!@\@\x7B..\xFF"); 
+			$dir_param = addcslashes($sendname, "\x00..\x2E!@\@\x7B..\xFF");
 			switch ($cfg["package_type"]) {
 				Case "tar":
 					$command = "tar cf - ".$dir_param;
@@ -251,7 +250,7 @@ function downloadArchive($download) {
 					break;
 				default:
 					$cfg["package_type"] = "tar";
-					$command = "tar cf - ".$dir_param;
+					$command             = "tar cf - ".$dir_param;
 					break;
 			}
 
@@ -293,16 +292,18 @@ function downloadArchive($download) {
  * @return
  */
 function getExtension($fileName) {
-	$noExtensionFile="unknown"; // The return when no extension is found
+	$noExtensionFile = "unknown"; // The return when no extension is found
 	// Prepare the loop to find an extension
-	$length = -1*(strlen($fileName)); // The maximum negative value for $i
-	$i=-1; //The counter which counts back to $length
+	$length = -1 * (strlen($fileName)); // The maximum negative value for $i
+	$i      = -1; //The counter which counts back to $length
 	// Find the last dot in an string
-	while (substr($fileName,$i,1) != "." && $i > $length) {$i -= 1; }
+	while (substr($fileName, $i, 1) != "." && $i > $length) {
+		$i -= 1;
+	}
 	// Get the extension (with dot)
-	$ext = substr($fileName,$i);
+	$ext = substr($fileName, $i);
 	// Decide what to return.
-	$ext = (substr($ext,0,1)==".") ? substr($ext,((-1 * strlen($ext))+1)) : $noExtensionFile;
+	$ext = (substr($ext, 0, 1) == ".") ? substr($ext, ((-1 * strlen($ext)) + 1)) : $noExtensionFile;
 	// Return the extension
 	return strtolower($ext);
 }
@@ -360,7 +361,7 @@ function isNfo($entry) {
  * @return 0|1|2 ; 0 = no match, 1 = rar-file, 2 = zip-file
  */
 function isRar($entry) {
-	if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
+	if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE) OR (strpos($entry, '.part1.rar') !== FALSE))
 		return 1;
 	if (strpos($entry, '.zip') !== FALSE)
 		return 2;
@@ -375,10 +376,10 @@ function isRar($entry) {
  */
 function findArchives($dirName) {
 	$zip = false;
-	$d = dir($dirName);
+	$d   = dir($dirName);
 	while (false !== ($entry = $d->read())) {
-		if($entry != '.' && $entry != '..' && !empty($entry)) {
-			if(isFile($dirName.'/'.$entry) && isRar($entry)) {
+		if ($entry != '.' && $entry != '..' && !empty($entry)) {
+			if (isFile($dirName.'/'.$entry) && isRar($entry)) {
 				$zip[] = $dirName.'/'.$entry;
 			}
 		}
@@ -395,10 +396,10 @@ function findArchives($dirName) {
  */
 function findSFV($dirName) {
 	$sfv = false;
-	$d = dir($dirName);
+	$d   = dir($dirName);
 	while (false !== ($entry = $d->read())) {
-		if($entry != '.' && $entry != '..' && !empty($entry)) {
-			if(isFile($dirName.'/'.$entry) && strtolower(substr($entry, -4, 4)) == '.sfv') {
+		if ($entry != '.' && $entry != '..' && !empty($entry)) {
+			if (isFile($dirName.'/'.$entry) && strtolower(substr($entry, -4, 4)) == '.sfv') {
 				$sfv['dir'] = $dirName;
 				$sfv['sfv'] = $dirName.'/'.$entry;
 			}
@@ -416,7 +417,7 @@ function findSFV($dirName) {
  * @return boolean
  */
 function chmodRecursive($path, $mode = 0777) {
-	if ((! @is_dir($path)) && (isValidEntry(basename($path))))
+	if ((!@is_dir($path)) && (isValidEntry(basename($path))))
 		return @chmod($path, $mode);
 	$dirHandle = opendir($path);
 	while ($file = readdir($dirHandle)) {
@@ -437,30 +438,30 @@ function chmodRecursive($path, $mode = 0777) {
 
 
 /**
-*  Encode a string for safe transport across GET transfers, adding
-*  slashes if magic quoting is off
-*
-* @param	string	$input to apply encoding to
-* @return	string	$return string with encoded string
-*/
-function UrlHTMLSlashesEncode($input){
-	$return=htmlentities(rawurlencode($input), ENT_QUOTES);
+ *  Encode a string for safe transport across GET transfers, adding
+ *  slashes if magic quoting is off
+ *
+ * @param    string    $input to apply encoding to
+ * @return    string    $return string with encoded string
+ */
+function UrlHTMLSlashesEncode($input) {
+	$return = htmlentities(rawurlencode($input), ENT_QUOTES);
 
 	// Add slashes if magic quotes off:
-	if(get_magic_quotes_gpc() === 0){
-		$return=addslashes($return);
+	if (get_magic_quotes_gpc() === 0) {
+		$return = addslashes($return);
 	}
-	return($return);
+	return ($return);
 }
 
 /**
-*  Decode a string encoded with UrlHTMLSlashesEncode()
-*
-* @param	string	$input string to decode
-* @return	string	$return string with decoded string
-*/
-function UrlHTMLSlashesDecode($input){
-	return(stripslashes(html_entity_decode(rawurldecode($input), ENT_QUOTES)));
+ *  Decode a string encoded with UrlHTMLSlashesEncode()
+ *
+ * @param    string    $input string to decode
+ * @return    string    $return string with decoded string
+ */
+function UrlHTMLSlashesDecode($input) {
+	return (stripslashes(html_entity_decode(rawurldecode($input), ENT_QUOTES)));
 }
 
 /**
@@ -471,8 +472,7 @@ function UrlHTMLSlashesDecode($input){
  * @link        http://aidanlister.com/2004/04/calculating-a-directories-size-in-php/
  * @param       string   $directory    Path to directory
  */
-function dirsize($path)
-{
+function dirsize($path) {
 	// Init a float for big sizes
 	$size = 0.0;
 
@@ -483,13 +483,12 @@ function dirsize($path)
 
 	// Sanity check
 	if (is_file($path)) {
-		return sprintf("%.0f",filesize($path));
+		return sprintf("%.0f", filesize($path));
 	} elseif (!is_dir($path)) {
 		return false;
 	}
 
-	if (!isWinOS())
-	{
+	if (!isWinOS()) {
 		$size += @trim(shell_exec('du -ksL '.tfb_shellencode($path)));
 		$size *= 1024;
 		if ($size > 0.0) return sprintf("%.0f", $size);
@@ -497,8 +496,7 @@ function dirsize($path)
 
 	// Iterate queue
 	$queue = array($path);
-	for ($i = 0, $j = count($queue); $i < $j; ++$i)
-	{
+	for ($i = 0, $j = count($queue); $i < $j; ++$i) {
 		// Open directory
 		$parent = $i;
 		if (is_dir($queue[$i]) && $dir = @dir($queue[$i])) {
@@ -510,7 +508,7 @@ function dirsize($path)
 				}
 
 				// Get list of directories or filesizes
-				$path = $queue[$i] . $entry;
+				$path = $queue[$i].$entry;
 				if (is_dir($path)) {
 					$path .= DIRECTORY_SEPARATOR;
 					$subdirs[] = $path;
@@ -535,4 +533,5 @@ function dirsize($path)
 
 	return $size;
 }
+
 ?>

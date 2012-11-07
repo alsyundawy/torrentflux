@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -40,28 +39,28 @@ transfer_init();
 
 $isTransmissionTransfer = false;
 if ($cfg["transmission_rpc_enable"] > 0) {
-	if (isHash($transfer)) 
+	if (isHash($transfer))
 		$hash = $transfer;
 	else
 		$hash = getTransferHash($transfer);
 	require_once('inc/functions/functions.rpc.transmission.php');
 	$isTransmissionTransfer = isTransmissionTransfer($hash);
-	if (!$isTransmissionTransfer && $cfg["transmission_rpc_enable"]==1) {
+	if (!$isTransmissionTransfer && $cfg["transmission_rpc_enable"] == 1) {
 		$isTransmissionTransfer = (getTransferClient($transfer) == 'transmissionrpc');
 	}
 }
 
 $list_host = array();
 if ($isTransmissionTransfer) {
-	$options = array('peers');
+	$options  = array('peers');
 	$transfer = getTransmissionTransfer($hash, $options);
-	
+
 	$isRunning = true; //TODO make this actually determine if the torrent is running
 	if ($isRunning) {
-		foreach ( $transfer['peers'] as $peer) {
+		foreach ($transfer['peers'] as $peer) {
 			array_push($list_host, array(
-				'host' => @gethostbyaddr($peer['address']), // TODO: do we actually want the host lookup names instead of IPs?
-				'port' => $peer['port']
+					'host' => @gethostbyaddr($peer['address']), // TODO: do we actually want the host lookup names instead of IPs?
+					'port' => $peer['port']
 				)
 			);
 		}
@@ -72,12 +71,12 @@ if ($isTransmissionTransfer) {
 
 	// set vars
 	if ($sf->running == 1) {
-		$transfer_pid = getTransferPid($transfer);
-		$transfer_cons = netstatConnectionsByPid($transfer_pid);
+		$transfer_pid   = getTransferPid($transfer);
+		$transfer_cons  = netstatConnectionsByPid($transfer_pid);
 		$transfer_hosts = netstatHostsByPid($transfer_pid);
-	
+
 		$hostAry = array_keys($transfer_hosts);
-	
+
 		foreach ($hostAry as $host) {
 			$host = @trim($host);
 			$port = @trim($transfer_hosts[$host]);
@@ -86,21 +85,21 @@ if ($isTransmissionTransfer) {
 			if ($host != "") {
 				$tmpl->setvar('hosts', 1);
 				array_push($list_host, array(
-					'host' => $host,
-					'port' => $port
+						'host' => $host,
+						'port' => $port
 					)
 				);
 			}
 		}
-		
+
 	}
 }
 
 $transfer_cons = sizeof($list_host);
-$tmpl->setvar('hosts', (sizeof($list_host)>0 ? 1 : 0) );
+$tmpl->setvar('hosts', (sizeof($list_host) > 0 ? 1 : 0));
 $tmpl->setvar('cons_hosts', $transfer_cons);
 
-if($transfer_cons>0){
+if ($transfer_cons > 0) {
 	$tmpl->setvar('transfer_hosts_aval', 1);
 	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);
 	$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);

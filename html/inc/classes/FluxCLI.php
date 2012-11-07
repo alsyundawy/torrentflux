@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // defines
 define('_DUMP_DELIM', '*');
@@ -29,8 +28,7 @@ define('_REVISION_FLUXCLI', 'v1.0git');
 /**
  * FluxCLI
  */
-class FluxCLI
-{
+class FluxCLI {
 	// public fields
 
 	// name
@@ -127,8 +125,8 @@ class FluxCLI
 		$cfg['isAdmin'] = true;
 
 		// set user-agent
-		$cfg['user_agent'] = $this->name."/" . _REVISION_FLUXCLI;
-		$_SERVER['HTTP_USER_AGENT'] = $this->name."/" . _REVISION_FLUXCLI;
+		$cfg['user_agent']          = $this->name."/"._REVISION_FLUXCLI;
+		$_SERVER['HTTP_USER_AGENT'] = $this->name."/"._REVISION_FLUXCLI;
 
 		// parse args and set fields
 		$argCount = count($args);
@@ -140,7 +138,7 @@ class FluxCLI
 		$this->_script = basename($args[0]);
 		$this->_action = (isset($args[1])) ? $args[1] : "";
 		if ($argCount > 2) {
-			$prm = array_splice($args, 2);
+			$prm         = array_splice($args, 2);
 			$this->_args = array_map('trim', $prm);
 			$this->_argc = count($this->_args);
 		} else {
@@ -172,20 +170,20 @@ class FluxCLI
 			case "transfers":
 				return $this->_transfers();
 
-						/* pm */
-						case "pm":
-								if ($this->_argc < 3) {
-										array_push($this->_argErrors, "Missing arguments: sender, recipient, message text");
-										break;
-								} else {
-										$sender = array_shift($this->_args);
-										$user = array_shift($this->_args);
-										$message = implode(" ",$this->_args);
-										return $this->_pm(
-												$sender,
-												$user,
-												$message
-										);
+			/* pm */
+			case "pm":
+				if ($this->_argc < 3) {
+					array_push($this->_argErrors, "Missing arguments: sender, recipient, message text");
+					break;
+				} else {
+					$sender  = array_shift($this->_args);
+					$user    = array_shift($this->_args);
+					$message = implode(" ", $this->_args);
+					return $this->_pm(
+						$sender,
+						$user,
+						$message
+					);
 				}
 
 			/* start */
@@ -391,20 +389,20 @@ class FluxCLI
 	 * (error already reported via $this->_outputError).
 	 *
 	 * Example:
-	 *	_parseOptions(
-	 *		array(							// $desc: array of possible options with number of extra-args.
-	 *			'd' => 0,						// Options 'd' and 's' take no extra-arg.
-	 *			's' => 0,
-	 *			'p' => 1,						// Option 'p' takes one extra-arg.
-	 *			'x' => 2						// Option 'x' takes two extra-args.
-	 *		),
-	 *		'spx',							// $options
-	 *		array('profname', 'x1', 'x2')	// $extra
-	 *	) === array(
-	 *		's' => array(),						// Option 's' was found, no extra-arg.
-	 *		'p' => array('profname'),			// Option 'p' was found, its extra-arg's value was 'profname'.
-	 *		'x' => array('x1', 'x2')			// Option 'x' was found, its extra-args' values were 'x1' and 'x2'.
-	 *	)
+	 *    _parseOptions(
+	 *        array(                            // $desc: array of possible options with number of extra-args.
+	 *            'd' => 0,                        // Options 'd' and 's' take no extra-arg.
+	 *            's' => 0,
+	 *            'p' => 1,                        // Option 'p' takes one extra-arg.
+	 *            'x' => 2                        // Option 'x' takes two extra-args.
+	 *        ),
+	 *        'spx',                            // $options
+	 *        array('profname', 'x1', 'x2')    // $extra
+	 *    ) === array(
+	 *        's' => array(),                        // Option 's' was found, no extra-arg.
+	 *        'p' => array('profname'),            // Option 'p' was found, its extra-arg's value was 'profname'.
+	 *        'x' => array('x1', 'x2')            // Option 'x' was found, its extra-args' values were 'x1' and 'x2'.
+	 *    )
 	 *
 	 * @param array  $desc
 	 * @param string $options
@@ -422,7 +420,7 @@ class FluxCLI
 				continue;
 
 			$needed = $desc[$option];
-			$found = array();
+			$found  = array();
 
 			// Option needs at least one extra-arg, ensure there are enough and load it/them.
 			if ($needed > 0) {
@@ -446,18 +444,18 @@ class FluxCLI
 	 * set, returned previously by $this->_parseOptions).
 	 *
 	 * Example:
-	 *	_buildOptions(
-	 *		'spx',							// $options: list of options to pass-thru
-	 *		array(							// $optionsSet: options of current call
-	 *			'd' => array(),
-	 *			's' => array(),
-	 *			'x' => array('x1', 'x2'),
-	 *			'p' => array('profname')
-	 *		)
-	 *	) === array(
-	 *		'sxp',							// $options for new call // The three options 's', 'p' and 'x' are
-	 *		array('x1', 'x2', 'profname')	// $extra   for new call // forwarded, with their extra-args.
-	 *	)
+	 *    _buildOptions(
+	 *        'spx',                            // $options: list of options to pass-thru
+	 *        array(                            // $optionsSet: options of current call
+	 *            'd' => array(),
+	 *            's' => array(),
+	 *            'x' => array('x1', 'x2'),
+	 *            'p' => array('profname')
+	 *        )
+	 *    ) === array(
+	 *        'sxp',                            // $options for new call // The three options 's', 'p' and 'x' are
+	 *        array('x1', 'x2', 'profname')    // $extra   for new call // forwarded, with their extra-args.
+	 *    )
 	 *
 	 * @param string $options
 	 * @param array  $optionsSet
@@ -465,7 +463,7 @@ class FluxCLI
 	 */
 	function _buildOptions($options, $optionsSet) {
 		$returnOptions = '';
-		$returnExtra = array();
+		$returnExtra   = array();
 
 		// Iterate on current call's options.
 		foreach ($optionsSet as $option => $extra) {
@@ -516,13 +514,13 @@ class FluxCLI
 			echo "- ".implode(" - ", $transferAry)."\n";
 		// print out stats
 		echo "Server:\n";
-		if (! array_key_exists("total_download", $cfg))
+		if (!array_key_exists("total_download", $cfg))
 			$cfg["total_download"] = 0;
-		if (! array_key_exists("total_upload", $cfg))
+		if (!array_key_exists("total_upload", $cfg))
 			$cfg["total_upload"] = 0;
 		echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' kB/s'."\n";
 		echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' kB/s'."\n";
-		echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' kB/s'."\n";
+		echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"] + $cfg["total_upload"], 2).' kB/s'."\n";
 		echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum()."\n";
 		return true;
 	}
@@ -549,7 +547,7 @@ class FluxCLI
 		}
 		// parse options
 		$optionsSet = $this->_parseOptions(
-			array( 'p' => 1 ),	// Only recognized option is 'p'.
+			array('p' => 1), // Only recognized option is 'p'.
 			$options, $extra
 		);
 		if ($optionsSet === false)
@@ -561,31 +559,31 @@ class FluxCLI
 		// output
 		$this->_outputMessage(
 			"Starting ".$transfer." for user ".$cfg["user"].
-			(!empty($profile) ? " using profile ".$profile : '').
-			" ...\n"
+				(!empty($profile) ? " using profile ".$profile : '').
+				" ...\n"
 		);
 
 		$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		// load and apply profile, if specified (just ignore
 		// it if profiles are disabled, no error)
-		if ($cfg['transfer_profiles'] >= 1 && !empty($profile)) {		
+		if ($cfg['transfer_profiles'] >= 1 && !empty($profile)) {
 			$ch->settingsDefault($transfer);
 			$settings = GetProfileSettings($profile);
 			if (empty($settings) || $settings === false) {
 				$this->_outputError("profilename ".$profile." is no valid profile.\n");
 				return false;
 			}
-			$ch->rate = $settings['rate'];
-			$ch->drate = $settings['drate'];
-			$ch->maxuploads = $settings['maxuploads'];
+			$ch->rate        = $settings['rate'];
+			$ch->drate       = $settings['drate'];
+			$ch->maxuploads  = $settings['maxuploads'];
 			$ch->superseeder = $settings['superseeder'];
-			$ch->runtime = $settings['runtime'];
-			$ch->sharekill = $settings['sharekill'];
-			$ch->minport = $settings['minport'];
-			$ch->maxport = $settings['maxport'];
-			$ch->maxcons = $settings['maxcons'];
-			$ch->rerequest = $settings['rerequest'];
-			$ch->savepath = calcTransferSavepath($transfer, $profile);
+			$ch->runtime     = $settings['runtime'];
+			$ch->sharekill   = $settings['sharekill'];
+			$ch->minport     = $settings['minport'];
+			$ch->maxport     = $settings['maxport'];
+			$ch->maxcons     = $settings['maxcons'];
+			$ch->rerequest   = $settings['rerequest'];
+			$ch->savepath    = calcTransferSavepath($transfer, $profile);
 			// TODO CONFIRM ALL GOES WELL AFTER THIS
 			$ch->settingsSave();
 		}
@@ -600,19 +598,19 @@ class FluxCLI
 		}
 	}
 
-		/**
-		 * PM a user
-		 *
-		 * @param $user, $message
-		 * @return $string
-		 */
-		function _pm($sender, $recipient, $message) {
-				global $cfg;
-				// 
-				require_once("inc/functions/functions.common.message.php");
-				check_html($message, "nohtml");
-				SaveMessage($recipient, $sender, $message);
-		}
+	/**
+	 * PM a user
+	 *
+	 * @param $user, $message
+	 * @return $string
+	 */
+	function _pm($sender, $recipient, $message) {
+		global $cfg;
+		//
+		require_once("inc/functions/functions.common.message.php");
+		check_html($message, "nohtml");
+		SaveMessage($recipient, $sender, $message);
+	}
 
 	/**
 	 * Stop Transfer
@@ -749,7 +747,7 @@ class FluxCLI
 		// set user
 		$cfg["user"] = getOwner($transfer);
 		// delete
-		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch           = ClientHandler::getInstance(getTransferClient($transfer));
 		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag) {
 			// stop transfer first
@@ -785,7 +783,7 @@ class FluxCLI
 		// set user
 		$cfg["user"] = getOwner($transfer);
 		// wipe
-		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch           = ClientHandler::getInstance(getTransferClient($transfer));
 		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag) {
 			// stop transfer first
@@ -795,18 +793,18 @@ class FluxCLI
 		}
 		if (!$tRunningFlag) {
 			$this->_outputMessage("Deleting...\n");
-			$msgsDelete = deleteTransferData($transfer);
+			$msgsDelete  = deleteTransferData($transfer);
 			$countDelete = count($msgsDelete);
-			$msgsReset = resetTransferTotals($transfer, true);
-			$countReset = count($msgsReset);
+			$msgsReset   = resetTransferTotals($transfer, true);
+			$countReset  = count($msgsReset);
 			if (($countDelete + $countReset) == 0) {
 				$this->_outputMessage("done.\n");
 				return true;
 			} else {
 				$this->_outputError("there were problems: "
-					.(($countDelete > 0) ? implode("\n", $msgsDelete)."\n" : "")
-					.(($countReset > 0) ? implode("\n", $msgsReset) : "")
-					."\n"
+						.(($countDelete > 0) ? implode("\n", $msgsDelete)."\n" : "")
+						.(($countReset > 0) ? implode("\n", $msgsReset) : "")
+						."\n"
 				);
 				return false;
 			}
@@ -826,7 +824,7 @@ class FluxCLI
 	function _transfersStart($options = '', $extra = array()) {
 		// parse options
 		$optionsSet = $this->_parseOptions(
-			array( 'p' => 1 ),	// Only recognized option is 'p'.
+			array('p' => 1), // Only recognized option is 'p'.
 			$options, $extra
 		);
 		if ($optionsSet === false)
@@ -835,12 +833,12 @@ class FluxCLI
 
 		$this->_outputMessage(
 			"Starting all transfers".
-			(!empty($profile) ? " using profile ".$profile : '').
-			" ...\n"
+				(!empty($profile) ? " using profile ".$profile : '').
+				" ...\n"
 		);
 
 		// build args for _transferStart
-		$newOptions = $this->_buildOptions('p', $optionsSet);	// Pass-thru option 'p'.
+		$newOptions = $this->_buildOptions('p', $optionsSet); // Pass-thru option 'p'.
 
 		$transferList = getTransferArray();
 		foreach ($transferList as $transfer) {
@@ -859,7 +857,7 @@ class FluxCLI
 	function _transfersResume($options = '', $extra = array()) {
 		// parse options
 		$optionsSet = $this->_parseOptions(
-			array( 'p' => 1 ),	// Only recognized option is 'p'.
+			array('p' => 1), // Only recognized option is 'p'.
 			$options, $extra
 		);
 		if ($optionsSet === false)
@@ -868,15 +866,15 @@ class FluxCLI
 
 		$this->_outputMessage(
 			"Resuming all transfers".
-			(!empty($profile) ? " using profile ".$profile : '').
-			" ...\n"
+				(!empty($profile) ? " using profile ".$profile : '').
+				" ...\n"
 		);
 
 		// build args for _transferStart
-		$newOptions = $this->_buildOptions('p', $optionsSet);	// Pass-thru option 'p'.
+		$newOptions = $this->_buildOptions('p', $optionsSet); // Pass-thru option 'p'.
 
 		$transferList = getTransferArray();
-		$sf = new StatFile("");
+		$sf           = new StatFile("");
 		foreach ($transferList as $transfer) {
 			$sf->init($transfer);
 			if (trim($sf->running) == 0)
@@ -916,10 +914,10 @@ class FluxCLI
 		}
 		// check params
 		$settingsKeys = array(
-			'uprate' => 'NUMBER',
-			'downrate' => 'NUMBER',
+			'uprate'     => 'NUMBER',
+			'downrate'   => 'NUMBER',
 			'completion' => 'BOOL',
-			'sharekill' => 'NUMBER'
+			'sharekill'  => 'NUMBER'
 		);
 		if (!array_key_exists($key, $settingsKeys)) {
 			$this->_outputError("invalid settings-key: ".$key."\n");
@@ -1023,7 +1021,7 @@ class FluxCLI
 		}
 		// parse options
 		$optionsSet = $this->_parseOptions(
-			array( 'd' => 0, 's' => 0, 'p' => 1 ),	// Recognized options are 'd', 's' and 'p'.
+			array('d' => 0, 's' => 0, 'p' => 1), // Recognized options are 'd', 's' and 'p'.
 			$options, $extra
 		);
 		if ($optionsSet === false)
@@ -1032,8 +1030,8 @@ class FluxCLI
 
 		$this->_outputMessage(
 			"Inject ".$transferFile." for user ".$username.
-			(!empty($profile) ? " using profile ".$profile : '').
-			" ...\n"
+				(!empty($profile) ? " using profile ".$profile : '').
+				" ...\n"
 		);
 
 		// set user
@@ -1065,10 +1063,9 @@ class FluxCLI
 					// start
 					if (isset($optionsSet['s'])) {
 						// build args for _transferStart
-						$newOptions = $this->_buildOptions('p', $optionsSet);	// Pass-thru option 'p'.
+						$newOptions = $this->_buildOptions('p', $optionsSet); // Pass-thru option 'p'.
 						return $this->_transferStart($transfer, $newOptions[0], $newOptions[1]);
-					}
-					// return
+					} // return
 					else
 						return true;
 				} else {
@@ -1112,7 +1109,7 @@ class FluxCLI
 		}
 		// parse options
 		$optionsSet = $this->_parseOptions(
-			array( 'd' => 0, 's' => 0, 'p' => 1 ),	// Recognized options are 'd', 's' and 'p'.
+			array('d' => 0, 's' => 0, 'p' => 1), // Recognized options are 'd', 's' and 'p'.
 			$options, $extra
 		);
 		if ($optionsSet === false)
@@ -1121,8 +1118,8 @@ class FluxCLI
 
 		$this->_outputMessage(
 			"Processing watch-dir ".$watchDir." for user ".$username.
-			(!empty($profile) ? " using profile ".$profile : '').
-			" ...\n"
+				(!empty($profile) ? " using profile ".$profile : '').
+				" ...\n"
 		);
 
 		// process dir
@@ -1140,7 +1137,7 @@ class FluxCLI
 			// trailing slash
 			$watchDir = checkDirPathString($watchDir);
 			// build args for _inject
-			$newOptions = $this->_buildOptions('dsp', $optionsSet);	// Pass-thru options 'd', 's' and 'p'.
+			$newOptions = $this->_buildOptions('dsp', $optionsSet); // Pass-thru options 'd', 's' and 'p'.
 			// process input-files
 			$ctr = array('files' => count($input), 'ok' => 0);
 			foreach ($input as $transfer) {
@@ -1330,7 +1327,7 @@ class FluxCLI
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$content = "";
 		while (list($a, $b) = $recordset->FetchRow())
-			 $content .= $a._DUMP_DELIM.$b."\n";
+			$content .= $a._DUMP_DELIM.$b."\n";
 		echo $content;
 		return ($content != "");
 	}
@@ -1341,7 +1338,7 @@ class FluxCLI
 	 * @param $message
 	 */
 	function _outputMessage($message) {
-                global $cfg;
+		global $cfg;
 		if (!isset($cfg['fluxd_loglevel']) || $cfg['fluxd_loglevel'] > 0) printMessage($this->name, $message);
 	}
 
@@ -1372,127 +1369,127 @@ class FluxCLI
 	function _printUsage() {
 		$this->_printVersion();
 		echo "\n"
-		. "Usage: ".$this->_script." action [extra-args]\n"
-		. "\n"
-		. "action: \n"
-		. "  transfers   : show transfers.\n"
-		. "  netstat     : show netstat.\n"
-		. "  start       : start a transfer.\n"
-		. "                extra-arg 1 : name of transfer as known inside webapp\n"
-		. "                extra-arg 2 : options (p) (optional, default: none)\n"
-		. "                              options-arg contains 'p' : use transfer-profile\n"
-		. "                extra-arg 3 : transfer-profile name (optional, default: none)\n"
-		. "  stop        : stop a transfer.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  reset       : reset totals of a transfer.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  delete      : delete a transfer.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  wipe        : reset totals, delete metafile, delete data.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  enqueue     : enqueue a transfer.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  dequeue     : dequeue a transfer.\n"
-		. "                extra-arg : name of transfer as known inside webapp\n"
-		. "  start-all   : start all transfers.\n"
-		. "                extra-arg 1 : options (p) (optional, default: none)\n"
-		. "                              options-arg contains 'p' : use transfer-profile\n"
-		. "                extra-arg 2 : transfer-profile name (optional, default: none)\n"
-		. "  resume-all  : resume all transfers.\n"
-		. "                extra-arg 1 : options (p) (optional, default: none)\n"
-		. "                              options-arg contains 'p' : use transfer-profile\n"
-		. "                extra-arg 2 : transfer-profile name (optional, default: none)\n"
-		. "  stop-all    : stop all running transfers.\n"
-		. "  tset        : set a transfer-setting.\n"
-		. "                extra-arg 1 : name of transfer as known inside webapp\n"
-		. "                extra-arg 2 : settings-key\n"
-		. "                extra-arg 3 : settings-value\n"
-		. "                extra-arg 4 : options (optional, default: s)\n"
-		. "                              options-arg contains 's' : send changes to running client\n"
-		. "                valid settings :\n"
-		. "                uprate     ; value: uprate in kB/s   ; options: s\n"
-		. "                downrate   ; value: downrate in kB/s ; options: s\n"
-		. "                completion ; value: true/false       ; options: s\n"
-		. "                sharekill  ; value: seed-percentage  ; options: s\n"
-		. "  inject      : injects (+ starts) a transfer.\n"
-		. "                extra-arg 1 : path to transfer-meta-file\n"
-		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (d/s/p) (optional, default: none)\n"
-		. "                              options-arg contains 'd' : delete source-file after inject\n"
-		. "                              options-arg contains 's' : start transfer after inject\n"
-		. "                              options-arg contains 'p' : use transfer-profile\n"
-		. "                extra-arg 4 : transfer-profile name (optional, default: none)\n"
-		. "  watch       : watch a dir and inject (+ start) transfers.\n"
-		. "                extra-arg 1 : watch-dir\n"
-		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (d/s/p) (optional, default: ds)\n"
-		. "                              options-arg contains 'd' : delete source-file(s) after inject\n"
-		. "                              options-arg contains 's' : start transfer(s) after inject\n"
-		. "                              options-arg contains 'p' : use transfer-profile\n"
-		. "                extra-arg 4 : transfer-profile name (optional, default: none)\n"
-		. "  rss         : download torrents matching filter-rules from a rss-feed.\n"
-		. "                extra-arg 1 : save-dir\n"
-		. "                extra-arg 2 : filter-file\n"
-		. "                extra-arg 3 : history-file\n"
-		. "                extra-arg 4 : rss-feed-url\n"
-		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default: superadmin)\n"
-		. "  xfer        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
-		. "                extra-arg 1 : time-delta of xfer to use : (all/total/month/week/day)\n"
-		. "  repair      : repair of torrentflux. DON'T do this unless you have to.\n"
-		. "                Doing this on a running ok flux _will_ screw up things.\n"
-		. "  maintenance : call maintenance and repair all died transfers.\n"
-		. "                extra-arg 1 : restart died transfers (true/false. optional, default: false)\n"
-		. "  dump        : dump database.\n"
-		. "                extra-arg 1 : type. (settings/users)\n"
-		. "  filelist    : print file-list.\n"
-		. "                extra-arg 1 : dir (optional, default: docroot)\n"
-		. "  checksums   : print checksum-list.\n"
-		. "                extra-arg 1 : dir (optional, default: docroot)\n"
-				. "  pm          : Send a private message to another user.\n"
-				. "                extra-arg 1 : username of sender\n"
-				. "                extra-arg 2 : username of recipient\n"
-				. "                extra-arg 3 : text to send\n"
-		. "\n"
-		. "examples:\n"
-		. $this->_script." transfers\n"
-		. $this->_script." netstat\n"
-		. $this->_script." start foo.torrent\n"
-		. $this->_script." start foo.torrent p profilename\n"
-		. $this->_script." stop foo.torrent\n"
-		. $this->_script." enqueue foo.torrent\n"
-		. $this->_script." dequeue foo.torrent\n"
-		. $this->_script." start-all\n"
-		. $this->_script." start-all p profilename\n"
-		. $this->_script." resume-all\n"
-		. $this->_script." stop-all\n"
-		. $this->_script." tset foo.torrent uprate 100\n"
-		. $this->_script." tset foo.torrent downrate 100\n"
-		. $this->_script." tset foo.torrent completion false\n"
-		. $this->_script." tset foo.torrent sharekill 200\n"
-		. $this->_script." reset foo.torrent\n"
-		. $this->_script." delete foo.torrent\n"
-		. $this->_script." wipe foo.torrent\n"
-		. $this->_script." inject /path/to/foo.torrent fluxuser\n"
-		. $this->_script." inject /path/to/foo.torrent fluxuser ds\n"
-		. $this->_script." inject /path/to/foo.torrent fluxuser sp profilename\n"
-		. $this->_script." watch /path/to/watch-dir/ fluxuser\n"
-		. $this->_script." watch /path/to/watch-dir/ fluxuser d\n"
-		. $this->_script." watch /path/to/watch-dir/ fluxuser dsp profilename\n"
-		. $this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n"
-		. $this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml fluxuser\n"
-		. $this->_script." xfer month\n"
-		. $this->_script." repair\n"
-		. $this->_script." maintenance true\n"
-		. $this->_script." dump settings\n"
-		. $this->_script." dump users\n"
-		. $this->_script." filelist /var/www\n"
-		. $this->_script." checksums /var/www\n"
-				. $this->_script." pm admin user here is a message for you\n"
-		. "\n";
+			."Usage: ".$this->_script." action [extra-args]\n"
+			."\n"
+			."action: \n"
+			."  transfers   : show transfers.\n"
+			."  netstat     : show netstat.\n"
+			."  start       : start a transfer.\n"
+			."                extra-arg 1 : name of transfer as known inside webapp\n"
+			."                extra-arg 2 : options (p) (optional, default: none)\n"
+			."                              options-arg contains 'p' : use transfer-profile\n"
+			."                extra-arg 3 : transfer-profile name (optional, default: none)\n"
+			."  stop        : stop a transfer.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  reset       : reset totals of a transfer.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  delete      : delete a transfer.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  wipe        : reset totals, delete metafile, delete data.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  enqueue     : enqueue a transfer.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  dequeue     : dequeue a transfer.\n"
+			."                extra-arg : name of transfer as known inside webapp\n"
+			."  start-all   : start all transfers.\n"
+			."                extra-arg 1 : options (p) (optional, default: none)\n"
+			."                              options-arg contains 'p' : use transfer-profile\n"
+			."                extra-arg 2 : transfer-profile name (optional, default: none)\n"
+			."  resume-all  : resume all transfers.\n"
+			."                extra-arg 1 : options (p) (optional, default: none)\n"
+			."                              options-arg contains 'p' : use transfer-profile\n"
+			."                extra-arg 2 : transfer-profile name (optional, default: none)\n"
+			."  stop-all    : stop all running transfers.\n"
+			."  tset        : set a transfer-setting.\n"
+			."                extra-arg 1 : name of transfer as known inside webapp\n"
+			."                extra-arg 2 : settings-key\n"
+			."                extra-arg 3 : settings-value\n"
+			."                extra-arg 4 : options (optional, default: s)\n"
+			."                              options-arg contains 's' : send changes to running client\n"
+			."                valid settings :\n"
+			."                uprate     ; value: uprate in kB/s   ; options: s\n"
+			."                downrate   ; value: downrate in kB/s ; options: s\n"
+			."                completion ; value: true/false       ; options: s\n"
+			."                sharekill  ; value: seed-percentage  ; options: s\n"
+			."  inject      : injects (+ starts) a transfer.\n"
+			."                extra-arg 1 : path to transfer-meta-file\n"
+			."                extra-arg 2 : username of fluxuser\n"
+			."                extra-arg 3 : options (d/s/p) (optional, default: none)\n"
+			."                              options-arg contains 'd' : delete source-file after inject\n"
+			."                              options-arg contains 's' : start transfer after inject\n"
+			."                              options-arg contains 'p' : use transfer-profile\n"
+			."                extra-arg 4 : transfer-profile name (optional, default: none)\n"
+			."  watch       : watch a dir and inject (+ start) transfers.\n"
+			."                extra-arg 1 : watch-dir\n"
+			."                extra-arg 2 : username of fluxuser\n"
+			."                extra-arg 3 : options (d/s/p) (optional, default: ds)\n"
+			."                              options-arg contains 'd' : delete source-file(s) after inject\n"
+			."                              options-arg contains 's' : start transfer(s) after inject\n"
+			."                              options-arg contains 'p' : use transfer-profile\n"
+			."                extra-arg 4 : transfer-profile name (optional, default: none)\n"
+			."  rss         : download torrents matching filter-rules from a rss-feed.\n"
+			."                extra-arg 1 : save-dir\n"
+			."                extra-arg 2 : filter-file\n"
+			."                extra-arg 3 : history-file\n"
+			."                extra-arg 4 : rss-feed-url\n"
+			."                extra-arg 5 : use cookies from this torrentflux user (optional, default: superadmin)\n"
+			."  xfer        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
+			."                extra-arg 1 : time-delta of xfer to use : (all/total/month/week/day)\n"
+			."  repair      : repair of torrentflux. DON'T do this unless you have to.\n"
+			."                Doing this on a running ok flux _will_ screw up things.\n"
+			."  maintenance : call maintenance and repair all died transfers.\n"
+			."                extra-arg 1 : restart died transfers (true/false. optional, default: false)\n"
+			."  dump        : dump database.\n"
+			."                extra-arg 1 : type. (settings/users)\n"
+			."  filelist    : print file-list.\n"
+			."                extra-arg 1 : dir (optional, default: docroot)\n"
+			."  checksums   : print checksum-list.\n"
+			."                extra-arg 1 : dir (optional, default: docroot)\n"
+			."  pm          : Send a private message to another user.\n"
+			."                extra-arg 1 : username of sender\n"
+			."                extra-arg 2 : username of recipient\n"
+			."                extra-arg 3 : text to send\n"
+			."\n"
+			."examples:\n"
+			.$this->_script." transfers\n"
+			.$this->_script." netstat\n"
+			.$this->_script." start foo.torrent\n"
+			.$this->_script." start foo.torrent p profilename\n"
+			.$this->_script." stop foo.torrent\n"
+			.$this->_script." enqueue foo.torrent\n"
+			.$this->_script." dequeue foo.torrent\n"
+			.$this->_script." start-all\n"
+			.$this->_script." start-all p profilename\n"
+			.$this->_script." resume-all\n"
+			.$this->_script." stop-all\n"
+			.$this->_script." tset foo.torrent uprate 100\n"
+			.$this->_script." tset foo.torrent downrate 100\n"
+			.$this->_script." tset foo.torrent completion false\n"
+			.$this->_script." tset foo.torrent sharekill 200\n"
+			.$this->_script." reset foo.torrent\n"
+			.$this->_script." delete foo.torrent\n"
+			.$this->_script." wipe foo.torrent\n"
+			.$this->_script." inject /path/to/foo.torrent fluxuser\n"
+			.$this->_script." inject /path/to/foo.torrent fluxuser ds\n"
+			.$this->_script." inject /path/to/foo.torrent fluxuser sp profilename\n"
+			.$this->_script." watch /path/to/watch-dir/ fluxuser\n"
+			.$this->_script." watch /path/to/watch-dir/ fluxuser d\n"
+			.$this->_script." watch /path/to/watch-dir/ fluxuser dsp profilename\n"
+			.$this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n"
+			.$this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml fluxuser\n"
+			.$this->_script." xfer month\n"
+			.$this->_script." repair\n"
+			.$this->_script." maintenance true\n"
+			.$this->_script." dump settings\n"
+			.$this->_script." dump users\n"
+			.$this->_script." filelist /var/www\n"
+			.$this->_script." checksums /var/www\n"
+			.$this->_script." pm admin user here is a message for you\n"
+			."\n";
 		if (count($this->_argErrors) > 0) {
 			echo "arg-error(s) :\n"
-			. implode("\n", $this->_argErrors)
-			. "\n\n";
+				.implode("\n", $this->_argErrors)
+				."\n\n";
 			return false;
 		}
 		return true;

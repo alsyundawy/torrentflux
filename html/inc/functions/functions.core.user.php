@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * IsUser
@@ -65,7 +64,7 @@ function IsSuperAdmin($user = "") {
  */
 function IsOnline($user) {
 	global $cfg, $db;
-	return ($db->GetOne("SELECT count(*) FROM tf_log WHERE user_id=" . $db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"])) > 0);
+	return ($db->GetOne("SELECT count(*) FROM tf_log WHERE user_id=".$db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"])) > 0);
 }
 
 /**
@@ -97,17 +96,17 @@ function GetSuperAdmin() {
  */
 function GetUID($user) {
 	global $cfg, $db;
-	
+
 	if (empty($cfg['user_uids'])) {
-		$lst = $db->GetAll("SELECT uid,user_id FROM tf_users");
+		$lst  = $db->GetAll("SELECT uid,user_id FROM tf_users");
 		$uids = array();
 		foreach ($lst as $row) {
 			$uids[$row['user_id']] = $row['uid'];
 		}
 		$cfg['user_uids'] = $uids;
 	}
-	
-	return (int) @ $cfg['user_uids'][$user];
+
+	return (int)@ $cfg['user_uids'][$user];
 }
 
 /**
@@ -117,16 +116,16 @@ function GetUID($user) {
  */
 function GetUsername($uid) {
 	global $cfg, $db;
-	
+
 	if (empty($cfg['user_uids'])) {
-		$lst = $db->GetAll("SELECT uid,user_id FROM tf_users");
+		$lst  = $db->GetAll("SELECT uid,user_id FROM tf_users");
 		$uids = array();
 		foreach ($lst as $row) {
 			$uids[$row['user_id']] = $row['uid'];
 		}
 		$cfg['user_uids'] = $uids;
 	}
-	
+
 	foreach ($cfg['user_uids'] as $name => $id) {
 		if ($id == $uid) {
 			return $name;

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) or (isset($_REQUEST['cfg']))) {
@@ -30,7 +29,7 @@ if ((!isset($cfg['user'])) or (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 if (isset($_REQUEST['ajax_update'])) {
-	$isAjaxUpdate = true;
+	$isAjaxUpdate     = true;
 	$ajaxUpdateParams = tfb_getRequestVar('ajax_update');
 	// init template-instance
 	tmplInitializeInstance($cfg["theme"], "inc.transferList.tmpl");
@@ -90,7 +89,7 @@ $tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : 
 $arList = getTransferArray($sortOrder);
 
 $progress_color = "#22BB22";
-$bar_width = "4";
+$bar_width      = "4";
 
 $bUseRPC = false;
 
@@ -109,7 +108,7 @@ if ($cfg["transmission_rpc_enable"]) {
 
 	} catch (Exception $e) {
 		$rpc_exception = $e->getMessage();
-		$aTrTorrents = array();
+		$aTrTorrents   = array();
 	}
 
 	// eta
@@ -117,57 +116,60 @@ if ($cfg["transmission_rpc_enable"]) {
 	//  -2 : Unknown
 
 	// add transmission-daemon torrents to current user list
-	foreach($aTrTorrents as $aTorrent)
-	{
+	foreach ($aTrTorrents as $aTorrent) {
 		$hash = $aTorrent['hashString'];
-		
+
 		// fill in eta
-		if ( $aTorrent['eta'] == '-1' && $aTorrent['percentDone'] != 1 ) {
+		if ($aTorrent['eta'] == '-1' && $aTorrent['percentDone'] != 1) {
 			$eta = 'n/a';
-		} elseif ( $aTorrent['percentDone'] == 1 ) {
+		} elseif ($aTorrent['percentDone'] == 1) {
 			$eta = 'Done';
-		} elseif ( $aTorrent['eta'] == '-2' ) {
+		} elseif ($aTorrent['eta'] == '-2') {
 			$eta = 'Unknown';
 		} else {
-			$eta = convertTimeText( $aTorrent['eta'] );
+			$eta = convertTimeText($aTorrent['eta']);
 		}
 
 		$status = $aTorrent['status'];
 		switch ($aTorrent['status']) {
-		case 0:
-			$transferRunning = false;
-			if ( $aTorrent['percentDone'] >= 1 ) {
-				$status = "Done";
-				$eta = '';
-			} else {
-				$status = "Stopped";
-				$eta = 'Torrent Stopped'; # this might be fixed in a cleaner way
-				if ( $aTorrent['downloadedEver'] == 0 ) {
-					$status = "New";
-					$eta = '';
+			case 0:
+				$transferRunning = false;
+				if ($aTorrent['percentDone'] >= 1) {
+					$status = "Done";
+					$eta    = 'Download Succeeded';
+				} else {
+					$status = "Stopped";
+					$eta    = 'Torrent Stopped'; # this might be fixed in a cleaner way
+					if ($aTorrent['downloadedEver'] == 0) {
+						$status = "New";
+						$eta    = '';
+					}
 				}
-			}
-			break;
-		case 5:
-			$status = "QSeeding";
-			$transferRunning = true;
-			break;
-		case 6:
-			$status = "Seeding";
-			$transferRunning = true;
-			break;
-		case 4:
-			if ( $aTorrent['rateDownload'] == 0 ) {
-				$status = "Idle";
-			} else {
-				$status = "Downloading";
-			}
-			$transferRunning = true;
-			break;
-		case 2:
-			$status = "Checking data...";
-			$transferRunning = true;
-			break;
+				break;
+			case 5:
+				$status          = "QSeeding";
+				$transferRunning = true;
+				break;
+			case 6:
+				$status          = "Seeding";
+				$transferRunning = true;
+				break;
+			case 4:
+				if ($aTorrent['rateDownload'] == 0) {
+					$status = "Idle";
+				} else {
+					$status = "Downloading";
+				}
+				$transferRunning = true;
+				break;
+			case 2:
+				$status          = "Checking data...";
+				$transferRunning = true;
+				break;
+			case 1:
+				$status          = "Queued for check";
+				$transferRunning = true;
+				break;
 		}
 
 		/*
@@ -185,63 +187,63 @@ if ($cfg["transmission_rpc_enable"]) {
 		*/
 
 		$transferowner = getOwner($hash);
-		
+
 		$tArray = array(
-			'is_owner' => ($cfg['isAdmin']) ? true : IsOwner($cfg["user"], $transferowner),
-			'transferowner' => getOwner($hash),
-			'transferRunning' => (int) $transferRunning,
-			'rpc_status' => $aTorrent['status'],
-			'clientType' => 'torrent',
-			'client' => 'Tr*',
-			'url_entry'   => $hash,
-			'displayname' => $aTorrent['name'],
-			'statusStr'   => $status,
-			'estTime'     => $eta,
-			'percentage'  => ( $status=='New' ? '' : round($aTorrent['percentDone']*100,1) ),
-			'graph_width' => ( $status=='New' ? -1 : round($aTorrent['percentDone']*100) ),
-			'100_graph_width' => 100 - round($aTorrent['percentDone']*100),
-			'sharing' => round($aTorrent['uploadRatio']*100.0,1),
-			'seeds' => $aTorrent['peersSendingToUs'],
-			'peers' => $aTorrent['peersGettingFromUs'],
-			'cons'  => $aTorrent['peersConnected'],
-			'seedlimit' => round($aTorrent['seedRatioLimit']*100.0,1),
-			'url_path' => urlencode( $cfg['user'] . '/' . $aTorrent['name'] ),
-			'datapath' => $aTorrent['name'],
-			'entry' => $aTorrent['name'],
-			'size' => (float) $aTorrent['totalSize'],
-			'format_af_size' => formatBytesTokBMBGBTB( $aTorrent['totalSize'] ),
-			'uptotal'   => $aTorrent['uploadedEver'],
-			'downtotal' => $aTorrent['downloadedEver'],
-			'down_speed' => ($aTorrent['rateDownload'] != 0 ? formatBytesTokBMBGBTB( $aTorrent['rateDownload'] ) . '/s' : '&nbsp;'),
-			'up_speed' =>   ($aTorrent['rateUpload']   != 0 ? formatBytesTokBMBGBTB( $aTorrent['rateUpload'] ) . '/s' : '&nbsp;'),
-                        'error' => (int) $aTorrent['error'],
-                        'errorString' => $aTorrent['errorString']
+			'is_owner'        => ($cfg['isAdmin']) ? true : IsOwner($cfg["user"], $transferowner),
+			'transferowner'   => $transferowner,
+			'transferRunning' => (int)$transferRunning,
+			'rpc_status'      => $aTorrent['status'],
+			'clientType'      => 'torrent',
+			'client'          => 'Tr*',
+			'url_entry'       => $hash,
+			'displayname'     => $aTorrent['name'],
+			'statusStr'       => $status,
+			'estTime'         => $eta,
+			'percentage'      => ($status == 'New' ? '' : round($aTorrent['percentDone'] * 100, 1)),
+			'graph_width'     => ($status == 'New' ? -1 : round($aTorrent['percentDone'] * 100)),
+			'100_graph_width' => 100 - round($aTorrent['percentDone'] * 100),
+			'sharing'         => round($aTorrent['uploadRatio'] * 100.0, 1),
+			'seeds'           => $aTorrent['peersSendingToUs'],
+			'peers'           => $aTorrent['peersGettingFromUs'],
+			'cons'            => $aTorrent['peersConnected'],
+			'seedlimit'       => round($aTorrent['seedRatioLimit'] * 100.0, 1),
+			'url_path'        => urlencode($cfg['user'].'/'.$aTorrent['name']),
+			'datapath'        => $aTorrent['name'],
+			'entry'           => $aTorrent['name'],
+			'size'            => (float)$aTorrent['totalSize'],
+			'format_af_size'  => formatBytesTokBMBGBTB($aTorrent['totalSize']),
+			'uptotal'         => $aTorrent['uploadedEver'],
+			'downtotal'       => $aTorrent['downloadedEver'],
+			'down_speed'      => ($aTorrent['rateDownload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateDownload']).'/s' : '&nbsp;'),
+			'up_speed'        => ($aTorrent['rateUpload'] != 0 ? formatBytesFromDecPrefixTokBMBGBTB($aTorrent['rateUpload']).'/s' : '&nbsp;'),
+			'error'           => (int)$aTorrent['error'],
+			'errorString'     => $aTorrent['errorString']
 		);
 
 		if ($cfg["transmission_rpc_enable"] == 1) {
-			
+
 			// Method 1 ClientHandler compatible
 			$arTrUserTorrent[$hash] = $tArray;
-			
+
 		} else {
-			
+
 			// Method 2 direct by hash (to be deleted) - not multiuser
-			$tArray = array_merge($tArray, array(
-				'is_rpc' => 1,
-				'hd_title' => $nothing,
-				'hd_image' => getTransmissionStatusImage($transferRunning, $seeds, $aTorrent['rateUpload']),
-	//			'transferowner' => ($cfg["transmission_rpc_enable"]==2 ? getTransmissionTransferOwner($hash) : '' ),
-				'is_no_file' => 1,
-				'show_run' => 1,
-				'format_downtotal' => $nothing,
-				'format_uptotal' => $nothing,
-				'progress_color' => ($transferRunning ? '#22BB22' : '#A0A0A0'),
-				'bar_width' => 4,
-				'background' => '#000000',
+			$tArray               = array_merge($tArray, array(
+				'is_rpc'                 => 1,
+				'hd_title'               => $nothing,
+				'hd_image'               => getTransmissionStatusImage($transferRunning, $seeds, $aTorrent['rateUpload']),
+				//			'transferowner' => ($cfg["transmission_rpc_enable"]==2 ? getTransmissionTransferOwner($hash) : '' ),
+				'is_no_file'             => 1,
+				'show_run'               => 1,
+				'format_downtotal'       => $nothing,
+				'format_uptotal'         => $nothing,
+				'progress_color'         => ($transferRunning ? '#22BB22' : '#A0A0A0'),
+				'bar_width'              => 4,
+				'background'             => '#000000',
 				'upload_support_enabled' => 1,
 			));
 			$tArray['percentage'] = $tArray['percentage']."%";
-			
+
 			$arUserTorrent[$hash] = $tArray;
 		}
 		//var_dump($aTorrent);
@@ -252,8 +254,8 @@ if ($cfg["transmission_rpc_enable"]) {
 				$cfg["total_upload"] = 0;
 			if (!isset($cfg["total_download"]))
 				$cfg["total_download"] = 0;
-			$cfg["total_upload"]   = $cfg["total_upload"] + GetSpeedValue($aTorrent["rateUpload"]/1000);
-			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($aTorrent["rateDownload"]/1000);
+			$cfg["total_upload"]   = $cfg["total_upload"] + GetSpeedValue($aTorrent["rateUpload"] / 1000);
+			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($aTorrent["rateDownload"] / 1000);
 		}
 	}
 }
@@ -265,7 +267,7 @@ if ($cfg["vuze_rpc_enable"]) {
 	require_once("inc/classes/VuzeRPC.php");
 	//one client for all vuzerpc transferts
 	$rpc = VuzeRPC::getInstance($cfg);
-	
+
 	//we can ask vuze data directly (not from .stat files)
 	$vuzeResults = $rpc->torrent_get_tf_array();
 }
@@ -273,23 +275,23 @@ if ($cfg["vuze_rpc_enable"]) {
 // end of Vuze RPC requests
 // ---------------------------------------------------------------------
 
-$nbRpc=0;
+$nbRpc = 0;
 foreach ($arList as $mtimecrc => $transfer) {
 	// displayname
 	$displayname = $transfer;
 
 	// may need a special config panel to clean names...
-	$displayname = str_replace('.',"_",$displayname);
+	$displayname = str_replace('.', "_", $displayname);
 
-	$displayname = preg_replace('#([^_]+_(com|org|net|info)_)#i',"",$displayname);
-	$displayname = preg_replace('#(_torrent)$#i',"",$displayname);
+	$displayname = preg_replace('#([^_]+_(com|org|net|info)_)#i', "", $displayname);
+	$displayname = preg_replace('#(_torrent)$#i', "", $displayname);
 
-	$arToClean = array ("http_","_www_","isohunt");
-	$displayname = str_ireplace($arToClean,"",$displayname);
+	$arToClean   = array("http_", "_www_", "isohunt");
+	$displayname = str_ireplace($arToClean, "", $displayname);
 
-	$displayname = str_replace('_',".",$displayname);
-	$displayname = str_replace('..',".",$displayname);
-	$displayname = trim($displayname,'.');
+	$displayname = str_replace('_', ".", $displayname);
+	$displayname = str_replace('..', ".", $displayname);
+	$displayname = trim($displayname, '.');
 
 	$displayname = (strlen($displayname) > 53) ? substr($displayname, 0, 50)."..." : $displayname;
 
@@ -297,34 +299,34 @@ foreach ($arList as $mtimecrc => $transfer) {
 		//must fix $transfer torrent filename before...
 		//$name = getTransferFromHash($hash);
 		$displayname = 'dup:'.$mtimecrc;
-		addGrowlMessage('[dup]','This torrent has already been downloaded');
+		addGrowlMessage('[dup]', 'This torrent has already been downloaded');
 	}
 
 	// owner
 	$transferowner = getOwner($transfer);
-	$owner = IsOwner($cfg["user"], $transferowner);
+	$owner         = IsOwner($cfg["user"], $transferowner);
 	// stat
 	$sf = new StatFile($transfer, $transferowner);
 	// settings
-        //var_dump($transfers['settings'][$transfer], $transfer, $sf);
+	//var_dump($transfers['settings'][$transfer], $transfer, $sf);
 	if (isset($transfers['settings'][$transfer])) {
 		$settingsAry = $transfers['settings'][$transfer];
-        //} else {
-        // auto-added torrent, info missing?
-        }
-        if (empty($transfers['settings'][$transfer]['type']) || empty($transfers['settings'][$transfer]['client'])) {
+		//} else {
+		// auto-added torrent, info missing?
+	}
+	if (empty($transfers['settings'][$transfer]['type']) || empty($transfers['settings'][$transfer]['client'])) {
 		if (!isset($transfers['settings'][$transfer])) $settingsAry = array();
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a t-client
-			$settingsAry['type'] = "torrent";
+			$settingsAry['type']   = "torrent";
 			$settingsAry['client'] = $cfg["btclient"];
 		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
-			$settingsAry['type'] = "wget";
+			$settingsAry['type']   = "wget";
 			$settingsAry['client'] = "wget";
 		} else if (substr($transfer, -4) == ".nzb") {
 			// this is nzbperl.
-			$settingsAry['type'] = "nzb";
+			$settingsAry['type']   = "nzb";
 			$settingsAry['client'] = "nzbperl";
 		} else {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
@@ -332,28 +334,28 @@ foreach ($arList as $mtimecrc => $transfer) {
 		}
 	}
 	if (empty($settingsAry['hash'])) {
-		$settingsAry['hash'] = getTransferHash($transfer);
+		$settingsAry['hash']              = getTransferHash($transfer);
 		$transfers['settings'][$transfer] = $settingsAry;
 	}
 	if (empty($settingsAry['datapath'])) {
-		$settingsAry["datapath"] = getTransferSavepath($transfer);
+		$settingsAry["datapath"]          = getTransferSavepath($transfer);
 		$transfers['settings'][$transfer] = $settingsAry;
 	}
 	if (empty($settingsAry['savepath'])) {
-		$settingsAry["savepath"] = getTransferSavepath($transfer);
+		$settingsAry["savepath"]          = getTransferSavepath($transfer);
 		$transfers['settings'][$transfer] = $settingsAry;
 	}
 	if ($settingsAry["client"] == "") {
 
 		// Fix FluAzu progression 100% (client to check, not set to "azureus", solved by mysql column enum to varchar ?)
 		if (!$sf->seedlimit)
-			$sf->seedlimit=$settingsAry["sharekill"];
+			$sf->seedlimit = $settingsAry["sharekill"];
 
 		if ((float)$sf->size > 0) {
 			if (!$sf->sharing)
-				$sf->sharing=round( ((float)$sf->uptotal / (float)$sf->size) * 100.0 , 2);
+				$sf->sharing = round(((float)$sf->uptotal / (float)$sf->size) * 100.0, 2);
 		}
-		
+
 	} else { // in rpc : realtime for running torrents (downloading & seeding)
 
 		if ($bUseRPC) {
@@ -364,144 +366,150 @@ foreach ($arList as $mtimecrc => $transfer) {
 			}
 
 			switch ($settingsAry["client"]) {
-				
-			case "vuzerpc":
-				if (!empty($vuzeResults)) {
-	
-					//$hash = getTransferHash($transfer);
-					$hash = $settingsAry['hash'];
-					$rpcStat = $vuzeResults[strtoupper($hash)];
-					if (is_array($rpcStat)) {
 
-						//updated often
-						$sf->up_speed    = round($rpcStat['speedUp'] / 1024 ,1);
-						$sf->down_speed  = round($rpcStat['speedDown'] / 1024 ,1);
-						$sf->uptotal     = $rpcStat['upTotal'];
-						$sf->downtotal   = $rpcStat['downTotal'];
-						$sf->seeds       = $rpcStat['seeds'];
-						$sf->peers       = $rpcStat['peers'];
-						$sf->cons        = $rpcStat['cons'];
-						$sf->sharing     = $rpcStat['sharing'];
+				case "vuzerpc":
+					if (!empty($vuzeResults)) {
 
-						$sf->rpc_status  = $rpcStat['status'];
+						//$hash = getTransferHash($transfer);
+						$hash    = $settingsAry['hash'];
+						$rpcStat = $vuzeResults[strtoupper($hash)];
+						if (is_array($rpcStat)) {
 
-						if (!$sf->seedlimit)
-							$sf->seedlimit=$settingsAry["sharekill"];
-							
-						if ($rpcStat['status'] == 5 || $rpcStat['status'] == 6)
-							$sf->running = 1;
+							//updated often
+							$sf->up_speed   = round($rpcStat['speedUp'] / 1024, 1);
+							$sf->down_speed = round($rpcStat['speedDown'] / 1024, 1);
+							$sf->uptotal    = $rpcStat['upTotal'];
+							$sf->downtotal  = $rpcStat['downTotal'];
+							$sf->seeds      = $rpcStat['seeds'];
+							$sf->peers      = $rpcStat['peers'];
+							$sf->cons       = $rpcStat['cons'];
+							$sf->sharing    = $rpcStat['sharing'];
 
-						$sf->percent_done= floatval($rpcStat['percentDone']);
+							$sf->rpc_status = $rpcStat['status'];
+							$sf->isRPC      = TRUE;
 
-						$sf->up_speed = ($sf->up_speed > 0 ? $sf->up_speed .= " kB/s" : "&nbsp;");
-						$sf->down_speed = ($sf->down_speed > 0 ? $sf->down_speed .= " kB/s" : "&nbsp;");
+							if (!$sf->seedlimit)
+								$sf->seedlimit = $settingsAry["sharekill"];
 
-						if ((int)$rpcStat['error'] != 0 && !empty($rpcStat['errorString'])) {
-							$error = $rpcStat['errorString'];
-							if (strpos($error,'Scrape') !== false) {
-								//ignore scrape error
-							} else {
-								$sf->status .= 'Error';
-							}
-						}
+							if ($rpcStat['status'] == 5 || $rpcStat['status'] == 6)
+								$sf->running = 1;
 
-						if ($rpcStat['eta'] > 0 || $rpcStat['eta'] < -1) {
-							$sf->time_left = convertTimeText($rpcStat['eta']);
-						} elseif ($rpcStat['eta'] == -1) {
-							$sf->time_left = "&#8734;"; //infinite
-						} else
-							$sf->time_left="";
+							$sf->percent_done = floatval($rpcStat['percentDone']);
 
-						if ($rpcStat['status'] == 0) {
-							if (abs($sf->percent_done) >= 100) {
-								//$sf->percent_done = 100;
-								//$sf->running = 0;
-								if ($sf->eta > 0)
-									$sf->time_left = "Done in ".convertTimeText($sf->eta);
-								else
-									$sf->time_left = "Done";
-								
-								if ((int) $sf->sharing < (int) $sf->seedlimit - 1) {
-									$sf->percent_done = -200; //stopped 100%
+							$sf->up_speed   = ($sf->up_speed > 0 ? $sf->up_speed .= " kB/s" : "&nbsp;");
+							$sf->down_speed = ($sf->down_speed > 0 ? $sf->down_speed .= " kB/s" : "&nbsp;");
+
+							if ((int)$rpcStat['error'] != 0 && !empty($rpcStat['errorString'])) {
+								$error = $rpcStat['errorString'];
+								if (strpos($error, 'Scrape') !== false) {
+									//ignore scrape error
 								} else {
-									//argh, finished up_speed need to be ""
-									$sf->up_speed = "";
+									$sf->status .= 'Error';
 								}
 							}
-						} else {
-							$nbRpc++;
-						}
-					}
-				}
-				break;
 
-			case "transmissionrpc":
-				if (!empty($arTrUserTorrent)) {
-					$trStat = $arTrUserTorrent[$settingsAry['hash']];
-					if (is_array($trStat)) {
-						$sf->running      = $trStat['transferRunning'];
+							if ($rpcStat['eta'] > 0 || $rpcStat['eta'] < -1) {
+								$sf->time_left = convertTimeText($rpcStat['eta']);
+							} elseif ($rpcStat['eta'] == -1) {
+								$sf->time_left = "&#8734;"; //infinite
+							} else
+								$sf->time_left = "";
 
-                                                // this may have never worked, because 'status' isnt in the array
-						//if ($trStat['status'] == 5 || $trStat['status'] == 6)
-						//	$sf->running = 2;
-						
-                                                if ($trStat["statusStr"] == "New") $sf->running = 2;
-						$sf->rpc_status   = $trStat['rpc_status'];
-						$sf->status       = $trStat['statusStr'];
-						$sf->seeds        = $trStat['seeds'];
-						$sf->peers        = $trStat['peers'];
-						$sf->sharing      = floatval($trStat['sharing']);
-						$sf->percent_done = floatval($trStat['percentage']);
-						$sf->down_speed   = $trStat['down_speed'];
-						$sf->graph_width  = (int) $trStat['graph_width'];
-						$sf->graph_width  = (int) $trStat['graph_width'];
-						$sf->up_speed     = $trStat['up_speed'];
-						$sf->time_left    = $trStat['estTime'];
-						
-						$sf->sharing      = $trStat['sharing'];
-						$sf->seedlimit    = $trStat['seedlimit'];
-						
-						$sf->uptotal      = (float) $trStat['uptotal'];
-						$sf->downtotal    = (float) $trStat['downtotal'];
-						
-						$sf->size         = (float) $trStat['size'];
-                                                $sf->error        = $trStat['error'];
-                                                $sf->errorString  = $trStat['errorString'];
-						
-						//sf->write();
-						//var_dump($sf);
-						
-						if ((int)$trStat['error'] != 0 && !empty($trStat['errorString'])) {
-							$error = $trStat['errorString'];
-							if (strpos($error,'Scrape') !== false) {
-								//ignore scrape error
+							if ($rpcStat['status'] == 0) {
+								if (abs($sf->percent_done) >= 100) {
+									//$sf->percent_done = 100;
+									//$sf->running = 0;
+									if ($sf->eta > 0)
+										$sf->time_left = "Done in ".convertTimeText($sf->eta);
+									else
+										$sf->time_left = "Done";
+
+									if ((int)$sf->sharing < (int)$sf->seedlimit - 1) {
+										$sf->percent_done = -200; //stopped 100%
+									} else {
+										//argh, finished up_speed need to be ""
+										$sf->up_speed = "";
+									}
+								}
 							} else {
-								$sf->status = 'Error';
+								$nbRpc++;
 							}
-						}
-						
-						if ($sf->down_speed == '0 B/s')
-							$sf->down_speed = '';
-						
-						if ($sf->rpc_status == 0) {
-							//stopped
-							$sf->up_speed = '';
-							if (abs($sf->percent_done) >= 100) {// && (int) $sf->sharing > (int) $sf->seedlimit - 5) {
-								$sf->graph_width  = 100;
-							}
-						} else {
-							$nbRpc++;
 						}
 					}
-				}
-				break;
+					break;
+
+				case "transmissionrpc":
+					if (!empty($arTrUserTorrent)) {
+						$trStat = $arTrUserTorrent[$settingsAry['hash']];
+						if (is_array($trStat)) {
+							$sf->running = $trStat['transferRunning'];
+
+							// this may have never worked, because 'status' isnt in the array
+							//if ($trStat['status'] == 5 || $trStat['status'] == 6)
+							//	$sf->running = 2;
+
+							if ($trStat["statusStr"] == "New") $sf->running = 2;
+							$sf->rpc_status   = $trStat['rpc_status'];
+							$sf->status       = $trStat['statusStr'];
+							$sf->seeds        = $trStat['seeds'];
+							$sf->peers        = $trStat['peers'];
+							$sf->sharing      = floatval($trStat['sharing']);
+							$sf->percent_done = floatval($trStat['percentage']);
+							$sf->down_speed   = $trStat['down_speed'];
+							$sf->graph_width  = (int)$trStat['graph_width'];
+							$sf->graph_width  = (int)$trStat['graph_width'];
+							$sf->up_speed     = $trStat['up_speed'];
+							$sf->time_left    = $trStat['estTime'];
+							$sf->isRPC        = TRUE;
+
+							// re-add $transferowner, because we'll stop relying on statfiles, though they apply an empty string,
+							// because it doesnt get updated after starting the torrent
+							$sf->transferowner = $transferowner;
+
+							$sf->sharing   = $trStat['sharing'];
+							$sf->seedlimit = $trStat['seedlimit'];
+
+							$sf->uptotal   = (float)$trStat['uptotal'];
+							$sf->downtotal = (float)$trStat['downtotal'];
+
+							$sf->size        = (float)$trStat['size'];
+							$sf->error       = $trStat['error'];
+							$sf->errorString = $trStat['errorString'];
+
+							//sf->write();
+							//var_dump($sf);
+
+							if ((int)$trStat['error'] != 0 && !empty($trStat['errorString'])) {
+								$error = $trStat['errorString'];
+								if (strpos($error, 'Scrape') !== false) {
+									//ignore scrape error
+								} else {
+									$sf->status = 'Error';
+								}
+							}
+
+							if ($sf->down_speed == '0 B/s')
+								$sf->down_speed = '';
+
+							if ($sf->rpc_status == 0) {
+								//stopped
+								$sf->up_speed = '';
+								if (abs($sf->percent_done) >= 100) { // && (int) $sf->sharing > (int) $sf->seedlimit - 5) {
+									$sf->graph_width = 100;
+								}
+							} else {
+								$nbRpc++;
+							}
+						}
+					}
+					break;
 			} //switch client
 
 		} //bUseRPC
 	} //if client
 
 	// running-flag in local var. we will access that often
-	$transferRunning = (int) $sf->running;
+	$transferRunning = (int)$sf->running;
 	// percent-done in local var. ...
 	$percentDone = $sf->percent_done;
 
@@ -524,31 +532,32 @@ foreach ($arList as $mtimecrc => $transfer) {
 	// injects new
 	if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 		$transferRunning = 2;
-		$sf->running = "2";
-		$sf->size = getTransferSize($transfer);
+		$sf->running     = "2";
+		$sf->size        = getTransferSize($transfer);
 		injectTransfer($transfer);
 	}
 
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
 	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-		$ch = ClientHandler::getInstance($settingsAry['client']);
+		$ch             = ClientHandler::getInstance($settingsAry['client']);
 		$transferTotals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 	}
 
 	// ---------------------------------------------------------------------
 	// preprocess stat-file and get some vars
-	$estTime = "&nbsp;";
+	$estTime   = "&nbsp;";
 	$statusStr = "&nbsp;";
-	$show_run = true;
+	$show_run  = true;
+
 	switch ($transferRunning) {
 		case 2: // new
-			$statusStr = "New";
+			$statusStr  = "New";
 			$is_no_file = 1;
 			break;
 		case 3: // queued
-			$statusStr = "Queued";
-			$estTime = "Waiting...";
+			$statusStr  = "Queued";
+			$estTime    = "Waiting...";
 			$is_no_file = 1;
 			break;
 		default: // running
@@ -562,7 +571,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 				$estTime = $sf->time_left;
 			} else {
 				if ($sf->time_left != "" && $sf->time_left != "0") {
-					if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
+					if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100)) {
 						$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && (intval(($sf->up_speed{0})) > 0))
 							? convertTimeText(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
 							: '-';
@@ -574,84 +583,79 @@ foreach ($arList as $mtimecrc => $transfer) {
 			// $show_run + $statusStr
 			if ($percentDone >= 100) {
 				$statusStr = (trim($sf->up_speed) != "" && $transferRunning == 1) ? "Seeding" : "Done";
-				$show_run = false;
+				$show_run  = false;
 			} else if ($percentDone < 0) {
 				$statusStr = "Stopped";
-				$show_run = true;
+				$show_run  = true;
 			} else {
 				//fixme: wont necessarily work; old:  $statusStr = "Leeching";
-                                if (!empty($sf->status)) {
-                                    $statusStr = $sf->status;
-                                    
-                                    if ($transferRunning !== 0 && $sf->error !== 0) {
-                                        $statusStr = "Error";
-                                        $show_run = true;
-                                    }
-                                }
-                                else $statusStr = "Leeching";
+				if (!empty($sf->status)) {
+					$statusStr = $sf->status;
+
+					if ($transferRunning !== 0 && $sf->error !== 0) {
+						$statusStr = "Error";
+						$show_run  = true;
+					}
+				} else $statusStr = "Leeching";
 			}
 			// pid-file
-			//fixme: error handling for transmissionrpc
-                        $is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
-                        if ($sf->error !== 0) $is_no_file = 1;
+			// is_no_file seems like a relic from spawned transfers and not compatible with rpc
+			$is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
+			if ($sf->error !== 0 || ($sf->isRPC && $transferRunning === 0)) $is_no_file = 1;
 			break;
 	}
-
 	// ==================================================================== name
 
 	// =================================================================== owner
 
 	// ==================================================================== size
 	$format_af_size = "";
-	if($settings[1] != 0)
-	{
+	if ($settings[1] != 0) {
 		$format_af_size = formatBytesTokBMBGBTB($sf->size);
-		if(strstr($format_af_size,"G")) $format_af_size = "<b>".$format_af_size."</b>";
-		if($format_af_size == "") $format_af_size = "&nbsp;";
+		if (strstr($format_af_size, "G")) $format_af_size = "<b>".$format_af_size."</b>";
+		if ($format_af_size == "") $format_af_size = "&nbsp;";
 	}
 	// =============================================================== downtotal
 	$format_downtotal = "";
-	if($settings[2] != 0)
-	{
+	if ($settings[2] != 0) {
 		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]);
-		if($format_downtotal == "") $format_downtotal = "&nbsp;";
+		if ($format_downtotal == "") $format_downtotal = "&nbsp;";
 	}
 	// ================================================================= uptotal
 	$format_uptotal = "";
-	if($settings[3] != 0)
-	{
+	if ($settings[3] != 0) {
 		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]);
-		if($format_uptotal == "") $format_uptotal = "&nbsp;";
+		if ($format_uptotal == "") $format_uptotal = "&nbsp;";
 	}
 	// ================================================================== status
 
 	// ================================================================ progress
 	if ($settings[5] != 0) {
-		if ((int)$percentDone >= 100 && $sf->size!=0  && trim($sf->up_speed) != "") {
+		if ((int)$percentDone >= 100 && $sf->size != 0 && trim($sf->up_speed) != "") {
 			//finished
 			$graph_width = -1;
-			$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
+			$percentage  = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2).'%';
 		} else {
 			if ($percentDone >= 1) {
 				//leeching
 				$graph_width = $percentDone;
-				$percentage = $graph_width . '%';
+				$percentage  = $graph_width.'%';
 			} else if ($percentDone < 0) {
 				//stopped
-				$graph_width = round(($percentDone*-1)-100,1);
-				$percentage = $graph_width . '%';
+				$graph_width = round(($percentDone * -1) - 100, 1);
+				$percentage  = $graph_width.'%';
 			} else {
 				//new
 				$graph_width = 0;
-				$percentage = '0%';
+				$percentage  = '0%';
 			}
 		}
-		$graph_width = min($graph_width,100);
-		$background = ($graph_width == 100) ? $progress_color : "#000000";
+		$graph_width = min($graph_width, 100);
+		$background  = ($graph_width == 100) ? $progress_color : "#000000";
 	} else {
 		$graph_width = 0;
-		$background = "";
-		$percentage = "";
+		$background  = "";
+		$percentage  = "";
 	}
 
 	// ==================================================================== down
@@ -678,7 +682,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 	if ($settings[8] != 0) {
 		$seeds = ($transferRunning == 1)
 			? $sf->seeds
-			:  "&nbsp;";
+			: "&nbsp;";
 	} else {
 		$seeds = "&nbsp;";
 	}
@@ -687,7 +691,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 	if ($settings[9] != 0) {
 		$peers = ($transferRunning == 1)
 			? $sf->peers
-			:  "&nbsp;";
+			: "&nbsp;";
 	} else {
 		$peers = "&nbsp;";
 	}
@@ -731,37 +735,37 @@ foreach ($arList as $mtimecrc => $transfer) {
 	// -------------------------------------------------------------------------
 	// create temp-array
 	$tArray = array(
-		'is_owner' => ($cfg['isAdmin']) ? true : $owner,
-		'is_rpc' => (int) $bUseRPC,
-		'transferRunning' => $transferRunning,
-		'url_entry' => urlencode($transfer),
-		'hd_image' => $hd->image,
-		'hd_title' => $hd->title,
-		'displayname' => $displayname,
-		'transferowner' => $transferowner,
-		'format_af_size' => $format_af_size,
-		'format_downtotal' => $format_downtotal,
-		'format_uptotal' => $format_uptotal,
-		'statusStr' => $statusStr,
-		'graph_width' => $graph_width,
-		'percentage' => $percentage,
-		'progress_color' => $progress_color,
-		'bar_width' => $bar_width,
-		'background' => $background,
-		'100_graph_width' => (100 - $graph_width),
-		'down_speed' => $down_speed,
-		'up_speed' => $up_speed,
-		'seeds' => $seeds,
-		'peers' => $peers,
-		'estTime' => $estTime,
-		'clientType' => $settingsAry['type'],
+		'is_owner'               => ($cfg['isAdmin']) ? true : $owner,
+		'is_rpc'                 => (int)$sf->isRPC,
+		'transferRunning'        => $transferRunning,
+		'url_entry'              => urlencode($transfer),
+		'hd_image'               => $hd->image,
+		'hd_title'               => $hd->title,
+		'displayname'            => $displayname,
+		'transferowner'          => $transferowner,
+		'format_af_size'         => $format_af_size,
+		'format_downtotal'       => $format_downtotal,
+		'format_uptotal'         => $format_uptotal,
+		'statusStr'              => $statusStr,
+		'graph_width'            => $graph_width,
+		'percentage'             => $percentage,
+		'progress_color'         => $progress_color,
+		'bar_width'              => $bar_width,
+		'background'             => $background,
+		'100_graph_width'        => (100 - $graph_width),
+		'down_speed'             => $down_speed,
+		'up_speed'               => $up_speed,
+		'seeds'                  => $seeds,
+		'peers'                  => $peers,
+		'estTime'                => $estTime,
+		'clientType'             => $settingsAry['type'],
 		'upload_support_enabled' => $cfg["supportMap"][$settingsAry['client']]['max_upload_rate'],
-		'client' => $client,
-		'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
-		'datapath' => $settingsAry['datapath'],
-		'is_no_file' => $is_no_file,
-		'show_run' => $show_run,
-		'entry' => $transfer
+		'client'                 => $client,
+		'url_path'               => urlencode(str_replace($cfg["path"], '', $settingsAry['savepath']).$settingsAry['datapath']),
+		'datapath'               => $settingsAry['datapath'],
+		'is_no_file'             => $is_no_file,
+		'show_run'               => $show_run,
+		'entry'                  => $transfer
 	);
 
 	// Is this transfer for the current user or the general list?
@@ -811,7 +815,7 @@ $tmpl->setvar('are_transfer', (($boolCond) && (sizeof($arListTorrent) > 0)) ? 1 
 
 $onLoad = "";
 
-$msgGrowl = "";
+$msgGrowl  = "";
 $msgSticky = false;
 
 // pm
@@ -821,7 +825,7 @@ if ($nbMsg > 0) {
 		//disabled page lock
 		//$tmpl->setvar('IsForceReadMsg', 1);
 
-		 //Dont use " dblquotes in msgs, because this javascript will be in a onload="" attribute, quoted dblquotes (\") seems not working
+		//Dont use " dblquotes in msgs, because this javascript will be in a onload="" attribute, quoted dblquotes (\") seems not working
 		$msgGrowl .= "<img src=images/msg_new.png width=16 height=16> You have an important message !<br/><br/><a href=index.php?iid=readmsg>Please read...</a>";
 
 		//dont auto-hide growl message
@@ -840,11 +844,11 @@ if ($nbMsg > 0) {
 
 if ($isAjaxUpdate) {
 	$ajax_delim = "|#|";
-	$content = "";
-	$isFirst = true;
+	$content    = "";
+	$isFirst    = true;
 	// server stats
 	if ($ajaxUpdateParams{0} == "1") {
-		$isFirst = false;
+		$isFirst     = false;
 		$serverStats = getServerStats();
 		$serverCount = count($serverStats);
 		for ($i = 0; $i < $serverCount; $i++) {
@@ -873,8 +877,8 @@ if ($isAjaxUpdate) {
 			$isFirst = false;
 		else
 			$content .= $ajax_delim;
-		$countUsers = count($cfg['users']);
-		$arOnlineUsers = array();
+		$countUsers     = count($cfg['users']);
+		$arOnlineUsers  = array();
 		$arOfflineUsers = array();
 		for ($i = 0; $i < $countUsers; $i++) {
 			if (IsOnline($cfg['users'][$i]))
@@ -921,7 +925,7 @@ if ($isAjaxUpdate) {
 		}
 		//Growl message on ajax refresh
 		if (!empty($msgGrowl)) {
-			$jGrowls .= "jQuery.jGrowl('".addslashes($msgGrowl)."',{sticky:".($msgSticky ?'true':'false')."});";
+			$jGrowls .= "jQuery.jGrowl('".addslashes($msgGrowl)."',{sticky:".($msgSticky ? 'true' : 'false')."});";
 		}
 		$content .= $jGrowls;
 
@@ -988,9 +992,9 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$ajaxInit .= ",".$cfg["ui_displaybandwidthbars"];
 	$ajaxInit .= ",'".$cfg['bandwidthbar']."'";
 	$ajaxInit .= ");onbeforeunload = ajax_unload;";
-	
+
 	$onLoad .= $ajaxInit;
-} 
+}
 
 //Index Growl messages
 $jGrowls = "";
@@ -999,7 +1003,7 @@ if (!empty($cfg['growl'])) {
 	clearGrowlMessages();
 }
 if (!empty($msgGrowl)) {
-	$jGrowls .= "jQuery.jGrowl('".addslashes($msgGrowl)."',{sticky:".($msgSticky ?'true':'false')."});";
+	$jGrowls .= "jQuery.jGrowl('".addslashes($msgGrowl)."',{sticky:".($msgSticky ? 'true' : 'false')."});";
 }
 $onLoad .= $jGrowls;
 
@@ -1030,18 +1034,18 @@ if ($cfg["index_page_connections"] != 0) {
 $loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/a";
 
 // Width of top right stats cell:
-$stats_cell_width=0;
+$stats_cell_width = 0;
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
-	$stats_cell_width+=200;
+	$stats_cell_width += 200;
 	if (isset($cfg['linklist']))
 		$tmpl->setloop('linklist', $cfg['linklist']);
 }
 
 // goodlookingstats
 if ($cfg["enable_goodlookstats"] != "0") {
-	$stats_cell_width+=180;
+	$stats_cell_width += 180;
 	if ($settingsHackStats[0] == 1) {
 		$tmpl->setvar('settingsHackStats1', 1);
 		$tmpl->setvar('settingsHackStats11', @number_format($cfg["total_download"], 2));
@@ -1052,7 +1056,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	}
 	if ($settingsHackStats[2] == 1) {
 		$tmpl->setvar('settingsHackStats3', 1);
-		$tmpl->setvar('settingsHackStats33', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+		$tmpl->setvar('settingsHackStats33', @number_format($cfg["total_download"] + $cfg["total_upload"], 2));
 	}
 	if ($settingsHackStats[3] == 1) {
 		$tmpl->setvar('settingsHackStats4', 1);
@@ -1070,11 +1074,11 @@ if ($cfg["enable_goodlookstats"] != "0") {
 
 // users
 if ($cfg["ui_displayusers"] != "0") {
-	$stats_cell_width+=100;
-	$tmpl->setvar('ui_displayusers',1);
+	$stats_cell_width += 100;
+	$tmpl->setvar('ui_displayusers', 1);
 	$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
-	$userCount = count($cfg['users']);
-	$arOnlineUsers = array();
+	$userCount      = count($cfg['users']);
+	$arOnlineUsers  = array();
 	$arOfflineUsers = array();
 	for ($inx = 0; $inx < $userCount; $inx++) {
 		if (IsOnline($cfg['users'][$inx]))
@@ -1089,7 +1093,7 @@ if ($cfg["ui_displayusers"] != "0") {
 }
 
 // Width of top right stats cell:
-$tmpl->setvar('stats_cell_width',$stats_cell_width);
+$tmpl->setvar('stats_cell_width', $stats_cell_width);
 
 // xfer
 if ($cfg['enable_xfer'] == 1) {
@@ -1099,15 +1103,15 @@ if ($cfg['enable_xfer'] == 1) {
 		$xfer_total = Xfer::getStatsTotal();
 		$tmpl->setvar('xfer_realtime', 1);
 		if ($cfg['xfer_day'])
-			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
+			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'], $xfer_total['day']['total'], $cfg['_XFERTHRU'].' Today:'));
 		if ($cfg['xfer_week'])
-			$tmpl->setvar('xfer_week', tmplGetXferBar($cfg['xfer_week'],$xfer_total['week']['total'],$cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
+			$tmpl->setvar('xfer_week', tmplGetXferBar($cfg['xfer_week'], $xfer_total['week']['total'], $cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
 		$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
-		$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
+		$monthText  = (date('j') < $cfg['month_start']) ? date('M j', strtotime('-1 Day', $monthStart)) : date('M j', strtotime('+1 Month -1 Day', $monthStart));
 		if ($cfg['xfer_month'])
-			$tmpl->setvar('xfer_month', tmplGetXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
+			$tmpl->setvar('xfer_month', tmplGetXferBar($cfg['xfer_month'], $xfer_total['month']['total'], $cfg['_XFERTHRU'].' '.$monthText.':'));
 		if ($cfg['xfer_total'])
-			$tmpl->setvar('xfer_total', tmplGetXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
+			$tmpl->setvar('xfer_total', tmplGetXferBar($cfg['xfer_total'], $xfer_total['total']['total'], $cfg['_TOTALXFER'].':'));
 	}
 }
 
@@ -1122,9 +1126,9 @@ if ($cfg['driveSpace'] >= 98) {
 // bottom stats
 if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('index_page_stats', 1);
-	if (!array_key_exists("total_download",$cfg))
+	if (!array_key_exists("total_download", $cfg))
 		$cfg["total_download"] = 0;
-	if (!array_key_exists("total_upload",$cfg))
+	if (!array_key_exists("total_upload", $cfg))
 		$cfg["total_upload"] = 0;
 	// xfer
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
@@ -1158,7 +1162,7 @@ if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('downloadspeed11', @number_format($transfers['sum']['drate'], 2));
 	$tmpl->setvar('uploadspeed1', @number_format($cfg["total_upload"], 2));
 	$tmpl->setvar('uploadspeed11', @number_format($transfers['sum']['rate'], 2));
-	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"] + $cfg["total_upload"], 2));
 	$tmpl->setvar('totalspeed11', @number_format($transfers['sum']['rate'] + $transfers['sum']['drate'], 2));
 	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);

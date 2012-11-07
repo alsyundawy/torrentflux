@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -41,53 +40,53 @@ tmplInitializeInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
 $authlist = array();
 // Form-Auth
 array_push($authlist, array(
-	'avalue' => 0,
-	'atype' => "Form-Auth",
-	'aselected' => ($cfg["auth_type"] == 0) ? 1 : 0
+		'avalue'    => 0,
+		'atype'     => "Form-Auth",
+		'aselected' => ($cfg["auth_type"] == 0) ? 1 : 0
 	)
 );
 // Form-Auth + Cookie
 array_push($authlist, array(
-	'avalue' => 1,
-	'atype' => "Form-Auth + Cookie",
-	'aselected' => ($cfg["auth_type"] == 1) ? 1 : 0
+		'avalue'    => 1,
+		'atype'     => "Form-Auth + Cookie",
+		'aselected' => ($cfg["auth_type"] == 1) ? 1 : 0
 	)
 );
 // Form-Auth + Image-Validation
 if (Image::isSupported()) {
 	array_push($authlist, array(
-		'avalue' => 4,
-		'atype' => "Form-Auth + Image-Validation",
-		'aselected' => ($cfg["auth_type"] == 4) ? 1 : 0
+			'avalue'    => 4,
+			'atype'     => "Form-Auth + Image-Validation",
+			'aselected' => ($cfg["auth_type"] == 4) ? 1 : 0
 		)
 	);
 }
 // 2009-04-17 pmunn@munn.com: Form-Auth + ReCaptcha.
 array_push($authlist, array(
-	    'avalue' => 5,
-	    'atype'=>'Form-Auth + reCAPTCHA',
-	    'aselected' => ($cfg["auth_type"] == 5) ? 1: 0
-	    )
+		'avalue'    => 5,
+		'atype'     => 'Form-Auth + reCAPTCHA',
+		'aselected' => ($cfg["auth_type"] == 5) ? 1 : 0
+	)
 );
 // 2009-05-12 pmunn@munn.com: Form-Auth + ReCaptcha + Cookie.
 array_push($authlist, array(
-	    'avalue' => 6,
-	    'atype'=>'Form-Auth + reCAPTCHA + Cookie',
-	    'aselected' => ($cfg["auth_type"] == 6) ? 1: 0
-	    )
+		'avalue'    => 6,
+		'atype'     => 'Form-Auth + reCAPTCHA + Cookie',
+		'aselected' => ($cfg["auth_type"] == 6) ? 1 : 0
+	)
 );
 // Basic-Auth
 array_push($authlist, array(
-	'avalue' => 2,
-	'atype' => "Basic-Auth",
-	'aselected' => ($cfg["auth_type"] == 2) ? 1 : 0
+		'avalue'    => 2,
+		'atype'     => "Basic-Auth",
+		'aselected' => ($cfg["auth_type"] == 2) ? 1 : 0
 	)
 );
 // Basic-Passthru
 array_push($authlist, array(
-	'avalue' => 3,
-	'atype' => "Basic-Passthru",
-	'aselected' => ($cfg["auth_type"] == 3) ? 1 : 0
+		'avalue'    => 3,
+		'atype'     => "Basic-Passthru",
+		'aselected' => ($cfg["auth_type"] == 3) ? 1 : 0
 	)
 );
 $tmpl->setloop('auth_type_list', $authlist);
@@ -122,37 +121,37 @@ $tmpl->setvar('transferStatsType', $cfg["transferStatsType"]);
 $tmpl->setvar('transferStatsUpdate', $cfg["transferStatsUpdate"]);
 // themes
 $theme_list = array();
-$arThemes = GetThemes();
+$arThemes   = GetThemes();
 for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	array_push($theme_list, array(
-		'arThemes' => preg_replace('/_beta$/',' (beta)',$arThemes[$inx]),
-		'arThemes2' => $arThemes[$inx],
-		'selected' => ($cfg["default_theme"] == $arThemes[$inx]) ? "selected=\"selected\"" : ""
+			'arThemes'  => preg_replace('/_beta$/', ' (beta)', $arThemes[$inx]),
+			'arThemes2' => $arThemes[$inx],
+			'selected'  => ($cfg["default_theme"] == $arThemes[$inx]) ? "selected=\"selected\"" : ""
 		)
 	);
 }
 $tmpl->setloop('theme_list', $theme_list);
 // tf standard themes
 $tfstandard_theme_list = array();
-$arThemes = GetThemesStandard();
+$arThemes              = GetThemesStandard();
 for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
 	array_push($tfstandard_theme_list, array(
-		'arThemes'  => $arThemes[$inx],
-		'arThemes2' => $arThemes2[$inx],
-		'selected'  => ($cfg["default_theme"] == $arThemes2[$inx]) ? "selected=\"selected\"" : ""
+			'arThemes'  => $arThemes[$inx],
+			'arThemes2' => $arThemes2[$inx],
+			'selected'  => ($cfg["default_theme"] == $arThemes2[$inx]) ? "selected=\"selected\"" : ""
 		)
 	);
 }
 $tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
 // languages
-$lang_list = array();
+$lang_list  = array();
 $arLanguage = GetLanguages();
 for ($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 	array_push($lang_list, array(
-		'arLanguage' => $arLanguage[$inx],
-		'selected' => ($cfg["default_language"] == $arLanguage[$inx]) ? "selected" : "",
-		'GetLanguageFromFile' => GetLanguageFromFile($arLanguage[$inx])
+			'arLanguage'          => $arLanguage[$inx],
+			'selected'            => ($cfg["default_language"] == $arLanguage[$inx]) ? "selected" : "",
+			'GetLanguageFromFile' => GetLanguageFromFile($arLanguage[$inx])
 		)
 	);
 }

@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // prevent direct invocation
 if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
@@ -29,24 +28,25 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-$user_id = tfb_getRequestVar('user_id');
-$org_user_id = tfb_getRequestVar('org_user_id');
+$user_id       = tfb_getRequestVar('user_id');
+$org_user_id   = tfb_getRequestVar('org_user_id');
 $email_address = tfb_getRequestVar('email_address');
-$pass1 = tfb_getRequestVar('pass1');
-$pass2 = tfb_getRequestVar('pass2');
-$userType = tfb_getRequestVar('userType');
-$hideOffline = tfb_getRequestVar('hideOffline');
-$user_id = strtolower($user_id);
+$pass1         = tfb_getRequestVar('pass1');
+$pass2         = tfb_getRequestVar('pass2');
+$userType      = tfb_getRequestVar('userType');
+$hideOffline   = tfb_getRequestVar('hideOffline');
+$user_id       = strtolower($user_id);
 $email_address = strtolower($email_address);
 
 // check password
 $passwordCheck = (($pass1 != '') && ($pass2 != ''))
 	? checkPassword($pass1, $pass2)
 	: true;
-	
+
 // update user
-if ( !empty($user_id) && (($passwordCheck === true && IsUser($user_id))
-	                 || $user_id == $org_user_id && IsUser($org_user_id)) ) {
+if (!empty($user_id) && (($passwordCheck === true && IsUser($user_id))
+	|| $user_id == $org_user_id && IsUser($org_user_id))
+) {
 	// Admin is changing id or password through edit screen
 	if (($user_id == $cfg["user"] || $cfg["user"] == $org_user_id) && $pass1 != "") {
 		// this will expire the user
@@ -67,17 +67,17 @@ tmplInitializeInstance($cfg["theme"], "page.admin.updateUser.tmpl");
 $tmpl->setvar('user_id', $user_id);
 $tmpl->setvar('org_user_id', $org_user_id);
 $tmpl->setvar('email_address', $email_address);
-	
+
 // error
-	
+
 $tmpl->setvar('_ERROR', $cfg['_ERROR']);
 
 // error-vars
 $tmpl->setvar('errUsername', ($user_id == '') ? 1 : 0);
-$tmpl->setvar('errMsgUsername', ($user_id == '') ? $cfg['_USERIDREQUIRED'] : '');	
+$tmpl->setvar('errMsgUsername', ($user_id == '') ? $cfg['_USERIDREQUIRED'] : '');
 $tmpl->setvar('errPassword', ($passwordCheck !== true) ? 1 : 0);
 $tmpl->setvar('errMsgPassword', ($passwordCheck !== true) ? $passwordCheck : '');
-	
+
 $tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
 //
 tmplSetTitleBar("Administration - Update User");

@@ -31,9 +31,9 @@
 */
 
 /**
-* lastRSS
-* Simple yet powerful PHP class to parse RSS files.
-*/
+ * lastRSS
+ * Simple yet powerful PHP class to parse RSS files.
+ */
 class lastRSS {
 
 	// -------------------------------------------------------------------------
@@ -49,7 +49,7 @@ class lastRSS {
 	// -------------------------------------------------------------------------
 	// Private variables
 	// -------------------------------------------------------------------------
-	var $_channeltags = array ('title', 'link', 'description', 'language', 'copyright', 'managingEditor', 'webMaster', 'lastBuildDate', 'rating', 'docs');
+	var $_channeltags = array('title', 'link', 'description', 'language', 'copyright', 'managingEditor', 'webMaster', 'lastBuildDate', 'rating', 'docs');
 	var $_itemtags = array('title', 'link', 'description', 'author', 'category', 'comments', 'enclosure', 'guid', 'pubDate', 'source');
 	var $_imagetags = array('title', 'url', 'link', 'width', 'height');
 	var $_textinputtags = array('title', 'description', 'name', 'link');
@@ -60,8 +60,8 @@ class lastRSS {
 	function Get($rss_url) {
 		// If CACHE ENABLED
 		if ($this->cache_dir != '') {
-			$cache_file = $this->cache_dir . '/rsscache_' . md5($rss_url);
-			$timedif = @(time() - filemtime($cache_file));
+			$cache_file = $this->cache_dir.'/rsscache_'.md5($rss_url);
+			$timedif    = @(time() - filemtime($cache_file));
 			if ($timedif < $this->cache_time) {
 				// cached file is fresh enough, return cached array
 				$result = unserialize(join('', file($cache_file)));
@@ -73,7 +73,7 @@ class lastRSS {
 				if ($result !== false) {
 					$serialized = serialize($result);
 					if ($f = @fopen($cache_file, 'w')) {
-						fwrite ($f, $serialized, strlen($serialized));
+						fwrite($f, $serialized, strlen($serialized));
 						fclose($f);
 					}
 					if ($result) $result['cached'] = 0;
@@ -99,9 +99,9 @@ class lastRSS {
 		if (isset($out[1])) {
 			// Process CDATA (if present)
 			if ($this->CDATA == 'content') { // Get CDATA content (without CDATA tag)
-				$out[1] = strtr($out[1], array('<![CDATA['=>'', ']]>'=>''));
+				$out[1] = strtr($out[1], array('<![CDATA[' => '', ']]>' => ''));
 			} elseif ($this->CDATA == 'strip') { // Strip CDATA
-				$out[1] = strtr($out[1], array('<![CDATA['=>'', ']]>'=>''));
+				$out[1] = strtr($out[1], array('<![CDATA[' => '', ']]>' => ''));
 			}
 			// If code page is set convert character encoding to required
 			if ($this->cp != '')
@@ -162,7 +162,7 @@ class lastRSS {
 
 		// CHANNEL info
 		if (preg_match("'<channel.*?>(.*?)</channel>'si", $rss_content, $out_channel)) {
-			foreach($this->_channeltags as $channeltag) {
+			foreach ($this->_channeltags as $channeltag) {
 				$temp = $this->my_preg_match("'<$channeltag.*?>(.*?)</$channeltag>'si", $out_channel[1]);
 				if ($temp != '') $result[$channeltag] = $temp; // Set only if not empty
 			}
@@ -178,7 +178,7 @@ class lastRSS {
 		// This a little strange regexp means:
 		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beginning tag)
 		if (isset($out_textinfo[2])) {
-			foreach($this->_textinputtags as $textinputtag) {
+			foreach ($this->_textinputtags as $textinputtag) {
 				$temp = $this->my_preg_match("'<$textinputtag.*?>(.*?)</$textinputtag>'si", $out_textinfo[2]);
 				if ($temp != '') $result['textinput_'.$textinputtag] = $temp; // Set only if not empty
 			}
@@ -193,13 +193,13 @@ class lastRSS {
 		}
 		// ITEMS
 		preg_match_all("'<item(| .*?)>(.*?)</item>'si", $rss_content, $items);
-		$rss_items = $items[2];
-		$i = 0;
+		$rss_items       = $items[2];
+		$i               = 0;
 		$result['items'] = array(); // create array even if there are no items
 		foreach ($rss_items as $rss_item) {
 			// If number of items is lower then limit: parse one item
 			if ($i < $this->items_limit || $this->items_limit == 0) {
-				foreach($this->_itemtags as $itemtag) {
+				foreach ($this->_itemtags as $itemtag) {
 					$temp = $this->my_preg_match("'<$itemtag.*?>(.*?)</$itemtag>'si", $rss_item);
 					if ($temp != '') $result['items'][$i][$itemtag] = $temp; // Set only if not empty
 				}
@@ -210,7 +210,7 @@ class lastRSS {
 				if ($this->stripHTML && $result['items'][$i]['title'])
 					$result['items'][$i]['title'] = strip_tags($this->unhtmlentities(strip_tags($result['items'][$i]['title'])));
 				// If date_format is specified and pubDate is valid
-				if ($this->date_format != '' && ($timestamp = strtotime($result['items'][$i]['pubDate'])) !==-1) {
+				if ($this->date_format != '' && ($timestamp = strtotime($result['items'][$i]['pubDate'])) !== -1) {
 					// convert pubDate to specified date format
 					$result['items'][$i]['pubDate'] = date($this->date_format, $timestamp);
 				}

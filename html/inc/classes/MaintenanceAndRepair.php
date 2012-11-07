@@ -4,54 +4,52 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 // states
-define('MAINTENANCEANDREPAIR_STATE_NULL', 0);                            // null
-define('MAINTENANCEANDREPAIR_STATE_OK', 1);                                // ok
-define('MAINTENANCEANDREPAIR_STATE_ERROR', -1);                         // error
+define('MAINTENANCEANDREPAIR_STATE_NULL', 0); // null
+define('MAINTENANCEANDREPAIR_STATE_OK', 1); // ok
+define('MAINTENANCEANDREPAIR_STATE_ERROR', -1); // error
 
 // modes
-define('MAINTENANCEANDREPAIR_MODE_CLI', 1);                               // cli
-define('MAINTENANCEANDREPAIR_MODE_WEB', 2);                               // web
+define('MAINTENANCEANDREPAIR_MODE_CLI', 1); // cli
+define('MAINTENANCEANDREPAIR_MODE_WEB', 2); // web
 
 // types
-define('MAINTENANCEANDREPAIR_TYPE_INT', 0);                          // internal
-define('MAINTENANCEANDREPAIR_TYPE_STD', 1);                          // standard
-define('MAINTENANCEANDREPAIR_TYPE_EXT', 2);                          // extended
+define('MAINTENANCEANDREPAIR_TYPE_INT', 0); // internal
+define('MAINTENANCEANDREPAIR_TYPE_STD', 1); // standard
+define('MAINTENANCEANDREPAIR_TYPE_EXT', 2); // extended
 
 /**
  * MaintenanceAndRepair
  */
-class MaintenanceAndRepair
-{
+class MaintenanceAndRepair {
 	// public fields
 	var $name = "MaintenanceAndRepair";
 
-    // state
-    var $state = MAINTENANCEANDREPAIR_STATE_NULL;
+	// state
+	var $state = MAINTENANCEANDREPAIR_STATE_NULL;
 
-    // messages-array
-    var $messages = array();
+	// messages-array
+	var $messages = array();
 
 	// private fields
 
-    // mode
-    var $_mode = 0;
+	// mode
+	var $_mode = 0;
 
 	// transfer fields
 	var $_bogusTransfers = array();
@@ -67,52 +65,52 @@ class MaintenanceAndRepair
 	// public static methods
 	// =========================================================================
 
-    /**
-     * accessor for singleton
-     *
-     * @return MaintenanceAndRepair
-     */
-    function getInstance() {
+	/**
+	 * accessor for singleton
+	 *
+	 * @return MaintenanceAndRepair
+	 */
+	function getInstance() {
 		global $instanceMaintenanceAndRepair;
 		// initialize
 		MaintenanceAndRepair::initialize();
 		// return instance
 		return $instanceMaintenanceAndRepair;
-    }
+	}
 
-    /**
-     * initialize MaintenanceAndRepair.
-     */
-    function initialize() {
-    	global $instanceMaintenanceAndRepair;
-    	// create instance
-    	if (!isset($instanceMaintenanceAndRepair))
-    		$instanceMaintenanceAndRepair = new MaintenanceAndRepair();
-    }
+	/**
+	 * initialize MaintenanceAndRepair.
+	 */
+	function initialize() {
+		global $instanceMaintenanceAndRepair;
+		// create instance
+		if (!isset($instanceMaintenanceAndRepair))
+			$instanceMaintenanceAndRepair = new MaintenanceAndRepair();
+	}
 
-    /**
-     * accessor for state
-     *
-     * @return int
-     */
-    function getState() {
+	/**
+	 * accessor for state
+	 *
+	 * @return int
+	 */
+	function getState() {
 		global $instanceMaintenanceAndRepair;
 		return (isset($instanceMaintenanceAndRepair))
 			? $instanceMaintenanceAndRepair->state
 			: MAINTENANCEANDREPAIR_STATE_NULL;
-    }
+	}
 
-    /**
-     * accessor for messages
-     *
-     * @return array
-     */
-    function getMessages() {
+	/**
+	 * accessor for messages
+	 *
+	 * @return array
+	 */
+	function getMessages() {
 		global $instanceMaintenanceAndRepair;
 		return (isset($instanceMaintenanceAndRepair))
 			? $instanceMaintenanceAndRepair->messages
 			: array();
-    }
+	}
 
 	/**
 	 * maintenance
@@ -142,20 +140,20 @@ class MaintenanceAndRepair
 	// ctor
 	// =========================================================================
 
-    /**
-     * do not use direct, use the factory-method !
-     *
-     * @return MaintenanceAndRepair
-     */
-    function MaintenanceAndRepair() {
-    	global $argv;
-        // messages
-        $this->messages = array();
-        // cli/web
+	/**
+	 * do not use direct, use the factory-method !
+	 *
+	 * @return MaintenanceAndRepair
+	 */
+	function MaintenanceAndRepair() {
+		global $argv;
+		// messages
+		$this->messages = array();
+		// cli/web
 		$this->_mode = (empty($argv[0]))
 			? MAINTENANCEANDREPAIR_MODE_WEB
 			: MAINTENANCEANDREPAIR_MODE_CLI;
-    }
+	}
 
 	// =========================================================================
 	// public methods
@@ -167,8 +165,8 @@ class MaintenanceAndRepair
 	 * @param $type
 	 */
 	function instance_maintenance($type = MAINTENANCEANDREPAIR_TYPE_STD) {
-    	// (re)set state
-    	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
+		// (re)set state
+		$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
 		$this->_outputMessage("Running Maintenance...\n");
 
@@ -197,8 +195,8 @@ class MaintenanceAndRepair
 	 * instance_repair
 	 */
 	function instance_repair() {
-    	// (re)set state
-    	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
+		// (re)set state
+		$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
 		$this->_outputMessage("Running Repair...\n");
 		// fluxd
@@ -231,12 +229,12 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("fluxd-maintenance...\n");
 		// files
-		$fdp = $cfg["path"].'.fluxd/fluxd.pid';
-		$fds = $cfg["path"].'.fluxd/fluxd.sock';
-		$fdpe = file_exists($fdp);
-		$fdse = file_exists($fds);
+		$fdp                 = $cfg["path"].'.fluxd/fluxd.pid';
+		$fds                 = $cfg["path"].'.fluxd/fluxd.sock';
+		$fdpe                = file_exists($fdp);
+		$fdse                = file_exists($fds);
 		$fluxdLeftoversFound = false;
-		$fctr = 0;
+		$fctr                = 0;
 		if ($fdpe)
 			$fctr++;
 		if ($fdse)
@@ -276,14 +274,14 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("fluazu-maintenance...\n");
 		// files
-		$fdp = $cfg["path"].'.fluazu/fluazu.pid';
-		$fds = $cfg["path"].'.fluazu/fluazu.stat';
-		$fdc = $cfg["path"].'.fluazu/fluazu.cmd';
-		$fdpe = file_exists($fdp);
-		$fdse = file_exists($fds);
-		$fdce = file_exists($fdc);
+		$fdp            = $cfg["path"].'.fluazu/fluazu.pid';
+		$fds            = $cfg["path"].'.fluazu/fluazu.stat';
+		$fdc            = $cfg["path"].'.fluazu/fluazu.cmd';
+		$fdpe           = file_exists($fdp);
+		$fdse           = file_exists($fds);
+		$fdce           = file_exists($fdc);
 		$leftoversFound = false;
-		$fctr = 0;
+		$fctr           = 0;
 		if ($fdpe)
 			$fctr++;
 		if ($fdse)
@@ -318,7 +316,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("fluazu-maintenance done.\n");
 	}
-	
+
 	/**
 	 * _maintenanceFluazuTransfers
 	 * delete leftovers of fluazu (only do this if daemon is not running)
@@ -328,7 +326,7 @@ class MaintenanceAndRepair
 		global $cfg;
 		// output
 		$this->_outputMessage("fluazu-Transfers maintenance...\n");
-	
+
 		// cmd-files of transfer-clients
 		$pidFiles = array();
 		if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
@@ -338,11 +336,11 @@ class MaintenanceAndRepair
 			}
 			@closedir($dirHandle);
 		}
-		
+
 		foreach ($pidFiles as $pidFile) {
 			$transfer = (substr($pidFile, 0, -4));
 			if (getTransferClient($transfer) == "azureus") {
-				$sf = new StatFile($transfer, getOwner($transfer)); 
+				$sf = new StatFile($transfer, getOwner($transfer));
 				if ($sf->running == "0") {
 					// set stopped flag in db
 					stopTransferSettings($transfer);
@@ -353,7 +351,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("fluazu-Transfers maintenance done.\n");
 	}
-	
+
 	/**
 	 * _maintenanceTransfers
 	 *
@@ -369,8 +367,8 @@ class MaintenanceAndRepair
 		// sanity-check for transfers-dir
 		if (!is_dir($cfg["transfer_file_path"])) {
 			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
-			$msg = "invalid dir-settings. no dir : ".$cfg["transfer_file_path"];
-			array_push($this->messages , $msg);
+			$msg         = "invalid dir-settings. no dir : ".$cfg["transfer_file_path"];
+			array_push($this->messages, $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
@@ -395,8 +393,8 @@ class MaintenanceAndRepair
 		$this->_bogusTransfers = array();
 		foreach ($pidFiles as $pidFile) {
 			$transfer = substr($pidFile, 0, -4); //remove ".pid"
-			$client = getTransferClient($transfer);
-			if ($client != "azureus" && strpos($client,'rpc') === false) {
+			$client   = getTransferClient($transfer);
+			if ($client != "azureus" && strpos($client, 'rpc') === false) {
 				if (stristr($psString, $transfer) === false) {
 					array_push($this->_bogusTransfers, $transfer);
 				}
@@ -490,11 +488,11 @@ class MaintenanceAndRepair
 		$this->_outputMessage("database-maintenance...\n");
 		/* tf_transfers */
 		$this->_countProblems = 0;
-		$this->_countFixed = 0;
+		$this->_countFixed    = 0;
 		// output
 		$this->_outputMessage("table-maintenance : tf_transfers\n");
 		// running-flag
-		$sql = "SELECT transfer FROM tf_transfers WHERE running = '1'";
+		$sql       = "SELECT transfer FROM tf_transfers WHERE running = '1'";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -513,7 +511,7 @@ class MaintenanceAndRepair
 			}
 		}
 		// empty hash
-		$sql = "SELECT transfer FROM tf_transfers WHERE hash = ''";
+		$sql       = "SELECT transfer FROM tf_transfers WHERE hash = ''";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -535,7 +533,7 @@ class MaintenanceAndRepair
 			}
 		}
 		// empty datapath
-		$sql = "SELECT transfer FROM tf_transfers WHERE datapath = ''";
+		$sql       = "SELECT transfer FROM tf_transfers WHERE datapath = ''";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -559,7 +557,7 @@ class MaintenanceAndRepair
 				}
 			}
 		}
-		
+
 		// output + log
 		if ($this->_countProblems == 0) {
 			// output
@@ -575,14 +573,14 @@ class MaintenanceAndRepair
 
 		/* tf_transfer_totals */
 		$this->_countProblems = 0;
-		$this->_countFixed = 0;
+		$this->_countFixed    = 0;
 		// output
 		$this->_outputMessage("table-maintenance : tf_transfer_totals\n");
 		$this->_countProblems = $db->GetOne("SELECT COUNT(*) FROM tf_transfer_totals WHERE tid = ''");
 		if (($this->_countProblems !== false) && ($this->_countProblems > 0)) {
 			// output
 			$this->_outputMessage("found ".$this->_countProblems." invalid entries, deleting...\n");
-			$sql = "DELETE FROM tf_transfer_totals WHERE tid = ''";
+			$sql    = "DELETE FROM tf_transfer_totals WHERE tid = ''";
 			$result = $db->Execute($sql);
 			if ($db->ErrorNo() != 0) dbError($sql);
 			$this->_countFixed = $db->Affected_Rows();
@@ -599,37 +597,37 @@ class MaintenanceAndRepair
 			// output
 			$this->_outputMessage("no problems found.\n");
 		}
-		
+
 		// null uid
-		$sql = "SELECT tid FROM tf_transfer_totals WHERE uid = 0";
+		$sql       = "SELECT tid FROM tf_transfer_totals WHERE uid = 0";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
 			$this->_countProblems += $rc;
 			while (list($tid) = $recordset->FetchRow()) {
-				
+
 				// get uid
 				$tname = getTransferFromHash($tid);
-				
+
 				if (!empty($tname))
-					$uid = (int) getTransferOwnerID($tname);
+					$uid = (int)getTransferOwnerID($tname);
 				else
 					$uid = 0;
-				
+
 				// t has no uid, update
 				if ($uid > 0) {
 					$this->_outputMessage("updating tf_transfer_totals which has empty uid : ".$tname."\n");
-				
+
 					$sql = "UPDATE tf_transfer_totals SET uid = $uid WHERE tid = ".$db->qstr($tid)." AND uid=0";
 					$db->Execute($sql);
-					
+
 					//if duplicates, delete old uid=0
 					$sql = "DELETE FROM tf_transfer_totals WHERE tid = ".$db->qstr($tid)." AND uid=0";
 					$db->Execute($sql);
-					
+
 					$this->_countFixed++;
-					
+
 					// output
 					$this->_outputMessage("done.\n");
 				} elseif (!empty($tname)) {
@@ -643,9 +641,9 @@ class MaintenanceAndRepair
 				*/
 			}
 		}
-		
+
 		//xfer delete TB day values
-		$sql = "SELECT user_id, date FROM tf_xfer WHERE download > '1000000000000' or upload > '1000000000000'";
+		$sql       = "SELECT user_id, date FROM tf_xfer WHERE download > '1000000000000' or upload > '1000000000000'";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -653,16 +651,16 @@ class MaintenanceAndRepair
 			$this->_outputMessage("updating xfer which has TeraBytes day count\n");
 			$this->_countProblems += $rc;
 			while (list($username, $date) = $recordset->FetchRow()) {
-					//if duplicates, delete old uid=0
-					$sql = "DELETE FROM tf_xfer WHERE user_id = ".$db->qstr($username)." AND date=".$db->qstr($date);
-					$db->Execute($sql);
-					
-					$this->_countFixed++;
+				//if duplicates, delete old uid=0
+				$sql = "DELETE FROM tf_xfer WHERE user_id = ".$db->qstr($username)." AND date=".$db->qstr($date);
+				$db->Execute($sql);
+
+				$this->_countFixed++;
 			}
 			$this->_outputMessage("done (".$this->_countFixed.").\n");
 		}
-		
-		
+
+
 		// prune db
 		$this->_maintenanceDatabasePrune();
 		/* done */
@@ -680,15 +678,15 @@ class MaintenanceAndRepair
 		$this->_outputMessage("table : tf_log\n");
 		// Prune LOG
 		$this->_count = 0;
-		$testTime = time() - ($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
-		$sql = "delete from tf_log where time < ".$db->qstr($testTime);
-		$result = $db->Execute($sql);
+		$testTime     = time() - ($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
+		$sql          = "delete from tf_log where time < ".$db->qstr($testTime);
+		$result       = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
 		unset($result);
 		$testTime = time() - ($cfg['minutes_to_keep'] * 60);
-		$sql = "delete from tf_log where time < ".$db->qstr($testTime)." and action=".$db->qstr($cfg["constants"]["hit"]);
-		$result = $db->Execute($sql);
+		$sql      = "delete from tf_log where time < ".$db->qstr($testTime)." and action=".$db->qstr($cfg["constants"]["hit"]);
+		$result   = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
 		unset($result);
@@ -712,8 +710,8 @@ class MaintenanceAndRepair
 		// sanity-check for transfers-dir
 		if (!is_dir($cfg["transfer_file_path"])) {
 			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
-            $msg = "invalid dir-settings. no dir : ".$cfg["transfer_file_path"];
-            array_push($this->messages , $msg);
+			$msg         = "invalid dir-settings. no dir : ".$cfg["transfer_file_path"];
+			array_push($this->messages, $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
@@ -731,13 +729,13 @@ class MaintenanceAndRepair
 			$sf = new StatFile($transfer, getOwner($transfer));
 			// output
 			$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");
-			$sf->running = 0;
+			$sf->running      = 0;
 			$sf->percent_done = -100.0;
-			$sf->time_left = 'repaired';
-			$sf->down_speed = 0;
-			$sf->up_speed = 0;
-			$sf->seeds = 0;
-			$sf->peers = 0;
+			$sf->time_left    = 'repaired';
+			$sf->down_speed   = 0;
+			$sf->up_speed     = 0;
+			$sf->seeds        = 0;
+			$sf->peers        = 0;
 			$sf->write();
 			// output
 			$this->_outputMessage("done.\n");

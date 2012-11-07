@@ -4,21 +4,20 @@
 
 /*******************************************************************************
 
- LICENSE
+LICENSE
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License (GPL)
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License (GPL)
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- To read the license please visit http://www.gnu.org/copyleft/gpl.html
-
-*******************************************************************************/
+To read the license please visit http://www.gnu.org/copyleft/gpl.html
+ *******************************************************************************/
 
 /**
  * updateServerSettings
@@ -136,7 +135,8 @@ function admin_updateFluxdSettings() {
 		$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
 		$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
 		$_POST["fluxd_Maintenance_interval"] != $cfg["fluxd_Maintenance_interval"] ||
-		$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
+		$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]
+	) {
 		$message = 'Settings changed. ';
 		// fluxd Running?
 		if (Fluxd::isRunning()) {
@@ -154,7 +154,8 @@ function admin_updateFluxdSettings() {
 					$_POST["fluxd_Maintenance_enabled"] != $cfg["fluxd_Maintenance_enabled"] ||
 					$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 					$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
-					$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"]) {
+					$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"]
+				) {
 					$reloadModules = true;
 				}
 				// reconfig of running daemon :
@@ -204,8 +205,8 @@ function admin_updateFluxdSettings() {
 function admin_controlFluxd() {
 	global $cfg;
 	$message = "";
-	$action = tfb_getRequestVar('a');
-	switch($action) {
+	$action  = tfb_getRequestVar('a');
+	switch ($action) {
 		case "start":
 			// start fluxd
 			if (Fluxd::isReadyToStart()) {
@@ -214,8 +215,8 @@ function admin_controlFluxd() {
 					$message = 'fluxd started';
 				} else {
 					$message = 'Error starting fluxd.';
-					$msgs = Fluxd::getMessages();
-					Fluxd::logError("Error starting fluxd.".( (!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
+					$msgs    = Fluxd::getMessages();
+					Fluxd::logError("Error starting fluxd.".((!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
 					array_push($msgs, "please check fluxd-logs");
 					@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", $msgs);
 				}
@@ -255,7 +256,8 @@ function admin_updateFluAzuSettings() {
 		$_POST["fluazu_port"] != $cfg["fluazu_port"] ||
 		$_POST["fluazu_secure"] != $cfg["fluazu_secure"] ||
 		$_POST["fluazu_user"] != $cfg["fluazu_user"] ||
-		$_POST["fluazu_pw"] != $cfg["fluazu_pw"]) {
+		$_POST["fluazu_pw"] != $cfg["fluazu_pw"]
+	) {
 		// fluazu Running?
 		if (FluAzu::isRunning()) {
 			$message = 'fluazu needs to be stopped before settings can be changed.';
@@ -283,8 +285,8 @@ function admin_controlFluAzu() {
 	// FluAzu
 	require_once("inc/classes/FluAzu.php");
 	$message = "";
-	$action = tfb_getRequestVar('a');
-	switch($action) {
+	$action  = tfb_getRequestVar('a');
+	switch ($action) {
 		case "start":
 			// start fluazu
 			if (!FluAzu::isRunning()) {
@@ -292,8 +294,8 @@ function admin_controlFluAzu() {
 					$message = 'fluazu started';
 				} else {
 					$message = 'Error starting fluazu.';
-					$msgs = FluAzu::getMessages();
-					FluAzu::logMessage("Error starting fluazu.".( (!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
+					$msgs    = FluAzu::getMessages();
+					FluAzu::logMessage("Error starting fluazu.".((!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
 					array_push($msgs, "please check fluazu-log");
 					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", $msgs);
 				}
@@ -330,7 +332,7 @@ function admin_updateAzureusSettings() {
 	$message = "";
 	// fluazu Running?
 	if (FluAzu::isRunning()) {
-		$status = FluAzu::getStatus();
+		$status     = FluAzu::getStatus();
 		$statusKeys = FluAzu::getStatusKeys();
 		// current settings
 		$settingsCurrent = array();
@@ -347,8 +349,7 @@ function admin_updateAzureusSettings() {
 		if ($cfg['transfer_customize_settings'] == 2)
 			$customize_settings = 1;
 		elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
-			$customize_settings = 1;
-		else
+			$customize_settings = 1; else
 			$customize_settings = 0;
 		// get changes
 		$settingsChanged = array();
@@ -410,8 +411,8 @@ function admin_addLink() {
 	global $cfg;
 	$newLink = tfb_getRequestVarRaw('newLink');
 	$newSite = tfb_getRequestVarRaw('newSite');
-	if (!empty($newLink)){
-		if (strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
+	if (!empty($newLink)) {
+		if (strpos($newLink, "http://") !== 0 && strpos($newLink, "https://") !== 0 && strpos($newLink, "ftp://") !== 0)
 			$newLink = "http://".$newLink;
 		empty($newSite) && $newSite = $newLink;
 		addNewLink($newLink, $newSite);
@@ -426,11 +427,11 @@ function admin_addLink() {
  */
 function admin_editLink() {
 	global $cfg;
-	$lid = tfb_getRequestVar('lid');
+	$lid     = tfb_getRequestVar('lid');
 	$newLink = tfb_getRequestVarRaw('editLink');
 	$newSite = tfb_getRequestVarRaw('editSite');
-	if (!empty($newLink)){
-		if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
+	if (!empty($newLink)) {
+		if (strpos($newLink, "http://") !== 0 && strpos($newLink, "https://") !== 0 && strpos($newLink, "ftp://") !== 0)
 			$newLink = "http://".$newLink;
 		empty($newSite) && $newSite = $newLink;
 		$oldLink = getLink($lid);
@@ -447,16 +448,16 @@ function admin_editLink() {
  */
 function admin_moveLink() {
 	global $db;
-	$lid = tfb_getRequestVar('lid');
+	$lid       = tfb_getRequestVar('lid');
 	$direction = tfb_getRequestVar('direction');
 	if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
 		@header("location: admin.php?op=editLinks");
 		exit();
 	}
-	$idx = getLinkSortOrder($lid);
-	$position = array("up"=>-1, "down"=>1);
-	$new_idx = $idx + $position[$direction];
-	$sql = "UPDATE tf_links SET sort_order = ".$db->qstr($idx)." WHERE sort_order = ".$db->qstr($new_idx);
+	$idx      = getLinkSortOrder($lid);
+	$position = array("up" => -1, "down" => 1);
+	$new_idx  = $idx + $position[$direction];
+	$sql      = "UPDATE tf_links SET sort_order = ".$db->qstr($idx)." WHERE sort_order = ".$db->qstr($new_idx);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$sql = "UPDATE tf_links SET sort_order = ".$db->qstr($new_idx)." WHERE lid = ".$db->qstr($lid);
@@ -488,7 +489,7 @@ function admin_deleteLink() {
 function admin_addRSS() {
 	global $cfg;
 	$newRSS = tfb_getRequestVarRaw('newRSS');
-	if(!empty($newRSS)){
+	if (!empty($newRSS)) {
 		addNewRSS($newRSS);
 		AuditAction($cfg["constants"]["admin"], "New RSS: ".addslashes($newRSS));
 	}
@@ -545,7 +546,7 @@ function tmplSetAdminMenu() {
 	// superadmin
 	if (IsSuperAdmin()) {
 		$tmpl->setvar('is_superadmin', 1);
-		$tmpl->setvar('adminmenu_superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font></a>'));
+		$tmpl->setvar('adminmenu_superAdminLink', getSuperAdminLink('', '<font class="adminlink">superadmin</font></a>'));
 	}
 }
 
@@ -560,7 +561,7 @@ function tmplSetAdminMenu() {
 function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "") {
 	global $cfg, $db, $tmpl;
 	$sqlForSearch = "";
-	$userdisplay = $user;
+	$userdisplay  = $user;
 	if ($user != "")
 		$sqlForSearch .= "user_id=".$db->qstr($user)." AND ";
 	else
@@ -570,51 +571,51 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	if ($srchAction != "")
 		$sqlForSearch .= "action like ".$db->qstr("%".$srchAction."%")." AND ";
 	$offset = 50;
-	$inx = 0;
+	$inx    = 0;
 	if (!isset($min))
-		$min=0;
-	$max = $min + $offset;
-	$sql = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
+		$min = 0;
+	$max    = $min + $offset;
+	$sql    = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
 	$result = $db->SelectLimit($sql, $offset, $min);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$act_list = array();
 	while (list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
-		$user_icon = (IsOnline($user_id))
+		$user_icon    = (IsOnline($user_id))
 			? "themes/".$cfg['theme']."/images/user.gif"
 			: "themes/".$cfg['theme']."/images/user_offline.gif";
 		$is_superuser = (IsUser($user_id)) ? 1 : 0;
 		array_push($act_list, array(
-			'is_superuser' => $is_superuser,
-			'user_id' => $user_id,
-			'user_icon' => $user_icon,
-			'action' => htmlentities($action, ENT_QUOTES),
-			'file' => htmlentities($file, ENT_QUOTES),
-			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
-			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
-			'ip' => htmlentities($ip, ENT_QUOTES),
-			'date' => date($cfg['_DATETIMEFORMAT'], $time)
+				'is_superuser' => $is_superuser,
+				'user_id'      => $user_id,
+				'user_icon'    => $user_icon,
+				'action'       => htmlentities($action, ENT_QUOTES),
+				'file'         => htmlentities($file, ENT_QUOTES),
+				'ip_resolved'  => htmlentities($ip_resolved, ENT_QUOTES),
+				'user_agent'   => htmlentities($user_agent, ENT_QUOTES),
+				'ip'           => htmlentities($ip, ENT_QUOTES),
+				'date'         => date($cfg['_DATETIMEFORMAT'], $time)
 			)
 		);
 		$inx++;
 	}
-	$prev = ($min - $offset);
-	$selected = "";
+	$prev        = ($min - $offset);
+	$selected    = "";
 	$action_list = array();
 	foreach ($cfg["constants"] as $action) {
 		if ($action != $cfg["constants"]["hit"]) {
 			array_push($action_list, array(
-				'action' => htmlentities($action, ENT_QUOTES),
-				'selected' => ($srchAction == $action) ? "selected" : ""
+					'action'   => htmlentities($action, ENT_QUOTES),
+					'selected' => ($srchAction == $action) ? "selected" : ""
 				)
 			);
 		}
 	}
 	$user_list = array();
-	$selected = "";
+	$selected  = "";
 	for ($inx2 = 0; $inx2 < sizeof($cfg['users']); $inx2++) {
 		array_push($user_list, array(
-			'user' => htmlentities($cfg['users'][$inx2], ENT_QUOTES),
-			'selected' => ($user == $cfg['users'][$inx2]) ? "selected" : ""
+				'user'     => htmlentities($cfg['users'][$inx2], ENT_QUOTES),
+				'selected' => ($user == $cfg['users'][$inx2]) ? "selected" : ""
 			)
 		);
 	}
@@ -648,9 +649,9 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$tmpl->setvar('activity_userdisplay', $userdisplay);
 	if ($prev >= 0)
 		$tmpl->setvar('activity_is_prev', 1);
-	if ($inx>=$offset)
+	if ($inx >= $offset)
 		$tmpl->setvar('activity_is_more', 1);
-	if ($prev >= 0 || $inx>=$offset)
+	if ($prev >= 0 || $inx >= $offset)
 		$tmpl->setvar('activity_both_set', 1);
 }
 
@@ -664,27 +665,27 @@ function tmplSetUserSection() {
 	if ($cfg['enable_xfer'] == 1) {
 		$tmpl->setvar('userSection_colspan', 8);
 		// getTransferListArray to update xfer-stats
-    	// xfer-init
-    	if ($cfg['xfer_realtime'] == 0) {
+		// xfer-init
+		if ($cfg['xfer_realtime'] == 0) {
 			$cfg['xfer_realtime'] = 1;
 			// set xfer-newday
 			Xfer::setNewday();
-    	}
+		}
 		@getTransferListArray();
 	} else {
 		$tmpl->setvar('userSection_colspan', 7);
 	}
 	// activity-prepare
 	$total_activity = GetActivityCount();
-	$sql = "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
-	$result = $db->Execute($sql);
+	$sql            = "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
+	$result         = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// user-details
 	$user_details_list = array();
 	while (list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
 		// disk-usage
 		$disk_usage = "0";
-		$tDir = $cfg["path"].$user_id."/";
+		$tDir       = $cfg["path"].$user_id."/";
 		if (is_dir($tDir)) {
 			switch ($cfg["_OS"]) {
 				case 1: //Linux
@@ -694,7 +695,7 @@ function tmplSetUserSection() {
 					$dudir = shell_exec($cfg['bin_du']." -sk -h -L ".tfb_shellencode($tDir));
 					break;
 			}
-			$dusize = explode("\t", $dudir);
+			$dusize     = explode("\t", $dudir);
 			$disk_usage = array_shift($dusize);
 		}
 		// xfer-usage
@@ -703,7 +704,7 @@ function tmplSetUserSection() {
 			: 0;
 		// activity
 		$user_activity = GetActivityCount($user_id);
-		$user_percent = ($user_activity == 0)
+		$user_percent  = ($user_activity == 0)
 			? 0
 			: number_format(($user_activity / $total_activity) * 100);
 		// online
@@ -712,34 +713,34 @@ function tmplSetUserSection() {
 			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
 		// level
 		$user_image = "themes/".$cfg['theme']."/images/user.gif";
-		$type_user = $cfg['_NORMALUSER'];
+		$type_user  = $cfg['_NORMALUSER'];
 		if ($user_level == 1) {
 			$user_image = "themes/".$cfg['theme']."/images/admin_user.gif";
-			$type_user = $cfg['_ADMINISTRATOR'];
+			$type_user  = $cfg['_ADMINISTRATOR'];
 		}
 		if ($user_level == 2) {
 			$user_image = "themes/".$cfg['theme']."/images/superadmin.gif";
-			$type_user = $cfg['_SUPERADMIN'];
+			$type_user  = $cfg['_SUPERADMIN'];
 		}
 		$is_superadmin = ($user_level <= 1 || IsSuperAdmin()) ? 1 : 0;
 		// add to list
 		array_push($user_details_list, array(
-			'is_user' => IsUser($user_id),
-			'user_id' => $user_id,
-			'user_icon' => $user_icon,
-			'hits' => $hits,
-			'disk_usage' => $disk_usage,
-			'xfer_usage' => $xfer_usage,
-			'user_percent' => $user_percent,
-			'user_percent2' => $user_percent*2,
-			'user_percent3' => (200 - ($user_percent*2)),
-			'time_created' => date($cfg['_DATEFORMAT'], $time_created),
-			'last_visit' => date($cfg['_DATETIMEFORMAT'], $last_visit),
-			'user_image' => $user_image,
-			'type_user' => $type_user,
-			'user_level' => $user_level,
-			'user_state' => $user_state,
-			'is_superadmin' => $is_superadmin
+				'is_user'       => IsUser($user_id),
+				'user_id'       => $user_id,
+				'user_icon'     => $user_icon,
+				'hits'          => $hits,
+				'disk_usage'    => $disk_usage,
+				'xfer_usage'    => $xfer_usage,
+				'user_percent'  => $user_percent,
+				'user_percent2' => $user_percent * 2,
+				'user_percent3' => (200 - ($user_percent * 2)),
+				'time_created'  => date($cfg['_DATEFORMAT'], $time_created),
+				'last_visit'    => date($cfg['_DATETIMEFORMAT'], $last_visit),
+				'user_image'    => $user_image,
+				'type_user'     => $type_user,
+				'user_level'    => $user_level,
+				'user_state'    => $user_state,
+				'is_superadmin' => $is_superadmin
 			)
 		);
 	}
@@ -782,20 +783,20 @@ function safePhpCli($php, $args) {
 	#   variables -- so if this code is run by a cgi php (with those env. vars set),
 	#   child will inherit those and thus believe it is invoked in cgi mode
 	#    => 'unset ...'
-	if (strncmp(PHP_OS,'WIN',3) === 0) {
-		$cmd = $php . ' ' . $args;
+	if (strncmp(PHP_OS, 'WIN', 3) === 0) {
+		$cmd = $php.' '.$args;
 	} else {
 		$cmd = 'unset SERVER_SOFTWARE SERVER_NAME GATEWAY_INTERFACE REQUEST_METHOD ; ';
-		$cmd .= $php . ' ' . $args . ' < /dev/null';
+		$cmd .= $php.' '.$args.' < /dev/null';
 	}
 	$return = shell_exec($cmd);
 	if (empty($return)) {
-		$cmd.=' > /tmp/phpver';
+		$cmd .= ' > /tmp/phpver';
 		shell_exec($cmd);
 		$return = file_get_contents('/tmp/phpver');
 		@unlink('/tmp/phpver');
 	}
-	return $return; 
+	return $return;
 }
 
 /**
@@ -871,8 +872,8 @@ function validateTransmissionCli($the_file) {
 	$transmissionHelp = strtolower(shell_exec("HOME=".tfb_shellencode($cfg["path"])."; export HOME; ".$the_file.' --help'));
 	return (
 		stripos($transmissionHelp, 'transmission') === false ||
-		((stripos($transmissionHelp, 'tfcli') === false) &&
-		 (stripos($transmissionHelp, 'torrentflux') === false))
+			((stripos($transmissionHelp, 'tfcli') === false) &&
+				(stripos($transmissionHelp, 'torrentflux') === false))
 	)
 		? validationMsg(false, 'Executable is not TorrentFlux-NG bundled transmission-cli')
 		: validationMsg(true);
@@ -883,7 +884,7 @@ function validateTransmissionCli($the_file) {
  */
 function setUserState() {
 	global $cfg, $db;
-	$user_id = tfb_getRequestVar('user_id');
+	$user_id    = tfb_getRequestVar('user_id');
 	$user_state = tfb_getRequestVar('state');
 	// check params
 	if (!(isset($user_id)) && (isset($user_state)))
@@ -895,10 +896,10 @@ function setUserState() {
 	}
 	// set new state
 	$sql = "SELECT * FROM tf_users WHERE user_id = ".$db->qstr($user_id);
-	$rs = $db->Execute($sql);
+	$rs  = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$rec = array('state'=>$user_state);
-	$sql = $db->GetUpdateSQL($rs, $rec);
+	$rec    = array('state' => $user_state);
+	$sql    = $db->GetUpdateSQL($rs, $rec);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	switch ($user_state) {
@@ -918,25 +919,25 @@ function setUserState() {
  * @param $newLink
  * @param $newSite
  */
-function addNewLink($newLink,$newSite) {
+function addNewLink($newLink, $newSite) {
 	global $db;
 	//$rec = array('url'=>$newLink);
 	// Link sort order index:
 	$idx = -1;
 	// Get current highest link index:
-	$sql = "SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
+	$sql    = "SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
 	$result = $db->SelectLimit($sql, 1);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$idx = ($result->fields === false)
+	$idx    = ($result->fields === false)
 		? 0 /* No links currently in db */
 		: $result->fields["sort_order"] + 1;
-	$rec = array(
-		'url' => $newLink,
-		'sitename' => $newSite,
+	$rec    = array(
+		'url'        => $newLink,
+		'sitename'   => $newSite,
 		'sort_order' => $idx
 	);
 	$sTable = 'tf_links';
-	$sql = $db->GetInsertSql($sTable, $rec);
+	$sql    = $db->GetInsertSql($sTable, $rec);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -950,7 +951,7 @@ function addNewLink($newLink,$newSite) {
  * @param $newLink
  * @param $newSite
  */
-function alterLink($lid,$newLink,$newSite) {
+function alterLink($lid, $newLink, $newSite) {
 	global $cfg, $db;
 	$sql = "UPDATE tf_links SET url=".$db->qstr($newLink).",sitename=".$db->qstr($newSite)." WHERE lid = ".$db->qstr($lid);
 	$db->Execute($sql);
@@ -968,7 +969,7 @@ function alterLink($lid,$newLink,$newSite) {
 function getLink($lid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT url FROM tf_links WHERE lid=".$db->qstr($lid);
+	$sql      = "SELECT url FROM tf_links WHERE lid=".$db->qstr($lid);
 	$rtnValue = $db->GetOne($sql);
 	return $rtnValue;
 }
@@ -993,13 +994,13 @@ function deleteOldLink($lid) {
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$arLinks = $result->GetAssoc();
 	// Decrement the sort order of each link:
-	foreach ($arLinks as $sid=>$this_lid) {
+	foreach ($arLinks as $sid => $this_lid) {
 		$sql = "UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=".$db->qstr($this_lid);
 		$db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	// Finally delete the link:
-	$sql = "DELETE FROM tf_links WHERE lid=".$db->qstr($lid);
+	$sql    = "DELETE FROM tf_links WHERE lid=".$db->qstr($lid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -1013,12 +1014,12 @@ function deleteOldLink($lid) {
  * @return string
  */
 function getLinkSortOrder($lid) {
-    global $db;
-    // Get Current sort order index of link with this link id:
-    $sql="SELECT sort_order FROM tf_links WHERE lid=".$db->qstr($lid);
-    $rtnValue=$db->GetOne($sql);
-    if ($db->ErrorNo() != 0) dbError($sql);
-    return $rtnValue;
+	global $db;
+	// Get Current sort order index of link with this link id:
+	$sql      = "SELECT sort_order FROM tf_links WHERE lid=".$db->qstr($lid);
+	$rtnValue = $db->GetOne($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	return $rtnValue;
 }
 
 /**
@@ -1028,11 +1029,11 @@ function getLinkSortOrder($lid) {
  * @return string
  */
 function getSite($lid) {
-    global $cfg, $db;
-    $rtnValue = "";
-    $sql = "SELECT sitename FROM tf_links WHERE lid=".$db->qstr($lid);
-    $rtnValue = $db->GetOne($sql);
-    return $rtnValue;
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql      = "SELECT sitename FROM tf_links WHERE lid=".$db->qstr($lid);
+	$rtnValue = $db->GetOne($sql);
+	return $rtnValue;
 }
 
 /**
@@ -1042,9 +1043,9 @@ function getSite($lid) {
  */
 function addNewRSS($newRSS) {
 	global $db;
-	$rec = array('url'=>$newRSS);
+	$rec    = array('url' => $newRSS);
 	$sTable = 'tf_rss';
-	$sql = $db->GetInsertSql($sTable, $rec);
+	$sql    = $db->GetInsertSql($sTable, $rec);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -1056,7 +1057,7 @@ function addNewRSS($newRSS) {
  */
 function deleteOldRSS($rid) {
 	global $db;
-	$sql = "delete from tf_rss where rid=".$db->qstr($rid);
+	$sql    = "delete from tf_rss where rid=".$db->qstr($rid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
@@ -1070,7 +1071,7 @@ function deleteOldRSS($rid) {
 function getRSS($rid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT url FROM tf_rss WHERE rid=".$db->qstr($rid);
+	$sql      = "SELECT url FROM tf_rss WHERE rid=".$db->qstr($rid);
 	$rtnValue = $db->GetOne($sql);
 	return $rtnValue;
 }
@@ -1083,19 +1084,19 @@ function getRSS($rid) {
 function DeleteThisUser($user_id) {
 	global $db;
 	$sql = "SELECT uid FROM tf_users WHERE user_id = ".$db->qstr($user_id);
-	$uid = $db->GetOne( $sql );
+	$uid = $db->GetOne($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// delete any cookies this user may have had
 	//$sql = "DELETE tf_cookies FROM tf_cookies, tf_users WHERE (tf_users.uid = tf_cookies.uid) AND tf_users.user_id=".$db->qstr($user_id);
-	$sql = "DELETE FROM tf_cookies WHERE uid=".$db->qstr($uid);
+	$sql    = "DELETE FROM tf_cookies WHERE uid=".$db->qstr($uid);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// Now cleanup any message this person may have had
-	$sql = "DELETE FROM tf_messages WHERE to_user=".$db->qstr($user_id);
+	$sql    = "DELETE FROM tf_messages WHERE to_user=".$db->qstr($user_id);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// now delete the user from the table
-	$sql = "DELETE FROM tf_users WHERE user_id=".$db->qstr($user_id);
+	$sql    = "DELETE FROM tf_users WHERE user_id=".$db->qstr($user_id);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// flush session-cache
@@ -1117,12 +1118,12 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline,
 	if ($hideOffline == "")
 		$hideOffline = 0;
 	$sql = "select * from tf_users where user_id = ".$db->qstr($org_user_id);
-	$rs = $db->Execute($sql);
+	$rs  = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$rec = array();
-	$rec['user_id'] = $user_id;
-	$rec['user_level'] = $userType;
-	$rec['hide_offline'] = $hideOffline;
+	$rec                  = array();
+	$rec['user_id']       = $user_id;
+	$rec['user_level']    = $userType;
+	$rec['hide_offline']  = $hideOffline;
 	$rec['email_address'] = $email_address;
 	if ($pass1 != "") {
 		$rec['password'] = md5($pass1);
@@ -1134,13 +1135,13 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline,
 	}
 	// if the original user id and the new id do not match, we need to update messages and log
 	if ($user_id != $org_user_id) {
-		$sql = "UPDATE tf_messages SET to_user=".$db->qstr($user_id)." WHERE to_user=".$db->qstr($org_user_id);
+		$sql    = "UPDATE tf_messages SET to_user=".$db->qstr($user_id)." WHERE to_user=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
-		$sql = "UPDATE tf_messages SET from_user=".$db->qstr($user_id)." WHERE from_user=".$db->qstr($org_user_id);
+		$sql    = "UPDATE tf_messages SET from_user=".$db->qstr($user_id)." WHERE from_user=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
-		$sql = "UPDATE tf_log SET user_id=".$db->qstr($user_id)." WHERE user_id=".$db->qstr($org_user_id);
+		$sql    = "UPDATE tf_log SET user_id=".$db->qstr($user_id)." WHERE user_id=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		// flush session-cache
@@ -1157,10 +1158,10 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline,
 function changeUserLevel($user_id, $level) {
 	global $db;
 	$sql = "select * from tf_users where user_id = ".$db->qstr($user_id);
-	$rs = $db->Execute($sql);
+	$rs  = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	$rec = array('user_level'=>$level);
-	$sql = $db->GetUpdateSQL($rs, $rec);
+	$rec    = array('user_level' => $level);
+	$sql    = $db->GetUpdateSQL($rs, $rec);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
