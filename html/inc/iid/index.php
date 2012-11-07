@@ -166,6 +166,10 @@ if ($cfg["transmission_rpc_enable"]) {
 				$status          = "Checking data...";
 				$transferRunning = true;
 				break;
+			case 1:
+				$status          = "Queued for check";
+				$transferRunning = true;
+				break;
 		}
 
 		/*
