@@ -597,7 +597,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 
 			$sf->running      = Transmission::status_to_tf($t['status']);
 			$sf->percent_done = round($t['percentDone'] * 100, 2);
-			if ($t['status'] == 8 || $t['status'] == 9) {
+			if ($t['status'] == 5 || $t['status'] == 6) {
 				$sf->sharing = round($t['uploadRatio'] * 100, 2);
 			}
 
@@ -611,7 +611,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 		foreach ($tfs as $hash => $t) {
 			if (!isset($sharekills[$hash]))
 				continue;
-			if (($t['status'] == 8 || $t['status'] == 9) && ($t['uploadRatio'] * 100) > $sharekills[$hash]) {
+			if (($t['status'] == 5 || $t['status'] == 6) && ($t['uploadRatio'] * 100) > $sharekills[$hash]) {
 				$transfer = $hashes[$hash];
 				if (stopTransmissionTransfer($hash)) {
 					AuditAction($cfg["constants"]["stop_transfer"], $this->client."-stat. : sharekill stopped $transfer");
@@ -694,7 +694,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 
 		$stat = array();
 		foreach ($aTorrent as $t) {
-			if ($t['status'] == 4 || $t['status'] == 8) $stat[$t['hashString']] = $t;
+			if ($t['status'] == 4 || $t['status'] == 6) $stat[$t['hashString']] = $t;
 		}
 		return $stat;
 	}
