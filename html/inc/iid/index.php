@@ -657,13 +657,13 @@ foreach ($arList as $mtimecrc => $transfer) {
 
 	// ==================================================================== down
 	if ($settings[6] != 0) {
-		if ($transferRunning == 1)
+		if ($transferRunning == 1) {
 			$down_speed = (trim($sf->down_speed) != "") ? $sf->down_speed : '&nbsp;';
 
 			// specialcase transmissionrpc transfers
-			if ($sf->isRPC && $cfg["transmission_rpc_enable"] && $cfg['transmission_rpc_enable'] == 1)
-				$down_speed = formatBytesFromDecPrefixTokBMBGBTB($sf->down_speed_B).'/s';
-		else
+			if ($sf->isRPC && $cfg['transmission_rpc_enable'] == 1)
+				$down_speed = $sf->down_speed_B > 0?formatBytesFromDecPrefixTokBMBGBTB($sf->down_speed_B).'/s':'&nbsp;';
+		} else
 			$down_speed = "&nbsp;";
 	} else {
 		$down_speed = "&nbsp;";
@@ -671,12 +671,12 @@ foreach ($arList as $mtimecrc => $transfer) {
 
 	// ====================================================================== up
 	if ($settings[7] != 0) {
-		if ($transferRunning == 1)
+		if ($transferRunning == 1) {
 			$up_speed = (trim($sf->up_speed) != "") ? $sf->up_speed : '&nbsp;';
 			// specialcase transmissionrpc transfers
-			if ($sf->isRPC && $cfg["transmission_rpc_enable"] && $cfg['transmission_rpc_enable'] == 1)
-				$up_speed = formatBytesFromDecPrefixTokBMBGBTB($sf->up_speed_B).'/s';
-		else
+			if ($sf->isRPC && $cfg['transmission_rpc_enable'] == 1)
+				$up_speed =  $sf->up_speed_B > 0?formatBytesFromDecPrefixTokBMBGBTB($sf->up_speed_B).'/s':'&nbsp;';
+		} else
 			$up_speed = "&nbsp;";
 	} else {
 		$up_speed = "&nbsp;";
