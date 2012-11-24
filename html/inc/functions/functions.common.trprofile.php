@@ -114,22 +114,23 @@ function GetProfileSettings($profile) {
  */
 function AddProfileInfo($newProfile) {
 	global $db, $cfg;
-	$sql = 'INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , savepath, public )'
+	$sql = 'INSERT INTO tf_trprofiles ( name , owner , public , rate , drate , maxuploads , superseeder , runtime, sharekill , minport , maxport , maxcons , rerequest , savepath)'
 		." VALUES ("
 		.$db->qstr($newProfile["name"])
 		.", ".$db->qstr($cfg['uid'])
+		.", ".$db->qstr($newProfile["public"])
+		.", ".$db->qstr($newProfile["rate"])
+		.", ".$db->qstr($newProfile["drate"])
+		.", ".$db->qstr($newProfile["maxuploads"])
+		.", ".$db->qstr($newProfile["superseeder"])
+		.", ".$db->qstr($newProfile["runtime"])
+		.", ".$db->qstr($newProfile["sharekill"])
 		.", ".$db->qstr($newProfile["minport"])
 		.", ".$db->qstr($newProfile["maxport"])
 		.", ".$db->qstr($newProfile["maxcons"])
 		.", ".$db->qstr($newProfile["rerequest"])
-		.", ".$db->qstr($newProfile["rate"])
-		.", ".$db->qstr($newProfile["maxuploads"])
-		.", ".$db->qstr($newProfile["drate"])
-		.", ".$db->qstr($newProfile["runtime"])
-		.", ".$db->qstr($newProfile["sharekill"])
-		.", ".$db->qstr($newProfile["superseeder"])
-		.", ".$db->qstr($newProfile["public"])
 		.", ".$db->qstr($newProfile["savepath"]).")";
+	var_dump($sql);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
