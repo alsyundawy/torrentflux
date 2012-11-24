@@ -283,7 +283,7 @@ function tmplGetXferBar($total, $used, $title, $type = 'xfer') {
 function getTorrentFluxLink() {
 	global $cfg;
 	$torrentFluxLink['address'] = "https://github.com/pannal/torrentflux";
-	$torrentFluxLink['name']    = "TorrentFlux-NG ".$cfg["version"];
+	$torrentFluxLink['name'] = "TorrentFlux-NG ANAL ".shell_exec('git log -1 --pretty=format:\'%h (%ci)\'');;
 	return $torrentFluxLink;
 }
 
