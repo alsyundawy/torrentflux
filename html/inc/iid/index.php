@@ -131,6 +131,7 @@ if ($cfg["transmission_rpc_enable"]) {
 		}
 
 		$status = $aTorrent['status'];
+		$transferRunning = true;
 		switch ($aTorrent['status']) {
 			case 0:
 				$transferRunning = false;
@@ -148,11 +149,9 @@ if ($cfg["transmission_rpc_enable"]) {
 				break;
 			case 5:
 				$status          = "QSeeding";
-				$transferRunning = true;
 				break;
 			case 6:
 				$status          = "Seeding";
-				$transferRunning = true;
 				break;
 			case 4:
 				if ($aTorrent['rateDownload'] == 0) {
@@ -160,15 +159,15 @@ if ($cfg["transmission_rpc_enable"]) {
 				} else {
 					$status = "Downloading";
 				}
-				$transferRunning = true;
+				break;
+			case 3:
+				$status          = "Queued";
 				break;
 			case 2:
 				$status          = "Checking data...";
-				$transferRunning = true;
 				break;
 			case 1:
 				$status          = "Queued for check";
-				$transferRunning = true;
 				break;
 		}
 
