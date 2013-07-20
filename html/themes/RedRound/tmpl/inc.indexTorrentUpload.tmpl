@@ -24,6 +24,7 @@
             </tmpl_if>
 		</select>
         <select name="profile">
+            <option value="" selected="selected">no profile</option>
             <tmpl_loop name="profiles">
                 <option value="<tmpl_var name="name">"><tmpl_var name="name"></option>
             </tmpl_loop>
