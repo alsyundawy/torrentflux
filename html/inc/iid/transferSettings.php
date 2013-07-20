@@ -278,7 +278,15 @@ if ($isSave) { /* save */
 			$tmpl->setvar('message', "settings saved");
 
 		}
-
+	}
+	$interactive = (tfb_getRequestVar('interactive') == 1) ? 1 : 0;
+	if (($interactive == 1) && (isset($_REQUEST["close"]))) {
+		echo '<script  language="JavaScript">';
+		echo ' window.opener.location.reload(true);';
+		echo ' window.close();';
+		echo '</script>';
+		// Prevent dispatcher_exit from running and redirecting client, otherwise script won't be executed.
+		exit();
 	}
 
 } else { /* display */

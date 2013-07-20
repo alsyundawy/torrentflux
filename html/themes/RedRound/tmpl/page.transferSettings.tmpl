@@ -92,6 +92,7 @@
 	</form>
 </tmpl_if>
 <form name="theForm" action="index.php?iid=transferSettings&transfer=<tmpl_var name="transfer">" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
+<input type="hidden" name="interactive" value="1">
 <input type="hidden" name="save" value="1" />
 	<tmpl_include name="inc.transferSettings.tmpl">
 <!-- IF USER IS ALLOWED TO CHOOSE SAVE PATH, THIS IS SHOWN. THIS CAN BE ENABLED/DISABLED IN admin/control/enable save path chooser -->
@@ -110,10 +111,14 @@
 	</tmpl_if>
 	<tmpl_if name="sendboxShow" value="1">
 		<table id="transferSettings">
-		<tr class="alt">
-			<th>Send Changes to Client</th>
-			<td><input type="checkbox" name="sendbox" id="sendbox" <tmpl_var name="sendboxAttr">></td>
-		</tr>
+            <tr class="alt">
+                <th>Send Changes to Client</th>
+                <td><input type="checkbox" name="sendbox" id="sendbox" <tmpl_var name="sendboxAttr">></td>
+            </tr>
+            <tr class="alt">
+                <th>Close Window</th>
+                <td><input type="checkbox" value="1" name="close" id="close" checked="checked"></td>
+            </tr>
 		</table>
 		</tmpl_if>
 		<table id="transferSettings">
