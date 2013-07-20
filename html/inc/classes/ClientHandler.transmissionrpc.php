@@ -83,6 +83,12 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 		// init properties
 		$this->_init($interactive, $enqueue, true, false);
 
+		// if the torrent was simply stopped and started by someone else we don't want to change ownership
+		// it was then new or deleted from the list
+		$sf = new StatFile($this->transfer, $this->owner);
+		$wasntStopped = $sf->running !== "0";
+		$wasNew = $sf->running === "2";
+
 		/*
 		if (!is_dir($cfg["path"].'.config/transmissionrpc/torrents')) {
 			if (!is_dir($cfg["path"].'.config'))
@@ -101,8 +107,8 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 		}
 
 		$this->command = "";
-		// we don't want to change the transfer owner just because someone else started it
-		/*if (getOwner($transfer) != $cfg['user']) {
+
+		if ($wasntStopped && !$wasNew && getOwner($transfer) != $cfg['user']) {
 			//directory must be changed for different users ?
 			changeOwner($transfer,$cfg['user']);
 			$this->owner = $cfg['user'];
@@ -116,8 +122,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 			
 		} else {
 			$this->command = "downloading to ".$this->savepath;
-		}*/
-		$this->command = "downloading to ".$this->savepath;
+		}
 
 		// no client needed
 		$this->state = CLIENTHANDLER_STATE_READY;
@@ -143,6 +148,7 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 			} else {
 				$this->command .= "\n".'torrent-add '.$transfer.' '.$hash; //log purpose
 			}
+			// it's a new transfer, set its owner
 		} else {
 			$this->command .= "\n".'torrent-start '.$transfer.' '.$hash; //log purpose
 		}
