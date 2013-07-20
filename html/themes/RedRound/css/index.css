@@ -52,3 +52,7 @@ ul.maintabs {
 	padding-top: 16px;
 	padding-bottom: 16px;
 }
+
+#indexTorrentUpload select {
+    padding: 4px;
+}
