@@ -305,6 +305,19 @@ class ClientHandler {
 	}
 
 	/**
+	 * get settings from profile
+	 */
+	function settingsFromProfile($settingsArray) {
+		foreach(array("rate", "drate", "maxuploads", "superseeder", "runtime", "sharekill", "minport", "maxport", "maxcons", "rerequest") as $key) {
+			if (array_key_exists($key, $settingsArray)) {
+				$this->$key = $settingsArray[$key];
+			}
+		}
+		if (array_key_exists("savepath", $settingsArray) && !empty($settingsArray["savepath"])) $this->savepath = $settingsArray["savepath"];
+		$this->settingsSave();
+	}
+
+	/**
 	 * load settings
 	 *
 	 * @param $transfer
@@ -387,6 +400,7 @@ class ClientHandler {
 			.$db->qstr($this->maxcons).","
 			.$db->qstr($this->rerequest)
 			.")";
+
 		$db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		// set transfers-cache
