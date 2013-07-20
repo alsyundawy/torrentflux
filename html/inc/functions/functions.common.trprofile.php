@@ -26,10 +26,10 @@ To read the license please visit http://www.gnu.org/copyleft/gpl.html
  * @param $profile
  * @return array
  */
-function GetProfiles($uid, $profile) {
+function GetProfiles($uid, $profile, $includePublic=FALSE) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql            = "SELECT name FROM tf_trprofiles WHERE owner=".$db->qstr($uid)." AND public='0'";
+	$sql            = "SELECT name FROM tf_trprofiles WHERE owner=".$db->qstr($uid).($includePublic === FALSE?" AND public='0'":"");
 	$rs             = $db->GetCol($sql);
 	if ($rs) {
 		foreach ($rs as $arr) {
@@ -51,10 +51,10 @@ function GetProfiles($uid, $profile) {
  * @param $profile
  * @return array
  */
-function GetProfilesByUserName($user, $profile) {
+function GetProfilesByUserName($user, $profile, $includePublic=FALSE) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql            = "SELECT p.name AS name FROM tf_users AS u LEFT JOIN tf_trprofiles AS p ON (u.uid = p.owner) WHERE u.user_id=".$db->qstr($user)." AND p.public='0'";
+	$sql            = "SELECT p.name AS name FROM tf_users AS u LEFT JOIN tf_trprofiles AS p ON (u.uid = p.owner) WHERE u.user_id=".$db->qstr($user).($includePublic === FALSE?" AND public='0'":"");
 	$rs             = $db->GetCol($sql);
 	if ($rs) {
 		foreach ($rs as $arr) {

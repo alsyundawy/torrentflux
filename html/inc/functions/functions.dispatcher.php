@@ -849,10 +849,25 @@ function dispatcher_processUpload() {
 			}
 		}
 	}
+
 	// instant action ?
 	if (($actionId > 1) && (!empty($tStack))) {
+		$profile = empty($_POST["profile"])?NULL:$_POST["profile"];
+		$profSettings = NULL;
+		if ($profile !== NULL) {
+			require_once('inc/functions/functions.common.trprofile.php');
+			$profSettings = GetProfileSettings($profile);
+		}
 		foreach ($tStack as $transfer) {
 			$ch = ClientHandler::getInstance(getTransferClient($transfer));
+			if ($profSettings !== NULL) {
+				$ch->settingsDefault($transfer);
+				$ch->settingsFromProfile($profSettings);
+				if ($cfg["lastProfileUsed"] !== NULL && $cfg["lastProfileUsed"] !== $profile) {
+					deleteUserSettingPair($cfg["uid"], "lastProfileUsed");
+				}
+				insertUserSettingPair($cfg["uid"], "lastProfileUsed", $profile);
+			}
 			switch ($actionId) {
 				case 3:
 					$ch->start($transfer, false, true);

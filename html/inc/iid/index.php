@@ -59,6 +59,9 @@ $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_USERS', $cfg['_USERS']);
 
+require_once('inc/functions/functions.common.trprofile.php');
+$tmpl->setloop('profiles', GetProfiles($cfg["uid"], $cfg["lastProfileUsed"], TRUE));
+
 // username
 $tmpl->setvar('user', $cfg["user"]);
 
@@ -131,6 +134,7 @@ if ($cfg["transmission_rpc_enable"]) {
 		}
 
 		$status = $aTorrent['status'];
+		$transferRunning = true;
 		switch ($aTorrent['status']) {
 			case 0:
 				$transferRunning = false;
@@ -148,11 +152,9 @@ if ($cfg["transmission_rpc_enable"]) {
 				break;
 			case 5:
 				$status          = "QSeeding";
-				$transferRunning = true;
 				break;
 			case 6:
 				$status          = "Seeding";
-				$transferRunning = true;
 				break;
 			case 4:
 				if ($aTorrent['rateDownload'] == 0) {
@@ -160,15 +162,15 @@ if ($cfg["transmission_rpc_enable"]) {
 				} else {
 					$status = "Downloading";
 				}
-				$transferRunning = true;
+				break;
+			case 3:
+				$status          = "Queued";
 				break;
 			case 2:
 				$status          = "Checking data...";
-				$transferRunning = true;
 				break;
 			case 1:
 				$status          = "Queued for check";
-				$transferRunning = true;
 				break;
 		}
 
