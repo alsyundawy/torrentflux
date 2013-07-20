@@ -51,7 +51,8 @@ $cfg['validUserSettingsKeys'] = array(
 	'transferStatsUpdate',
 	'transferHosts',
 	'transfer_delete_data',
-	'servermon_update'
+	'servermon_update',
+	'lastProfileUsed'
 );
 
 ?>

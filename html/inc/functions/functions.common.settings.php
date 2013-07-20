@@ -155,6 +155,16 @@ function insertUserSettingPair($uid, $key, $value) {
 	return true;
 }
 
+function deleteUserSettingPair($uid, $key) {
+	global $cfg, $db;
+	$sql = "DELETE FROM tf_settings_user WHERE uid = ".$db->qstr($uid)." AND tf_key = ".$db->qstr($key);
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	// return
+	$cfg[$key] = NULL;
+	return true;
+}
+
 /*
  * Function to delete saved user Settings
  *

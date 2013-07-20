@@ -863,6 +863,10 @@ function dispatcher_processUpload() {
 			if ($profSettings !== NULL) {
 				$ch->settingsDefault($transfer);
 				$ch->settingsFromProfile($profSettings);
+				if ($cfg["lastProfileUsed"] !== NULL && $cfg["lastProfileUsed"] !== $profile) {
+					deleteUserSettingPair($cfg["uid"], "lastProfileUsed");
+				}
+				insertUserSettingPair($cfg["uid"], "lastProfileUsed", $profile);
 			}
 			switch ($actionId) {
 				case 3:
