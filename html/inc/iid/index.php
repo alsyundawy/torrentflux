@@ -59,6 +59,9 @@ $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_USERS', $cfg['_USERS']);
 
+require_once('inc/functions/functions.common.trprofile.php');
+$tmpl->setloop('profiles', GetProfiles($cfg["uid"], NULL, TRUE));
+
 // username
 $tmpl->setvar('user', $cfg["user"]);
 
