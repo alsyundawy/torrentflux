@@ -30,7 +30,13 @@
 		<tmpl_if name="index_page_stats"><li><a href="#tabs-9">Stats</a></li></tmpl_if>
 		<a class="ui-button ui-icon ui-icon-refresh" style="float:right; height:16px;" onclick="ajax_update(); return false;" title="Ajax Refresh"></a>
 	</ul>
-	<div id="tabs-1"><tmpl_include name="inc.transferList.tmpl"><tmpl_include name="inc.transferListBulkActions.tmpl"></div>
+	<div id="tabs-1">
+        <form action="dispatcher.php" method="post" onsubmit="return actionSubmit()">
+            <div id="transferList">
+                <tmpl_include name="inc.transferList.tmpl"><tmpl_include name="inc.transferListBulkActions.tmpl">
+            </div>
+        </form>
+    </div>
 	<tmpl_if name="enable_search"><div id="tabs-4"><tmpl_include name="inc.indexTorrentSearch.tmpl"></div></tmpl_if>
 	<tmpl_if name="enable_wget"><div id="tabs-5"><tmpl_include name="inc.indexWget.tmpl"></div></tmpl_if>
 	<tmpl_if name="enable_nzbperl"><div id="tabs-6"><tmpl_include name="inc.indexNZB.tmpl"></div></tmpl_if>
