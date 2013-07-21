@@ -1,6 +1,3 @@
-<form action="dispatcher.php" method="post" onsubmit="return actionSubmit()">
-<!-- THIS IS NEEDED FOR AJAX UPDATE OF TRANSFER LIST TO WORK -->
-<div id="transferList">
 <h3 id="yours">
 <a class="ui-button" onclick="$('h3#yours').next('table.sortable').clearQueue().fadeToggle(); ajax_updateState = 0; return false;" title="Show/Hide Your Transfers"><img valign="bottom" height="16px" width="16px" src="themes/RedRound/images/index/TransferList/hidetable.png"/></a>
 Your Transfers
@@ -29,9 +26,9 @@ Your Transfers
 <tmpl_loop name="arUserTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray">
+	<tr class="gray unselectable">
 	<tmpl_else>
-	<tr class="white">
+	<tr class="white unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><!-- STATUS BULLET GREEN/YELLOW/RED/BLACK TO DISPLAY TORRENT STATUS + LINK TO A LIST OF HOSTS -->
@@ -273,9 +270,9 @@ Foreign Transfers
 <tmpl_loop name="arListTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray">
+	<tr class="gray unselectable">
 	<tmpl_else>
-	<tr class="white">
+	<tr class="white unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><a href="JavaScript:showTransfer('index.php?iid=transferHosts&amp;transfer=<tmpl_var name="url_entry">')">
@@ -479,4 +476,3 @@ Foreign Transfers
 </table>
 </tmpl_if>
 <!-- END TRANSFERS WHICH BELONG TO USER AND ADMIN CAN SEE -->
-</div>

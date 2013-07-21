@@ -6,104 +6,93 @@
  *      
  *      This file is public domain;
  */
+var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
+(function($,$$) {
+    bindFileInput = function() {
+        $('div.upload_file input[type="file"]').unbind('change').change(function() {
+            var cDiv = $(this).closest("div");
+            cDiv.children("div").remove();
+            if ($.browser.mozilla)
+                cDiv.append('<div style="position:absolute;margin-left:2px;margin-top:-21px;">'+$(this).val()+'</div>');
+            else//if ($.browser.webkit)
+                cDiv.append('<div style="position:absolute;margin-left:2px;margin-top:-16px;">'+$(this).val()+'</div>');
+        });
+    };
 
-function bindFileInput() {
-	jQuery('div.upload_file input[type="file"]').unbind('change').change(function() {
-		$(this).closest("div").children("div").remove();
-		if (jQuery.browser.mozilla)
-		$(this).closest("div").append('<div style="position:absolute;margin-left:2px;margin-top:-21px;">'+$(this).val()+'</div>');
-		else//if (jQuery.browser.webkit)
-		$(this).closest("div").append('<div style="position:absolute;margin-left:2px;margin-top:-16px;">'+$(this).val()+'</div>');
-	});
-}
-/**
- * addUploadField (override js/multiup.js)
- */
-function addUploadField(e) {
-	var fileContent = '</div><br /><div class="upload_file"><input type="file" name="upload_files[]" id="upload_files_first" width="250px" size="40" />';
+    /**
+     * addUploadField (override js/multiup.js)
+     */
+    addUploadField = function(e) {
+        var fileContent = '</div><br /><div class="upload_file"><input type="file" name="upload_files[]" id="upload_files_first" width="250px" size="40" />';
 
-	jQuery("div.upload_file").last().after(fileContent);
-	jQuery("div#indexTorrentUpload").css('height','auto');
-	
-	bindFileInput();
-}
+        $("div.upload_file").last().after(fileContent);
+        $("div#indexTorrentUpload").css('height','auto');
 
-// turn unordened list into tabs
-jQuery(document).ready(function(){
-	
-	//tabs first, because droplisti use ul/li too
-	jQuery("#tabs").tabs({ panelTemplate: '<li></li>' });
+        bindFileInput();
+    };
 
-	jQuery("tr.gray")
-	.mouseenter(function() {
-		this.className='hover';
-	})
-	.mouseleave(function() {
-		this.className='gray';
-	});
+    // turn unordened list into tabs
+    $(function(){
 
-	jQuery("tr.white")
-	.mouseenter(function() {
-		this.className='hover';
-	})
-	.mouseleave(function() {
-		this.className='white';
-	});
+        //tabs first, because droplisti use ul/li too
+        $("#tabs").tabs({ panelTemplate: '<li></li>' });
 
-	//skin buttons
-	jQuery("input:submit").button()
-		.css('padding','2px 8px');
-//		.css('height','22px')
-//		.css('line-height','20px')
-//		.css('vertical-align','bottom');
-	
-	bindFileInput();
-	
-	//text zones height
-	jQuery("input:text")
-		.css('height','18px')
-		.css('padding','1px')
-		.css('vertical-align','bottom');
-	
-	//comboboxes
-	jQuery('select#searchEngine').droplist({width:120});
-	jQuery('#indexWget select').droplist({width:120});
-	jQuery('select[name!="action"]').not('#searchEngine').droplist({autoresize:true,slide:false,height:150});
- 
+        $("tr").live("mouseenter", function() {
+            $(this).addClass('hover');
+        })
+        .live("mouseleave", function() {
+            $(this).removeClass('hover');
+        });
 
-	//multicolumn links
-	if (jQuery.browser.msie) {
-		jQuery("#indexLinks ul li")
-			.css('display', 'inline-block')
-			.css('min-width', '240px')
-			.css('margin-left', '1em');
-		jQuery("#indexLinks ul")
-			.css('max-width', '800px');
-	}
-});
+        //skin buttons
+        $("input:submit").button()
+            .css('padding','2px 8px');
+    //		.css('height','22px')
+    //		.css('line-height','20px')
+    //		.css('vertical-align','bottom');
 
-function beforeAjaxUpdate() {
-	jQuery("tr.gray, tr.white")
-		.unbind('mouseenter')
-		.unbind('mouseleave');
-}
+        bindFileInput();
 
-function afterAjaxUpdate() {
+        //text zones height
+        $("input:text")
+            .css('height','18px')
+            .css('padding','1px')
+            .css('vertical-align','bottom');
 
-	jQuery("tr.gray")
-	.mouseenter(function() {
-		this.className='hover';
-	})
-	.mouseleave(function() {
-		this.className='gray';
-	});
+        //comboboxes
+        $('select#searchEngine').droplist({width:120});
+        $('#indexWget select').droplist({width:120});
+        $('select[name!="action"]').not('#searchEngine').droplist({autoresize:true,slide:false,height:150});
 
-	jQuery("tr.white")
-	.mouseenter(function() {
-		this.className='hover';
-	})
-	.mouseleave(function() {
-		this.className='white';
-	});
 
-}
+        //multicolumn links
+        if ($.browser.msie) {
+            $("#indexLinks ul li")
+                .css('display', 'inline-block')
+                .css('min-width', '240px')
+                .css('margin-left', '1em');
+            $("#indexLinks ul")
+                .css('max-width', '800px');
+        }
+
+        $('tr').live("click", function(e) {
+            var isRow = !~$.inArray(e.target.nodeName, ["A", "INPUT", "IMG"]), $row, active = false, cb;
+            if (!isRow) return;
+            $row = $(this);
+            active = $row.hasClass("active");
+            cb = $row.find('input[type="checkbox"]')[0];
+            cb.checked = !active;
+            $row[(active?"remove":"add")+"Class"]("active");
+
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return false;
+        }).live("mouseenter", function(e) {
+                clearTimeout(indexTimer);
+        }).live("mouseleave", function(e) {
+            updateTimeLeft = ajax_updateTimer / 1000;
+            indexTimer = setTimeout(ajax_pageUpdate, 1000);
+            ajax_pageUpdate();
+        });
+    });
+})(jQuery, null);
