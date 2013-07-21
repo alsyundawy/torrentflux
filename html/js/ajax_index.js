@@ -359,7 +359,7 @@ var ajax_initialize, ajax_pageUpdate, ajax_processXML, ajax_processText, ajax_up
         // transfer-list
         if (transferListEnabled == 1) {
             // update content
-            $("#transferList").html(transferListStr);
+            $("#transferList > .transferListInner").html(transferListStr);
             // re-init sort-table
             if (sortTableEnabled == 1)
                 sortables_init();
@@ -367,7 +367,7 @@ var ajax_initialize, ajax_pageUpdate, ajax_processXML, ajax_processText, ajax_up
         // transfer-list
         if (ajaxScriptEnabled == 1) {
             // update content
-            $("#transferList").html(transferListStr);
+            $("#transferList > .transferListInner").html(transferListStr);
             // re-init sort-table
             if (sortTableEnabled == 1)
                 sortables_init();
