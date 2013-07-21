@@ -219,7 +219,7 @@ table.transfer_table tr.white {
 	background-color: #ededed;
 }
 
-.hover, .hover a {
+tr.items.hover, tr.items.hover a {
 	background-color: #4161c4 !important;
 	color: #ededed;
 }
@@ -228,7 +228,7 @@ table.transfer_table a{
 	color: #222;
 }
 
-table.transfer_table tr.hover a{
+table.transfer_table tr.items.hover a{
 	color: #ededed;
 }
 

@@ -5,7 +5,7 @@ Your Transfers
 <table class="table sortable transfer_table" style="width:100%" cellspacing="0" id="transfer_table_user">
 <!-- BEGIN TRANSFERS WHICH BELONG TO USER -->
 <tmpl_if name="are_user_transfer">
-	<tr>
+	<tr class="headings">
 		<th></th>
 		<th><tmpl_var name="_TRANSFERFILE"></th>
 		<!--<tmpl_if name="settings_0"><th>User</th></tmpl_if>-->
@@ -26,9 +26,9 @@ Your Transfers
 <tmpl_loop name="arUserTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray unselectable">
+	<tr class="gray items unselectable">
 	<tmpl_else>
-	<tr class="white unselectable">
+	<tr class="white items unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><!-- STATUS BULLET GREEN/YELLOW/RED/BLACK TO DISPLAY TORRENT STATUS + LINK TO A LIST OF HOSTS -->
@@ -250,7 +250,7 @@ Your Transfers
 Foreign Transfers
 </h3>
 <table class="table sortable transfer_table" width="100%" cellspacing="0" id="transfer_table_global">
-	<tr>
+	<tr class="headings">
 		<th></th>
 		<th><tmpl_var name="_TRANSFERFILE"></th>
 		<tmpl_if name="settings_0"><th>User</th></tmpl_if>
@@ -270,9 +270,9 @@ Foreign Transfers
 <tmpl_loop name="arListTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray unselectable">
+	<tr class="gray items unselectable">
 	<tmpl_else>
-	<tr class="white unselectable">
+	<tr class="white items unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><a href="JavaScript:showTransfer('index.php?iid=transferHosts&amp;transfer=<tmpl_var name="url_entry">')">

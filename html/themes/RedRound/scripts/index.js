@@ -80,12 +80,14 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
             $row = $(this);
             active = $row.hasClass("active");
             cb = $row.find('input[type="checkbox"]')[0];
-            cb.checked = !active;
-            $row[(active?"remove":"add")+"Class"]("active");
+            if (typeof(cb) !== "undefined") {
+                cb.checked = !active;
+                $row[(active?"remove":"add")+"Class"]("active");
 
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            return false;
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                return false;
+            }
         }).live("mouseenter", function(e) {
             clearTimeout(indexTimer);
             $("#span_update").html("Update paused.");
