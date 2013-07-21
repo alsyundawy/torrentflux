@@ -184,7 +184,7 @@ h3 { /* YOUR/FOREIGN TRANSFERS */
 	min-width: 900px;
 }
 
-table#transfer_table th, table#transfer_table th a {
+table.transfer_table th, table.transfer_table th a {
 	background-color: black;
 	color: white;
 	font-weight: normal;
@@ -192,21 +192,21 @@ table#transfer_table th, table#transfer_table th a {
 	font-size: 1.1em;
 }
 
-table#transfer_table {
+table.transfer_table {
 	border-collapse: collapse;
 	background-color: transparent;
 	font-size: .8em;
 }
 
-table#transfer_table td {
+table.transfer_table td {
 	background-color: transparent;
 }
  
-table#transfer_table tr.gray {
+table.transfer_table tr.gray {
 	background-color: #cccccc;
 }
 
-table#transfer_table tr.white {
+table.transfer_table tr.white {
 	background-color: #fff;
 }
 
@@ -215,15 +215,15 @@ table#transfer_table tr.white {
 	color: white;
 }
 
-table#transfer_table a{
+table.transfer_table a{
 	color: #222;
 }
 
-table#transfer_table tr.hover a{
+table.transfer_table tr.hover a{
 	color: white;
 }
 
-table#transfer_table td.tIcon {
+table.transfer_table td.tIcon {
 	width: 37px;
 }
 

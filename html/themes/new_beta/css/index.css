@@ -6,7 +6,7 @@
 	color: #FFFFFF;
 	text-decoration: none;
 }
-#transfer_table {
+.transfer_table {
 	width: 100%;
 }
 #statsBandwidthBars {
@@ -133,7 +133,7 @@ td.transfer_table_admin {
 	height: 26px;
 	background-image: url(../pics/upload.jpg);
 }
-#transfer_table_details {
+.transfer_table_details {
 	margin-left: 10px;
 	margin-right: 10px;
 	margin-bottom: 10px;

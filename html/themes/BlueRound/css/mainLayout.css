@@ -182,7 +182,7 @@ h3 { /* YOUR/FOREIGN TRANSFERS */
 	min-width: 900px;
 }
 
-table#transfer_table th, table#transfer_table th a {
+table.transfer_table th, table.transfer_table th a {
 	padding: 2px 0;
 	background-color: #000064;
 	color: #ededed;
@@ -192,14 +192,14 @@ table#transfer_table th, table#transfer_table th a {
 	font-size: 1.1em;
 }
 
-table#transfer_table {
+table.transfer_table {
 	border-collapse: collapse;
 	background-color: transparent;
 	font-size: 1.0em;
 	border:1px solid black;
 }
 
-table#transfer_table td {
+table.transfer_table td {
 	background-color: transparent;
 	padding: 0 1px;
 	vertical-align: middle;
@@ -207,15 +207,15 @@ table#transfer_table td {
 	white-space: nowrap;
 }
 
-table#transfer_table td a:hover {
+table.transfer_table td a:hover {
 	text-decoration: none;
 }	
  
-table#transfer_table tr.gray {
+table.transfer_table tr.gray {
 	background-color: #ddd;
 }
 
-table#transfer_table tr.white {
+table.transfer_table tr.white {
 	background-color: #ededed;
 }
 
@@ -224,11 +224,11 @@ table#transfer_table tr.white {
 	color: #ededed;
 }
 
-table#transfer_table a{
+table.transfer_table a{
 	color: #222;
 }
 
-table#transfer_table tr.hover a{
+table.transfer_table tr.hover a{
 	color: #ededed;
 }
 
@@ -487,11 +487,11 @@ credit dialog styles
 
 /* fix up */
 
-table#transfer_table td.tIcon {
+table.transfer_table td.tIcon {
   border-right: 0;
 }
 
-table#transfer_table td.tName {
+table.transfer_table td.tName {
   border-left: 0;
 }
 

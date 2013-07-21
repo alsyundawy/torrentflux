@@ -88,6 +88,7 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
             return false;
         }).live("mouseenter", function(e) {
             clearTimeout(indexTimer);
+            $("#span_update").html("Update paused.");
         }).live("mouseleave", function(e) {
             updateTimeLeft = ajax_updateTimer / 1000;
             indexTimer = setTimeout(ajax_pageUpdate, 1000);

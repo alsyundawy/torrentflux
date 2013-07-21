@@ -2,7 +2,7 @@
 <a class="ui-button" onclick="$('h3#yours').next('table.sortable').clearQueue().fadeToggle(); ajax_updateState = 0; return false;" title="Show/Hide Your Transfers"><img valign="bottom" height="16px" width="16px" src="themes/RedRound/images/index/TransferList/hidetable.png"/></a>
 Your Transfers
 </h3>
-<table class="table sortable" style="width:100%" cellspacing="0" id="transfer_table">
+<table class="table sortable transfer_table" style="width:100%" cellspacing="0" id="transfer_table_user">
 <!-- BEGIN TRANSFERS WHICH BELONG TO USER -->
 <tmpl_if name="are_user_transfer">
 	<tr>
@@ -249,7 +249,7 @@ Your Transfers
 <a class="ui-button" onclick="$('h3#foreign').next('table.sortable').fadeToggle(); ajax_updateState = 0; return false;" title="Show/Hide Your Transfers"><img valign="bottom" height="16px" width="16px" src="themes/RedRound/images/index/TransferList/hidetable.png"/></a>
 Foreign Transfers
 </h3>
-<table class="table sortable" width="100%" cellspacing="0" id="transfer_table">
+<table class="table sortable transfer_table" width="100%" cellspacing="0" id="transfer_table_global">
 	<tr>
 		<th></th>
 		<th><tmpl_var name="_TRANSFERFILE"></th>
