@@ -10,11 +10,12 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
 (function($,$$) {
     bindFileInput = function() {
         $('div.upload_file input[type="file"]').unbind('change').change(function() {
-            $(this).closest("div").children("div").remove();
-            if (jQuery.browser.mozilla)
-            $(this).closest("div").append('<div style="position:absolute;margin-left:2px;margin-top:-21px;">'+$(this).val()+'</div>');
-            else//if (jQuery.browser.webkit)
-            $(this).closest("div").append('<div style="position:absolute;margin-left:2px;margin-top:-16px;">'+$(this).val()+'</div>');
+            var cDiv = $(this).closest("div");
+            cDiv.children("div").remove();
+            if ($.browser.mozilla)
+                cDiv.append('<div style="position:absolute;margin-left:2px;margin-top:-21px;">'+$(this).val()+'</div>');
+            else//if ($.browser.webkit)
+                cDiv.append('<div style="position:absolute;margin-left:2px;margin-top:-16px;">'+$(this).val()+'</div>');
         });
     };
     /**
@@ -99,7 +100,7 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
     
     
         //multicolumn links
-        if (jQuery.browser.msie) {
+        if ($.browser.msie) {
             $("#indexLinks ul li")
                 .css('display', 'inline-block')
                 .css('min-width', '240px')
@@ -108,6 +109,6 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
                 .css('max-width', '800px');
         }
     
-        //$('')
+        $('')
     });
 })(jQuery, null);
