@@ -26,9 +26,9 @@ Your Transfers
 <tmpl_loop name="arUserTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray">
+	<tr class="gray unselectable">
 	<tmpl_else>
-	<tr class="white">
+	<tr class="white unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><!-- STATUS BULLET GREEN/YELLOW/RED/BLACK TO DISPLAY TORRENT STATUS + LINK TO A LIST OF HOSTS -->
@@ -270,9 +270,9 @@ Foreign Transfers
 <tmpl_loop name="arListTorrent">
 
 	<tmpl_if name="__ODD__">
-	<tr class="gray">
+	<tr class="gray unselectable">
 	<tmpl_else>
-	<tr class="white">
+	<tr class="white unselectable">
 	</tmpl_if>
 
 		<td class="tIcon"><a href="JavaScript:showTransfer('index.php?iid=transferHosts&amp;transfer=<tmpl_var name="url_entry">')">

@@ -30,52 +30,17 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
         bindFileInput();
     };
 
-    beforeAjaxUpdate = function() {
-        $("tr.gray, tr.white")
-            .unbind('mouseenter')
-            .unbind('mouseleave');
-    };
-
-    afterAjaxUpdate = function() {
-
-        $("tr.gray")
-            .mouseenter(function() {
-                this.className='hover';
-            })
-            .mouseleave(function() {
-                this.className='gray';
-            });
-
-        $("tr.white")
-            .mouseenter(function() {
-                this.className='hover';
-            })
-            .mouseleave(function() {
-                this.className='white';
-            });
-
-    };
-    
     // turn unordened list into tabs
     $(function(){
     
         //tabs first, because droplisti use ul/li too
         $("#tabs").tabs({ panelTemplate: '<li></li>' });
-    
-        $("tr.gray")
-        .mouseenter(function() {
-            this.className='hover';
+
+        $("tr").live("mouseenter", function() {
+            $(this).addClass('hover');
         })
-        .mouseleave(function() {
-            this.className='gray';
-        });
-    
-        $("tr.white")
-        .mouseenter(function() {
-            this.className='hover';
-        })
-        .mouseleave(function() {
-            this.className='white';
+        .live("mouseleave", function() {
+            $(this).removeClass('hover');
         });
     
         //skin buttons
@@ -109,6 +74,24 @@ var bindFileInput, addUploadField, beforeAjaxUpdate, afterAjaxUpdate;
                 .css('max-width', '800px');
         }
     
-        $('')
+        $('tr').live("click", function(e) {
+            var isRow = !~$.inArray(e.target.nodeName, ["A", "INPUT", "IMG"]), $row, active = false, cb;
+            if (!isRow) return;
+            $row = $(this);
+            active = $row.hasClass("active");
+            cb = $row.find('input[type="checkbox"]')[0];
+            cb.checked = !active;
+            $row[(active?"remove":"add")+"Class"]("active");
+
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return false;
+        }).live("mouseenter", function(e) {
+            clearTimeout(indexTimer);
+        }).live("mouseleave", function(e) {
+            updateTimeLeft = ajax_updateTimer / 1000;
+            indexTimer = setTimeout(ajax_pageUpdate, 1000);
+            ajax_pageUpdate();
+        });
     });
 })(jQuery, null);

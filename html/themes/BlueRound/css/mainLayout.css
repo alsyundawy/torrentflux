@@ -220,7 +220,7 @@ table#transfer_table tr.white {
 }
 
 .hover, .hover a {
-	background-color: #4161c4;
+	background-color: #4161c4 !important;
 	color: #ededed;
 }
 
