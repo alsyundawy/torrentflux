@@ -651,7 +651,7 @@ function GetSpeedInBytes($inValue) {
  * @param int $decimals
  * @return mixed
  */
-function number_format_locale_locale_locale_locale($number,$decimals=2) {
+function number_format_locale($number,$decimals=2) {
     $locale = ( isset($_COOKIE['locale']) ?
         $_COOKIE['locale'] :
         $_SERVER['HTTP_ACCEPT_LANGUAGE']
