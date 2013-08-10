@@ -56,7 +56,7 @@ if ($user_level >= 2) {
 if ($hide_offline == 1)
 	$hide_checked = "checked";
 $user_activity = GetActivityCount($user_id);
-$user_percent = ($user_activity != 0) ? number_format(($user_activity / $total_activity) * 100) : 0;
+$user_percent  = ($user_activity != 0) ? number_format_locale(($user_activity / $total_activity) * 100) : 0;
 // to do FluxFTPD Settings
 $tmpl->setvar('ftpEnabled',false);
 $tmpl->setvar('Dir','');

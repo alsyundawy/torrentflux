@@ -33,7 +33,7 @@ function transmissionSetVars ($transfer, $tmpl) {
 	$tmpl->setvar('size', @formatBytesTokBMBGBTB($returnArr['sizeWhenDone']));
 
 	// sharing
-	$tmpl->setvar('sharing', ($returnArr["downloadedEver"] > 0) ? @number_format((($returnArr["uploadedEver"] / $returnArr["downloadedEver"]) * 100), 2) : "0");
+	$tmpl->setvar('sharing', ($returnArr["downloadedEver"] > 0) ? @number_format_locale((($returnArr["uploadedEver"] / $returnArr["downloadedEver"]) * 100), 2) : "0");
 
 	// totals
 	$tmpl->setvar('downTotal', @formatFreeSpace($returnArr["downloadedEver"] / 1048576));

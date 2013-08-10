@@ -705,7 +705,7 @@ function tmplSetUserSection() {
 		$user_activity = GetActivityCount($user_id);
 		$user_percent = ($user_activity == 0)
 			? 0
-			: number_format(($user_activity / $total_activity) * 100);
+			: number_format_locale(($user_activity / $total_activity) * 100);
 		// online
 		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
 		if (IsOnline($user_id))

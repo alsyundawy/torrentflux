@@ -520,9 +520,9 @@ class FluxCLI
 			$cfg["total_download"] = 0;
 		if (! array_key_exists("total_upload", $cfg))
 			$cfg["total_upload"] = 0;
-		echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' kB/s'."\n";
-		echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' kB/s'."\n";
-		echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' kB/s'."\n";
+		echo $cfg['_UPLOADSPEED']."\t".': '.number_format_locale($cfg["total_upload"], 2).' kB/s'."\n";
+		echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format_locale($cfg["total_download"], 2).' kB/s'."\n";
+		echo $cfg['_TOTALSPEED']."\t".': '.number_format_locale($cfg["total_download"] + $cfg["total_upload"], 2).' kB/s'."\n";
 		echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum()."\n";
 		return true;
 	}

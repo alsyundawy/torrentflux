@@ -327,7 +327,7 @@ function image_pieServerBandwidth() {
 		Image::stringToRGBColor($cfg["body_data_bg"]),
 		array($bwU + 0.00001, $bwD + 0.00001),
 		image_getColors(),
-		array('Up : '.@number_format($bwU, 2)." kB/s", 'Down : '.@number_format($bwD, 2)." kB/s"),
+		array('Up : '.@number_format_locale($bwU, 2)." kB/s", 'Down : '.@number_format_locale($bwD, 2)." kB/s"),
 		48,
 		130,
 		2,

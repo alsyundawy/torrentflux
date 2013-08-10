@@ -203,11 +203,11 @@ function tmplSetBandwidthBars() {
 	// upload
 	$max_upload = $cfg["bandwidth_up"] / 8;
 	$percent_upload = ($max_upload > 0)
-		? @number_format(($cfg["total_upload"] / $max_upload) * 100, 0)
+		? @number_format_locale(($cfg["total_upload"] / $max_upload) * 100, 0)
 		: 0;
 	$tmpl->setvar('bandwidthbars_upload_text',
 		($percent_upload > 0)
-			? @number_format($cfg["total_upload"], 2)
+			? @number_format_locale($cfg["total_upload"], 2)
 			: "0.00");
 	$percent_upload = ($percent_upload >= 100)? 100:$percent_upload;
 	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
@@ -215,11 +215,11 @@ function tmplSetBandwidthBars() {
 	// download
 	$max_download = $cfg["bandwidth_down"] / 8;
 	$percent_download = ($max_download > 0)
-		? @number_format(($cfg["total_download"] / $max_download) * 100, 0)
+		? @number_format_locale(($cfg["total_download"] / $max_download) * 100, 0)
 		: 0;
 	$tmpl->setvar('bandwidthbars_download_text',
 		($percent_download > 0)
-			? @number_format($cfg["total_download"], 2)
+			? @number_format_locale($cfg["total_download"], 2)
 			: "0.00");
 	$percent_download = ($percent_download >= 100)? 100:$percent_download;
 	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);

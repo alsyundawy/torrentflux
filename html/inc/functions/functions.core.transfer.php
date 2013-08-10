@@ -482,7 +482,7 @@ function getTransferDetails($transfer, $full) {
 	$details['percentDone'] = $percentage;
 	// sharing
 	if (is_array($totals)) {
-		$details['sharing'] = ($totals["downtotal"] > 0) ? @number_format((($totals["uptotal"] / $totals["downtotal"]) * 100), 2) : 0;
+		$details['sharing'] = ($totals["downtotal"] > 0) ? @number_format_locale((($totals["uptotal"] / $totals["downtotal"]) * 100), 2) : 0;
 	}
 	// full (including static) details
 	if ($full) {
@@ -492,9 +492,9 @@ function getTransferDetails($transfer, $full) {
 		$details['size'] = @formatBytesTokBMBGBTB($size);
 		if ($running == 1) {
 			// max_download_rate
-			$details['maxSpeedDown'] = number_format($cfg["max_download_rate"], 2);
+			$details['maxSpeedDown'] = number_format_locale($cfg["max_download_rate"], 2);
 			// max_upload_rate
-			$details['maxSpeedUp'] = number_format($cfg["max_upload_rate"], 2);
+			$details['maxSpeedUp'] = number_format_locale($cfg["max_upload_rate"], 2);
 			// maxcons
 			$details['maxcons'] = $cfg["maxcons"];
 			// sharekill
@@ -824,7 +824,7 @@ function getTransferListArray() {
 		if ($settings[5] != 0) {
 			$percentage = "";
 			if (($percentDone >= 100) && (trim($sf->up_speed) != "")) {
-				$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
+				$percentage = @number_format_locale((($transferTotals["uptotal"] / $sf->size) * 100), 2).'%';
 			} else {
 				if ($percentDone >= 1)
 					$percentage = $percentDone . '%';

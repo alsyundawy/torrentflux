@@ -617,7 +617,7 @@ foreach ($arList as $mtimecrc => $transfer) {
 		if ((int)$percentDone >= 100 && $sf->size!=0  && trim($sf->up_speed) != "") {
 			//finished
 			$graph_width = -1;
-			$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
+			$percentage  = @number_format_locale((($transferTotals["uptotal"] / $sf->size) * 100), 2).'%';
 		} else {
 			if ($percentDone >= 1) {
 				//leeching
@@ -1031,15 +1031,15 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	$stats_cell_width+=180;
 	if ($settingsHackStats[0] == 1) {
 		$tmpl->setvar('settingsHackStats1', 1);
-		$tmpl->setvar('settingsHackStats11', @number_format($cfg["total_download"], 2));
+		$tmpl->setvar('settingsHackStats11', @number_format_locale($cfg["total_download"], 2));
 	}
 	if ($settingsHackStats[1] == 1) {
 		$tmpl->setvar('settingsHackStats2', 1);
-		$tmpl->setvar('settingsHackStats22', @number_format($cfg["total_upload"], 2));
+		$tmpl->setvar('settingsHackStats22', @number_format_locale($cfg["total_upload"], 2));
 	}
 	if ($settingsHackStats[2] == 1) {
 		$tmpl->setvar('settingsHackStats3', 1);
-		$tmpl->setvar('settingsHackStats33', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+		$tmpl->setvar('settingsHackStats33', @number_format_locale($cfg["total_download"] + $cfg["total_upload"], 2));
 	}
 	if ($settingsHackStats[3] == 1) {
 		$tmpl->setvar('settingsHackStats4', 1);
@@ -1141,12 +1141,12 @@ if ($cfg['index_page_stats'] != 0) {
 	}
 	// other
 	$tmpl->setvar('_OTHERSERVERSTATS', $cfg['_OTHERSERVERSTATS']);
-	$tmpl->setvar('downloadspeed1', @number_format($cfg["total_download"], 2));
-	$tmpl->setvar('downloadspeed11', @number_format($transfers['sum']['drate'], 2));
-	$tmpl->setvar('uploadspeed1', @number_format($cfg["total_upload"], 2));
-	$tmpl->setvar('uploadspeed11', @number_format($transfers['sum']['rate'], 2));
-	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
-	$tmpl->setvar('totalspeed11', @number_format($transfers['sum']['rate'] + $transfers['sum']['drate'], 2));
+	$tmpl->setvar('downloadspeed1', @number_format_locale($cfg["total_download"], 2));
+	$tmpl->setvar('downloadspeed11', @number_format_locale($transfers['sum']['drate'], 2));
+	$tmpl->setvar('uploadspeed1', @number_format_locale($cfg["total_upload"], 2));
+	$tmpl->setvar('uploadspeed11', @number_format_locale($transfers['sum']['rate'], 2));
+	$tmpl->setvar('totalspeed1', @number_format_locale($cfg["total_download"] + $cfg["total_upload"], 2));
+	$tmpl->setvar('totalspeed11', @number_format_locale($transfers['sum']['rate'] + $transfers['sum']['drate'], 2));
 	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
 	$tmpl->setvar('drivespace1', $cfg['freeSpaceFormatted']);
