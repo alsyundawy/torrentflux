@@ -652,25 +652,24 @@ function GetSpeedInBytes($inValue) {
  * @return mixed
  */
 function number_format_locale($number,$decimals=2) {
-    $locale = ( isset($_COOKIE['locale']) ?
-        $_COOKIE['locale'] :
-        $_SERVER['HTTP_ACCEPT_LANGUAGE']
-    );
+    // fixme: may be better using cookie locale and a fallback (though cookie locale isn't standard at all)
+    $locale = strtolower(locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']));
     switch($locale) {
-        case 'en-us':
-        case 'en-ca':
+        case 'en_us':
+        case 'en_ca':
             $decimal = '.';
             $thousands = ',';
             break;
         case 'fr':
         case 'ca':
+        case 'de_de':
         case 'de':
             $decimal = ',';
             $thousands = '.';
             break;
-        case 'en-gb':
+        case 'en_gb':
         case 'es':
-        case 'es-mx':
+        case 'es_mx':
         default:
             $decimal = ',';
             $thousands = ' ';
