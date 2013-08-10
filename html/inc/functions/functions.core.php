@@ -152,15 +152,15 @@ function getServerStats() {
 	$serverStats = array();
 	// speedDown
 	$speedDown = "n/a";
-	$speedDown = @number_format($cfg["total_download"], 2);
+	$speedDown = @number_format_locale_locale_locale($cfg["total_download"], 2);
 	array_push($serverStats, $speedDown);
 	// speedUp
 	$speedUp = "n/a";
-	$speedUp = @number_format($cfg["total_upload"], 2);
+	$speedUp = @number_format_locale_locale_locale($cfg["total_upload"], 2);
 	array_push($serverStats, $speedUp);
 	// speedTotal
 	$speedTotal = "n/a";
-	$speedTotal = @number_format($cfg["total_download"] + $cfg["total_upload"], 2);
+	$speedTotal = @number_format_locale_locale_locale($cfg["total_download"] + $cfg["total_upload"], 2);
 	array_push($serverStats, $speedTotal);
 	// cons
 	$cons = "n/a";
@@ -185,14 +185,14 @@ function getServerStats() {
 	$percentDownload = 0;
 	$maxDownload     = $cfg["bandwidth_down"] / 8;
 	$percentDownload = ($maxDownload > 0)
-		? @number_format(($cfg["total_download"] / $maxDownload) * 100, 0)
+		? @number_format_locale_locale_locale(($cfg["total_download"] / $maxDownload) * 100, 0)
 		: 0;
 	array_push($serverStats, $percentDownload);
 	// speedUpPercent
 	$percentUpload = 0;
 	$maxUpload     = $cfg["bandwidth_up"] / 8;
 	$percentUpload = ($maxUpload > 0)
-		? @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0)
+		? @number_format_locale_locale_locale(($cfg["total_upload"] / $maxUpload) * 100, 0)
 		: 0;
 	array_push($serverStats, $percentUpload);
 	// driveSpacePercent
@@ -616,10 +616,10 @@ function formatBytesFromDecPrefixTokBMBGBTB($inBytes) {
  */
 function formatFreeSpace($freeSpace) {
 	if ($freeSpace > 1048576)
-		return number_format($freeSpace / 1048576, 2)." TiB";
+		return number_format_locale_locale_locale($freeSpace / 1048576, 2)." TiB";
 	elseif ($freeSpace > 1024)
-		return number_format($freeSpace / 1024, 2)." GiB"; else
-		return number_format($freeSpace, 2)." MiB";
+		return number_format_locale_locale_locale($freeSpace / 1024, 2)." GiB"; else
+		return number_format_locale_locale_locale($freeSpace, 2)." MiB";
 }
 
 /**
@@ -644,4 +644,37 @@ function GetSpeedInBytes($inValue) {
 	return ($arTemp[1] == "kB/s") ? $arTemp[0] * 1024 : $arTemp[0];
 }
 
+/**
+ * locale based number_format_locale_locale_locale
+ *
+ * @param $number
+ * @param int $decimals
+ * @return mixed
+ */
+function number_format_locale_locale_locale_locale($number,$decimals=2) {
+    $locale = ( isset($_COOKIE['locale']) ?
+        $_COOKIE['locale'] :
+        $_SERVER['HTTP_ACCEPT_LANGUAGE']
+    );
+    switch($locale) {
+        case 'en-us':
+        case 'en-ca':
+            $decimal = '.';
+            $thousands = ',';
+            break;
+        case 'fr':
+        case 'ca':
+        case 'de':
+            $decimal = ',';
+            $thousands = '.';
+            break;
+        case 'en-gb':
+        case 'es':
+        case 'es-mx':
+        default:
+            $decimal = ',';
+            $thousands = ' ';
+    }
+    return number_format($number,$decimals,$decimal,$thousands);
+}
 ?>
