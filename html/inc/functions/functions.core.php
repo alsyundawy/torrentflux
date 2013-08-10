@@ -578,15 +578,35 @@ function convertTimeText($seconds) {
 function formatBytesTokBMBGBTB($inBytes) {
 	if(!is_numeric($inBytes)) return "";
 	if ($inBytes > 1099511627776)
-		return round($inBytes / 1099511627776, 2) . " TB";
+		return number_format_locale($inBytes / 1099511627776, 2)." TiB";
 	elseif ($inBytes > 1073741824)
-		return round($inBytes / 1073741824, 2) . " GB";
+		return number_format_locale($inBytes / 1073741824, 2)." GiB";
 	elseif ($inBytes > 1048576)
-		return round($inBytes / 1048576, 1) . " MB";
+		return number_format_locale($inBytes / 1048576, 2)." MiB";
 	elseif ($inBytes > 1024)
-		return round($inBytes / 1024, 1) . " kB";
+		return number_format_locale($inBytes / 1024, 1)." kiB";
 	else
-		return $inBytes . " B";
+		return number_format_locale($inBytes)." B";
+}
+
+/**
+ * Returns a string in format of TB, GB, MB, or kB depending on the size
+ *
+ * @param $inBytes
+ * @return string
+ */
+function formatBytesFromDecPrefixTokBMBGBTB($inBytes) {
+	if (!is_numeric($inBytes)) return "";
+	if ($inBytes > 1000000000000)
+		return number_format_locale($inBytes / 1000000000000, 2)." TB";
+	elseif ($inBytes > 1000000000)
+		return number_format_locale($inBytes / 1000000000, 2)." GB";
+	elseif ($inBytes > 1000000)
+		return number_format_locale($inBytes / 1000000, 2)." MB";
+	elseif ($inBytes > 1000)
+		return number_format_locale($inBytes / 1000, 1)." kB";
+	else
+		return $inBytes." B";
 }
 
 /**
@@ -626,4 +646,22 @@ function GetSpeedInBytes($inValue) {
 	return ($arTemp[1] == "kB/s") ? $arTemp[0] * 1024 : $arTemp[0];
 }
 
+/**
+ * locale based number_format_locale; needs pecl::intl
+ *
+ * @param $number
+ * @param int $decimals
+ * @return mixed
+ */
+function number_format_locale($number,$decimals=2) {
+    $locale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+    $fmt = numfmt_create($locale, NumberFormatter::DECIMAL);
+
+    numfmt_set_attribute($fmt, NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
+    $data = numfmt_format($fmt, $number);
+    if(intl_is_failure(numfmt_format($fmt))) {
+        report_error("Formatter error");
+    }
+    return $data;
+}
 ?>
