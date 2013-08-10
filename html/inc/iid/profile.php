@@ -343,7 +343,7 @@ switch ($op) {
 		if ($user_activity == 0)
 			$user_percent = 0;
 		else
-			$user_percent = number_format(($user_activity / $total_activity) * 100);
+			$user_percent = number_format_locale(($user_activity / $total_activity) * 100);
 		$tmpl->setvar('time_created1', date($cfg['_DATETIMEFORMAT'], $time_created));
 		$tmpl->setvar('width1', $user_percent * 2);
 		$tmpl->setvar('width2', (200 - ($user_percent * 2)));
