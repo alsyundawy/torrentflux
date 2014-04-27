@@ -108,7 +108,8 @@ class ClientHandlerTransmissionRPC extends ClientHandler {
 
 		$this->command = "";
 
-		if ($wasntStopped && !$wasNew && getOwner($transfer) != $cfg['user']) {
+		// change owners if we're not starting the same transfer; this definitely is non-safe. there're too many other states where this may fail our expectations
+		if ($this->savepath !== getTransferSavepath($transfer) || ($wasntStopped && !$wasNew && getOwner($transfer) != $cfg['user'])) {
 			//directory must be changed for different users ?
 			changeOwner($transfer,$cfg['user']);
 			$this->owner = $cfg['user'];
