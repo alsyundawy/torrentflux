@@ -1109,7 +1109,7 @@ class ClientHandler {
 				// set state
 				$this->state = CLIENTHANDLER_STATE_NULL;
 				// message
-				$msg = "skip ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)."; set:".$this->sharekill."; upTotal: ".$upTotal."; upWanted: ".$upWanted.")";
+				$msg = "skip ".$this->transfer." due to share-ratio (has: ".@number_format_locale($sharePercentage, 2)."; set:".$this->sharekill."; upTotal: ".$upTotal."; upWanted: ".$upWanted.")";
 				array_push($this->messages, $msg);
 				// debug-log
 				if ($cfg['debuglevel'] > 0)
