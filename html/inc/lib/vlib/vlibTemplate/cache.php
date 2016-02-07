@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: cache.php,v 1.4 2003/05/15 14:17:41 releasedj Exp $
+// $Id: cache.php 1434 2006-10-29 02:33:41Z b4rt $
 
 /**
  * Class uses all of vlibTemplate's functionality but caches the template files.
@@ -82,7 +82,7 @@ class vlibTemplateCache extends vlibTemplate {
      * @return boolean
      */
     function setCacheExtension($str = null) {
-        if ($str == null || !preg_match('#^[a-z0-9]+$#', strtolower($str))) return false;
+        if ($str == null || !preg_match('/^[a-z0-9]+$/', strtolower($str))) return false;
         $this->OPTIONS['CACHE_EXTENSION'] = strtolower($str);
         return true;
     }
@@ -103,7 +103,7 @@ class vlibTemplateCache extends vlibTemplate {
             return false;
         }
 
-        if (file_exists($this->_cachefile)) {
+        if (file_exists($this->_cachefile) && is_readable($this->_cachefile)) {
             $this->_cacheexists = 1;
 
             // if it's expired
@@ -139,24 +139,15 @@ class vlibTemplateCache extends vlibTemplate {
      */
     function _createCache($data) {
         $cache_file = $this->_cachefile;
-        if (empty($cache_file)) return false;
-        
         if(!$this->_prepareDirs($cache_file)) return false; // prepare all of the directories
 
-        $f = fopen($cache_file, "w");
-        if (!$f) {
-            if(!is_dir($this->OPTIONS['CACHE_DIRECTORY']) && !empty($this->OPTIONS['CACHE_DIRECTORY']) ) {
-               @ system("mkdir -m 775 -p '".$this->OPTIONS['CACHE_DIRECTORY']."'");
-               mkdir($this->OPTIONS['CACHE_DIRECTORY'], 0775);
-            }
-            $f = fopen($cache_file, "w");
-            if (!$f) vlibTemplateError::raiseError('VT_ERROR_NO_CACHE_WRITE',KILL,$cache_file);
-        }
+        $f = fopen ($cache_file, "w");
         flock($f, 2); // set an EXclusive lock
-        fputs($f, $data); // write the parsed string from vlibTemplate
+        if (!$f) vlibTemplateError::raiseError('VT_ERROR_NO_CACHE_WRITE',KILL,$cache_file);
+        fputs ($f, $data); // write the parsed string from vlibTemplate
         flock($f, 3); // UNlock file
-        fclose($f);
-        touch($cache_file);
+        fclose ($f);
+        touch ($cache_file);
         return true;
     }
 
@@ -170,29 +161,22 @@ class vlibTemplateCache extends vlibTemplate {
         $filepath = dirname($file);
         if (is_dir($filepath)) return true;
 
-        $dirs = preg_split("#[\\/\\\\]#", $filepath); // "/" ou "\"
-        $currpath=$this->OPTIONS['CACHE_DIRECTORY'];
+        $dirs = preg_split('[\\/]', $filepath);
+        $currpath = "";
         foreach ($dirs as $dir) {
-            if (empty($dir))
-                continue;
-            
             $currpath .= $dir .'/';
             $type = @filetype($currpath);
 
-            ($type=='link') && $type = 'dir';
-            if ($type != 'dir' and $type != false and !empty($type)) {
+            ($type=='link') and $type = 'dir';
+            if ($type != 'dir' && $type != false && !empty($type)) {
                 vlibTemplateError::raiseError('VT_ERROR_WRONG_CACHE_TYPE',KILL,'directory: '.$currpath.', type: '.$type);
             }
             if ($type == 'dir') {
                 continue;
             }
             else {
-                $s = (@mkdir($currpath, 0775) || @mkdir($currpath) );
-                if (!$s) {
-			@ system("mkdir -m 0775 -p '".$this->OPTIONS['CACHE_DIRECTORY']."'");
-			@ system("mkdir -m 0775 -p '$currpath'");
-			vlibTemplateError::raiseError('VT_ERROR_CACHE_MKDIR_FAILURE',KILL,'directory: '.$currpath);
-		}
+                $s = @mkdir($currpath, 0775);
+                if (!$s) vlibTemplateError::raiseError('VT_ERROR_CACHE_MKDIR_FAILURE',KILL,'directory: '.$currpath);
             }
         }
         return true;
