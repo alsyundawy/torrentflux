@@ -2,6 +2,19 @@
 $Id$
 ================================================================================
 
+TorrentFlux-NG v1.1git
+
+PHP 7 compatibility maintenance release (tested with PHP 7.3; may not work anymore
+with versions below 7.0).
+
+***** changes *****
+- PHP 7(.3) compatibility
+- A couple of DB drivers have been removed as their implementation counterparts
+  don't exist anymore in PHP 7
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 TorrentFlux-NG v1.0git
 based on torrentflux-b4rt 1.0 beta2
 
