@@ -15,7 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
  *******************************************************************************/
 
-function rpc_error($errorstr, $dummy = "", $dummy = "", $response = "") {
+function rpc_error($errorstr, $dummy1 = "", $dummy2 = "", $response = "") {
 	global $cfg;
 	AuditAction($cfg["constants"]["error"], "Transmission RPC : $errorstr - $response");
 	@error($errorstr."\n".$response, "", "", $response, $response);

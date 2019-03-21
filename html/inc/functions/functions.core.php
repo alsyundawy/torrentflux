@@ -657,7 +657,8 @@ function number_format_locale($number,$decimals=2) {
 
     numfmt_set_attribute($fmt, NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
     $data = numfmt_format($fmt, $number);
-    if(intl_is_failure(numfmt_format($fmt))) {
+    $err = intl_get_error_code();
+    if(intl_is_failure($err)) {
         report_error("Formatter error");
     }
     return $data;

@@ -149,7 +149,7 @@ class VuzeRPC {
 		$this->ch = curl_init("http://$HOST:$PORT/transmission/rpc");
 
 		curl_setopt($this->ch, CURLOPT_MAXCONNECTS, 8);
-		curl_setopt($this->ch, CURLOPT_CLOSEPOLICY, CURLCLOSEPOLICY_OLDEST);
+		//curl_setopt($this->ch, CURLOPT_CLOSEPOLICY, CURLCLOSEPOLICY_OLDEST);
 		//curl_setopt($this->ch, CURLOPT_FORBID_REUSE, 1);
 		//curl_setopt($this->ch, CURLOPT_FRESH_CONNECT, 1);
 		//curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
