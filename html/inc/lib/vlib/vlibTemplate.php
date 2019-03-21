@@ -339,11 +339,11 @@ if (!defined('vlibTemplateClassLoaded')) {
             switch ($db_type) {
 
                 case 'MYSQL':
-                    if (get_resource_type($result) != 'mysql result') {
+                    if (get_resource_type($result) != 'mysqli result') {
                         vlibTemplateError::raiseError('VT_WARNING_INVALID_RESOURCE',WARNING, $db_type);
                         return false;
                     }
-                    while($r = mysql_fetch_assoc($result)) {
+                    while($r = mysqli_fetch_assoc($result)) {
                         $loop_arr[] = $r;
                     }
                 break;
@@ -381,7 +381,8 @@ if (!defined('vlibTemplateClassLoaded')) {
                     }
                 break;
 
-                case 'INGRES':
+                // @PHP7
+                /*case 'INGRES':
                     if (!$result) {
                         vlibTemplateError::raiseError('VT_WARNING_INVALID_RESOURCE',WARNING, $db_type);
                         return false;
@@ -410,6 +411,7 @@ if (!defined('vlibTemplateClassLoaded')) {
                         $loop_arr[] = $r;
                     }
                 break;
+                */
 
                 case 'OCI8':
                     if (get_resource_type($result) != 'oci8 statement') {
@@ -431,6 +433,8 @@ if (!defined('vlibTemplateClassLoaded')) {
                     }
                 break;
 
+                // @PHP7
+                /*
                 case 'OVRIMOS':
                     if (!$result) {
                         vlibTemplateError::raiseError('VT_WARNING_INVALID_RESOURCE',WARNING, $db_type);
@@ -451,6 +455,7 @@ if (!defined('vlibTemplateClassLoaded')) {
                         $loop_arr[] = $r;
                     }
                 break;
+                */
             }
             $this->setLoop($loopname, $loop_arr);
             return true;
@@ -1368,14 +1373,18 @@ if (!defined('vlibTemplateClassLoaded')) {
          * @return boolean true/false
          */
         function _intParse () {
-            $mqrt = get_magic_quotes_runtime();
+            // @PHP7
+            /*$mqrt = get_magic_quotes_runtime();
             if ($mqrt) {
             	set_magic_quotes_runtime(0);
             }
+            */
             $this->_tmplfilep = '?>'.$this->_getData($this->_tmplfilename).'<?php return true;';
-            if ($mqrt) {
+
+            // @PHP7
+            /*if ($mqrt) {
             	set_magic_quotes_runtime($mqrt);
-            }
+            }*/
             return true;
         }
 
