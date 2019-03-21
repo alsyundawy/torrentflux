@@ -5,6 +5,7 @@ vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q. et tw=72 sw=4:
 
 /**********************************************************************
 TorrentFlux-NG README file
+PHP 7+ compatible version
 **********************************************************************/
 
     Contents:
